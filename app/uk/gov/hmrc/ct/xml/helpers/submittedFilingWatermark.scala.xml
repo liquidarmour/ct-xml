@@ -1,0 +1,5 @@
+@(date: Option[org.joda.time.DateTime])
+
+@if(date.nonEmpty) {
+    <p>Filed successfully on @date.get.toString("d MMMM yyyy") at @date.get.toString("HH:mm z")</p>
+}

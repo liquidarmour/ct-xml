@@ -1,11 +1,9 @@
+# Slim Play Activator template
 
-# ct-xml
+Generate your own version of the [slim-play app](https://github.com/lloydmeta/slim-play)
 
-[![Build Status](https://travis-ci.org/hmrc/ct-xml.svg?branch=master)](https://travis-ci.org/hmrc/ct-xml) [ ![Download](https://api.bintray.com/packages/hmrc/releases/ct-xml/images/download.svg) ](https://bintray.com/hmrc/releases/ct-xml/_latestVersion)
+## How to use
 
-This is a placeholder README.md for a new repository
-
-### License
-
-This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
-    
+1. Have [activator installed](https://www.typesafe.com/community/core-tools/activator-and-sbt)
+2. `$ activator new my-slim-play slim-play-scala`, enter in your project's name and version
+3. cd into the newly generated app dir and edit + run as needed via `$ activator run`

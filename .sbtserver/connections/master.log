@@ -1,0 +1,7 @@
+New log file opened at Fri Mar 24 09:05:53 GMT 2017 by 3812@Tomaszs-MacBook-Pro.local
+Taking next connection to: 51336
+New client attempting to connect on port: 51337-51336
+  Address = /127.0.0.1:51336
+This client on port 51337 has uuid 5d9f0de9-9382-40c8-a579-02f995a0db1d configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-5d9f0de9-9382-40c8-a579-02f995a0db1d
+Taking next connection to: 51336

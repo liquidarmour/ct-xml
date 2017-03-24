@@ -1,0 +1,18 @@
+@(print: Boolean)
+@if(print) {
+    <script type="text/javascript">
+        function showPrintDialog()
+        {
+            window.print();
+        }
+
+        if (window.addEventListener)
+        {
+            window.addEventListener("load", showPrintDialog);
+        }
+        else if (window.attachEvent)
+        {
+            window.attachEvent("onload", showPrintDialog);
+        }
+    </script>
+}
