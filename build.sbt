@@ -1,3 +1,5 @@
+import play.core.PlayVersion
+
 name := """ct-xml"""
 organization := "uk.gov.hmrc"
 
@@ -9,8 +11,11 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
+  "uk.gov.hmrc" %% "ct-calculations" % "2.120.0",
+
   specs2 % Test,
-  "uk.gov.hmrc" %% "ct-calculations" % "2.120.0"
+  "org.scalatest" %% "scalatest" % "2.2.6" % Test,
+  "uk.gov.hmrc" %% "hmrctest" % "2.2.0" % Test
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
