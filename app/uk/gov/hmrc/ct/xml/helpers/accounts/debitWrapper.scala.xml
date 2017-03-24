@@ -1,0 +1,3 @@
+@(wrapped: play.twirl.api.Xml)
+
+<span class="debit">(@wrapped)</span>
