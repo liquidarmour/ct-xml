@@ -12,6 +12,9 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "uk.gov.hmrc" %% "ct-calculations" % "2.120.0",
+  "uk.gov.hmrc" %% "crypto" % "3.0.0",
+  "uk.gov.hmrc" %% "domain" % "4.0.0",
+  "uk.gov.hmrc" %% "play-time" % "0.3.0",
 
   specs2 % Test,
   "org.scalatest" %% "scalatest" % "2.2.6" % Test,
