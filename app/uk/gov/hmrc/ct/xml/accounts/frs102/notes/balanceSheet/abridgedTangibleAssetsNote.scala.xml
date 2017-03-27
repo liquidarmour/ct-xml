@@ -1,0 +1,193 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever
+@(boxRetriever: Frs102AccountsBoxRetriever with FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+@import uk.gov.hmrc.ct.box.CtOptionalInteger
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.balanceSheet.FiguresHelper._
+
+@ac44 = @{boxRetriever.ac44.value}
+
+@ac124 = @{boxRetriever.ac124.value}
+@ac125 = @{boxRetriever.ac125.value}
+@ac126 = @{boxRetriever.ac126.value}
+@ac131 = @{boxRetriever.ac131.value}
+@ac212 = @{boxRetriever.ac212.value}
+@ac213 = @{boxRetriever.ac213.value}
+@ac128 = @{boxRetriever.ac128.value}
+@ac217 = @{boxRetriever.ac217.value}
+@ac219 = @{boxRetriever.ac219.value}
+@ac130 = @{boxRetriever.ac130.value}
+@ac132 = @{boxRetriever.ac132.value}
+@ac214 = @{boxRetriever.ac214.value}
+@ac133 = @{boxRetriever.ac133.value}
+@ac5133 = @{boxRetriever.ac5133.value}
+
+@noteType = @{ NoteType.TangibleAssets }
+
+@accountsStartDate = @{ DateFormatter.format(boxRetriever.ac3().value, DateFormat.LongUK) }
+@accountsEndDate = @{ DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK) }
+
+@tableSubHeading(headingKey: String, showCurrency: Boolean = false) = {
+    @defining(if(showCurrency) "&#163;" else "") { currency =>
+        <tr>
+            <th>@Messages(headingKey)</th>
+            <td class="text--right figure">@Xml(currency)</td>
+        </tr>
+    }
+}
+
+@labelAndDisplayGoodwillOtherAndTotalFigures(id: String, label: String, name: String, box: CtOptionalInteger, contextPrefix: String, isTotal: Boolean = false, isGrandTotal: Boolean = false, bracketsIfNegative: Boolean = false) = {
+    <tr id="@id">
+        <td id="@id-label">@label</td>
+        @labelAndDisplayFigures(id, label, name, box, contextPrefix, isTotal, isGrandTotal, bracketsIfNegative)
+    </tr>
+}
+
+@notesPage("BalanceSheetTangibleAssets", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+    <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.abridged.tangibleAssets.note.title")</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="text--right figure"></th>
+                <th class="text--right figure">@Messages("ixbrl.abridged.intangibleAssetsNote.total")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @tableSubHeading("ixbrl.abridged.balance.sheet.tangible.assets.cost.heading", showCurrency = true)
+
+            @boxRetriever.ac206().value.map{ _ =>
+                @labelAndDisplayGoodwillOtherAndTotalFigures(
+                    id              = "ac124",
+                    label           = Messages("ixbrl.abridged.tangibleAssetsNote.propertyPlantEquipmentGrossCostAtPoAStart.label", accountsStartDate),
+                    name            = "core:PropertyPlantEquipmentGrossCost",
+                    box             = boxRetriever.ac124(),
+                    contextPrefix   = "PY_END"
+                )
+            }
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac125",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.totalAdditionsPropertyPlantEquipment.label"),
+                name            = "core:TotalAdditionsIncludingFromBusinessCombinationsPropertyPlantEquipment",
+                box             = boxRetriever.ac125(),
+                contextPrefix   = "CY"
+            )
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac126",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.disposalsPropertyPlantEquipment.label"),
+                name            = "core:DisposalsPropertyPlantEquipment",
+                box             = boxRetriever.ac126(),
+                contextPrefix   = "CY"
+            )
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac212",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.totalIncreaseDecreaseRevaluationsPropertyPlantEquipment.label"),
+                name            = "core:TotalIncreaseDecreaseFromRevaluationsPropertyPlantEquipment",
+                box             = boxRetriever.ac212(),
+                contextPrefix   = "CY",
+                bracketsIfNegative = true
+            )
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac213",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.totalIncreaseDecreaseTransfersPropertyPlantEquipment.label"),
+                name            = "core:IncreaseDecreaseDueToTransfersBetweenClassesPropertyPlantEquipment",
+                box             = boxRetriever.ac213(),
+                contextPrefix   = "CY",
+                bracketsIfNegative = true
+            )
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac217",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.propertyPlantEquipmentGrossCostAtPoAEnd.label", accountsEndDate),
+                name            = "core:PropertyPlantEquipmentGrossCost",
+                box             = boxRetriever.ac217(),
+                contextPrefix   = "CY_END",
+                isGrandTotal = true
+            )
+
+            @tableSubHeading("ixbrl.abridged.balance.sheet.tangible.assets.depreciation.heading")
+
+            @boxRetriever.ac206().value.map{ _ =>
+                @labelAndDisplayGoodwillOtherAndTotalFigures(
+                    id              = "ac128",
+                    label           = Messages("ixbrl.abridged.tangibleAssetsNote.accumulatedDepreciationPropertyPlantEquipmentAtPoAStart.label", accountsStartDate),
+                    name            = "core:AccumulatedDepreciationImpairmentPropertyPlantEquipment",
+                    box             = boxRetriever.ac128(),
+                    contextPrefix   = "PY_END"
+                )
+            }
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac219",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.increaseFromDepreciationPropertyPlantEquipment.label"),
+                name            = "core:IncreaseFromDepreciationChargeForYearPropertyPlantEquipment",
+                box             = boxRetriever.ac219(),
+                contextPrefix   = "CY"
+            )
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac130",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.disposalsDecreaseFromDepreciationPropertyPlantEquipment.label"),
+                name            = "core:DisposalsDecreaseInDepreciationImpairmentPropertyPlantEquipment",
+                box             = boxRetriever.ac130(),
+                contextPrefix   = "CY"
+            )
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac214",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.otherIncreaseDecreaseInDepreciationPropertyPlantEquipment.label"),
+                name            = "core:OtherIncreaseDecreaseInDepreciationImpairmentPropertyPlantEquipment",
+                box             = boxRetriever.ac214(),
+                contextPrefix   = "CY",
+                bracketsIfNegative = true
+            )
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac131",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.accumulatedDepreciationPropertyPlantEquipmentAtPoAEnd.label", accountsEndDate),
+                name            = "core:AccumulatedDepreciationImpairmentPropertyPlantEquipment",
+                box             = boxRetriever.ac131(),
+                contextPrefix   = "CY_END",
+                isGrandTotal = true
+            )
+
+            @tableSubHeading("ixbrl.abridged.balance.sheet.tangible.assets.netBookValue.heading")
+
+            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                id              = "ac132",
+                label           = Messages("ixbrl.abridged.tangibleAssetsNote.netBookCurrentPropertyPlantEquipment.label", accountsEndDate),
+                name            = "core:PropertyPlantEquipment",
+                box             = boxRetriever.ac132(),
+                contextPrefix   = "CY_END",
+                isGrandTotal    = true
+            )
+
+            @boxRetriever.ac206().value.map{ previousPOAEndDate =>
+                @labelAndDisplayGoodwillOtherAndTotalFigures(
+                    id              = "ac133",
+                    label           = Messages("ixbrl.abridged.tangibleAssetsNote.netBookPreviousPropertyPlantEquipment.label", DateFormatter.format(previousPOAEndDate, DateFormat.LongUK)),
+                    name            = "core:PropertyPlantEquipment",
+                    box             = boxRetriever.ac133(),
+                    contextPrefix   = "PY_END",
+                    isGrandTotal    = true
+                )
+            }
+        </tbody>
+    </table>
+
+    @ac5133.map { value =>
+        <div class="text-area-display" id="tangible-assets-free-text-note">
+            @ixbrlTextNote(text = value, ixbrlName = "core:PropertyPlantEquipmentFree-textComment", context = "CY")
+        </div>
+    }
+}

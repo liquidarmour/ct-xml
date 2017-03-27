@@ -1,0 +1,68 @@
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever
+@import uk.gov.hmrc.ct.xml.helpers.BoxRetrieverTypeHelper
+
+@(boxRetriever: Frs102AccountsBoxRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState,
+    returnType:  uk.gov.hmrc.ct.version.ReturnType)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.model.filing.AccountsPeriodHeadingCalculator
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.IxbrlSectionStatus
+
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+
+@currentHeading = @{
+        AccountsPeriodHeadingCalculator.periodHeading(boxRetriever.ac3().value, boxRetriever.ac4().value)
+}
+
+@previousHeading = @{
+        AccountsPeriodHeadingCalculator.periodHeading(boxRetriever.ac205().value, boxRetriever.ac206().value)
+}
+
+@fullBoxRetriever = @{BoxRetrieverTypeHelper.optionalFullAccountsRetriever(boxRetriever)}
+
+
+@if(IxbrlSectionStatus(boxRetriever, returnType).isProfitAndLossEnabled) {
+<div id="ProfitAndLossOfAccount" class="page">
+    @pageHeader(boxRetriever)
+
+    <h2 class="text--center">@Messages(prependLbgPrefix("ixbrl.profit.loss.profit.heading", boxRetriever))</h2>
+    <p class="text--center">
+        <strong>for the Period Ended @poaEndDate</strong>
+    </p>
+    <table cellspacing="10">
+        <tbody>
+            @tableHeader(boxRetriever, "p-and-l")
+
+            @fullBoxRetriever.map { fbr =>
+                @profitAndLossFigureRow(fbr.ac12(), fbr.ac13(), "ixbrl.profit.loss.turnover.label", "TurnoverRevenue", boxRetriever)
+                @profitAndLossFigureRow(fbr.ac14(), fbr.ac15(), "ixbrl.profit.loss.cost.of.sales.label", "CostSales", boxRetriever)
+            }
+            @profitAndLossFigureRow(boxRetriever.ac16(), boxRetriever.ac17(), prependLbgPrefix("ixbrl.profit.loss.gross.profit.label", boxRetriever), "GrossProfitLoss", boxRetriever)
+            @profitAndLossFigureRow(boxRetriever.ac18(), boxRetriever.ac19(), "ixbrl.profit.loss.distribution.costs.label", "DistributionCosts", boxRetriever)
+            @profitAndLossFigureRow(boxRetriever.ac20(), boxRetriever.ac21(), "ixbrl.profit.loss.admin.expenses.label", "AdministrativeExpenses", boxRetriever)
+            @fullBoxRetriever.map { fbr =>
+                @profitAndLossFigureRow(fbr.ac22(), fbr.ac23(), "ixbrl.profit.loss.other.operating.income.label", "OtherOperatingIncomeFormat1", boxRetriever)
+            }
+            @profitAndLossFigureRow(boxRetriever.ac26(), boxRetriever.ac27(), prependLbgPrefix("ixbrl.profit.loss.operating.profit.label", boxRetriever), "OperatingProfitLoss", boxRetriever, isTotal = true)
+            @profitAndLossFigureRow(boxRetriever.ac28(), boxRetriever.ac29(), "ixbrl.profit.loss.interest.receivable.label", "OtherInterestReceivableSimilarIncomeFinanceIncome", boxRetriever)
+            @profitAndLossFigureRow(boxRetriever.ac30(), boxRetriever.ac31(), "ixbrl.profit.loss.interest.payable.label", "InterestPayableSimilarChargesFinanceCosts", boxRetriever)
+            @profitAndLossFigureRow(boxRetriever.ac32(), boxRetriever.ac33(), prependLbgPrefix("ixbrl.profit.loss.profit.before.label", boxRetriever), "ProfitLossOnOrdinaryActivitiesBeforeTax", boxRetriever, isTotal = true,
+                notes = AccountsRendering.getNumbersForNotes(Seq(ProfitBeforeTax), boxRetriever).mkString(", ")
+            )
+            @profitAndLossFigureRow(boxRetriever.ac34(), boxRetriever.ac35(), prependLbgPrefix("ixbrl.profit.loss.tax.label", boxRetriever), "TaxTaxCreditOnProfitOrLossOnOrdinaryActivities", boxRetriever)
+            @profitAndLossFigureRow(boxRetriever.ac36(), boxRetriever.ac37(), prependLbgPrefix("ixbrl.profit.loss.profit.after.tax.label", boxRetriever), "ProfitLoss", boxRetriever, isTotal = true)
+        </tbody>
+    </table>
+    <p>The notes form part of these financial statements</p>
+        @if(isLimitedByGuaranteeCompany(boxRetriever)) {
+            @frs10xPageBreak(documentState, "SurplusOrDeficit", "SurplusOrDeficit")
+        }else{
+            @frs10xPageBreak(documentState, "ProfitAndLoss", "ProfitAndLoss")
+        }
+    </div>
+}

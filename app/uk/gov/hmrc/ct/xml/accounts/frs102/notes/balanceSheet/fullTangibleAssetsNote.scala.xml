@@ -1,0 +1,325 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.FullAccountsBoxRetriever
+@import uk.gov.hmrc.ct.box.CtBoxIdentifier
+
+@(boxRetriever: FullAccountsBoxRetriever with FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+@import uk.gov.hmrc.ct.box.CtOptionalInteger
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.balanceSheet.FiguresHelper._
+
+@noteType = @{ NoteType.TangibleAssets }
+
+@accountsStartDate = @{ DateFormatter.format(boxRetriever.ac3().value, DateFormat.LongUK) }
+@accountsEndDate = @{ DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK) }
+@showPreviousYear = @{ boxRetriever.ac206().value.nonEmpty }
+
+@showLandAndBuildings = @{ boxRetriever.acq5031().orFalse }
+@showPlantAndMachinery = @{ boxRetriever.acq5032().orFalse }
+@showFixturesAndFittings = @{ boxRetriever.acq5033().orFalse }
+@showOfficeEquipment = @{ boxRetriever.acq5034().orFalse }
+@showMotorVehicles = @{ boxRetriever.acq5035().orFalse }
+
+@tableSubHeading(headingKey: String, showCurrency: Boolean = false) = {
+    @defining(if(showCurrency) "&#163;" else "") { currency =>
+        <tr>
+            <th>@Messages(headingKey)</th>
+            @if(showLandAndBuildings) {
+                <td class="text--center">@Xml(currency)</td>
+            }
+            @if(showPlantAndMachinery) {
+                <td class="text--center">@Xml(currency)</td>
+            }
+            @if(showFixturesAndFittings) {
+                <td class="text--center">@Xml(currency)</td>
+            }
+            @if(showOfficeEquipment) {
+                <td class="text--center">@Xml(currency)</td>
+            }
+            @if(showMotorVehicles) {
+                <td class="text--center">@Xml(currency)</td>
+            }
+            <td class="text--center">@Xml(currency)</td>
+        </tr>
+    }
+}
+
+@labelAndDisplayNotesFiguresAndTotals(label: String,
+    name: String,
+    contextSuffix: String,
+    landAndBuildings: CtOptionalInteger with CtBoxIdentifier,
+    plantAndMachinery: CtOptionalInteger with CtBoxIdentifier,
+    fixturesAndFittings: CtOptionalInteger with CtBoxIdentifier,
+    officeEquipment: CtOptionalInteger with CtBoxIdentifier,
+    motorVehicles: CtOptionalInteger with CtBoxIdentifier,
+    total: CtOptionalInteger with CtBoxIdentifier,
+    isTotal: Boolean = false,
+    isGrandTotal: Boolean = false) = {
+    <tr id="@{total.id}-row" class="figures">
+        <td>@label</td>
+        @if(showLandAndBuildings) {
+            @noteFigureCell(
+                box = landAndBuildings,
+                contextRef = s"LandAndBuildings_$contextSuffix",
+                fullName = name,
+                isTotal = isTotal,
+                isGrandTotal = isGrandTotal
+            )
+        }
+        @if(showPlantAndMachinery) {
+            @noteFigureCell(
+                box = plantAndMachinery,
+                contextRef = s"PlantMachinery_$contextSuffix",
+                fullName = name,
+                isTotal = isTotal,
+                isGrandTotal = isGrandTotal
+            )
+        }
+        @if(showFixturesAndFittings) {
+            @noteFigureCell(
+                box = fixturesAndFittings,
+                contextRef = s"FurnitureFittingsToolsEquipment_$contextSuffix",
+                fullName = name,
+                isTotal = isTotal,
+                isGrandTotal = isGrandTotal
+            )
+        }
+        @if(showOfficeEquipment) {
+            @noteFigureCell(
+                box = officeEquipment,
+                contextRef = s"OfficeEquipment_$contextSuffix",
+                fullName = name,
+                isTotal = isTotal,
+                isGrandTotal = isGrandTotal
+            )
+        }
+        @if(showMotorVehicles) {
+            @noteFigureCell(
+                box = motorVehicles,
+                contextRef = s"Vehicles_$contextSuffix",
+                fullName = name,
+                isTotal = isTotal,
+                isGrandTotal = isGrandTotal
+            )
+        }
+        @noteFigureCell(
+            box = total,
+            contextRef = contextSuffix,
+            fullName = name,
+            isTotal = isTotal,
+            isGrandTotal = isGrandTotal
+        )
+    </tr>
+}
+
+@notesPage("BalanceSheetTangibleAssets", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+    <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.full.tangibleAssets.note.title")</h2>
+
+    <table class="wrap">
+        <thead>
+            <tr>
+                <th class="text--right figure"></th>
+                @if(showLandAndBuildings) {
+                    <th class="text--right figure">@Messages("ixbrl.full.tangibleAssetsNote.landAndBuildings")</th>
+                }
+                @if(showPlantAndMachinery) {
+                    <th class="text--right figure">@Messages("ixbrl.full.tangibleAssetsNote.plantAndMachinery")</th>
+                }
+                @if(showFixturesAndFittings) {
+                    <th class="text--right figure">@Messages("ixbrl.full.tangibleAssetsNote.fixturesAndFittings")</th>
+                }
+                @if(showOfficeEquipment) {
+                    <th class="text--right figure">@Messages("ixbrl.full.tangibleAssetsNote.officeEquipment")</th>
+                }
+                @if(showMotorVehicles) {
+                    <th class="text--right figure">@Messages("ixbrl.full.tangibleAssetsNote.motorVehicles")</th>
+                }
+                <th class="text--right figure">@Messages("ixbrl.full.tangibleAssetsNote.total")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @tableSubHeading("ixbrl.full.balance.sheet.tangible.assets.cost.heading", showCurrency = true)
+
+            @if(showPreviousYear) {
+                @labelAndDisplayNotesFiguresAndTotals(
+                    label           = Messages("ixbrl.full.tangibleAssetsNote.propertyPlantEquipmentGrossCostAtPoAStart", accountsStartDate),
+                    name            = "core:PropertyPlantEquipmentGrossCost",
+                    contextSuffix   = "PY_END",
+                    landAndBuildings = boxRetriever.ac124B(),
+                    plantAndMachinery = boxRetriever.ac124E(),
+                    fixturesAndFittings = boxRetriever.ac124A(),
+                    officeEquipment = boxRetriever.ac124D(),
+                    motorVehicles = boxRetriever.ac124C(),
+                    total = boxRetriever.ac124()
+                )
+            }
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.totalAdditionsPropertyPlantEquipment.label"),
+                name            = "core:TotalAdditionsIncludingFromBusinessCombinationsPropertyPlantEquipment",
+                contextSuffix   = "CY",
+                landAndBuildings = boxRetriever.ac125B(),
+                plantAndMachinery = boxRetriever.ac125E(),
+                fixturesAndFittings = boxRetriever.ac125A(),
+                officeEquipment = boxRetriever.ac125D(),
+                motorVehicles = boxRetriever.ac125C(),
+                total = boxRetriever.ac125()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.disposalsPropertyPlantEquipment.label"),
+                name            = "core:DisposalsPropertyPlantEquipment",
+                contextSuffix   = "CY",
+                landAndBuildings = boxRetriever.ac126B(),
+                plantAndMachinery = boxRetriever.ac126E(),
+                fixturesAndFittings = boxRetriever.ac126A(),
+                officeEquipment = boxRetriever.ac126D(),
+                motorVehicles = boxRetriever.ac126C(),
+                total = boxRetriever.ac126()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.totalIncreaseDecreaseRevaluationsPropertyPlantEquipment.label"),
+                name            = "core:TotalIncreaseDecreaseFromRevaluationsPropertyPlantEquipment",
+                contextSuffix   = "CY",
+                landAndBuildings = boxRetriever.ac212B(),
+                plantAndMachinery = boxRetriever.ac212E(),
+                fixturesAndFittings = boxRetriever.ac212A(),
+                officeEquipment = boxRetriever.ac212D(),
+                motorVehicles = boxRetriever.ac212C(),
+                total = boxRetriever.ac212()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.totalIncreaseDecreaseTransfersPropertyPlantEquipment.label"),
+                name            = "core:IncreaseDecreaseDueToTransfersBetweenClassesPropertyPlantEquipment",
+                contextSuffix   = "CY",
+                landAndBuildings = boxRetriever.ac213B(),
+                plantAndMachinery = boxRetriever.ac213E(),
+                fixturesAndFittings = boxRetriever.ac213A(),
+                officeEquipment = boxRetriever.ac213D(),
+                motorVehicles = boxRetriever.ac213C(),
+                total = boxRetriever.ac213()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.propertyPlantEquipmentGrossCostAtPoAEnd.label", accountsEndDate),
+                name            = "core:PropertyPlantEquipmentGrossCost",
+                contextSuffix   = "CY_END",
+                landAndBuildings = boxRetriever.ac127B(),
+                plantAndMachinery = boxRetriever.ac127E(),
+                fixturesAndFittings = boxRetriever.ac127A(),
+                officeEquipment = boxRetriever.ac127D(),
+                motorVehicles = boxRetriever.ac127C(),
+                total = boxRetriever.ac127(),
+                isGrandTotal = true
+            )
+
+            @tableSubHeading("ixbrl.full.balance.sheet.tangible.assets.depreciation.heading")
+
+            @if(showPreviousYear) {
+                @labelAndDisplayNotesFiguresAndTotals(
+                    label           = Messages("ixbrl.full.tangibleAssetsNote.accumulatedDepreciationPropertyPlantEquipmentAtPoAStart.label", accountsStartDate),
+                    name            = "core:AccumulatedDepreciationImpairmentPropertyPlantEquipment",
+                    contextSuffix   = "PY_END",
+                    landAndBuildings = boxRetriever.ac128B(),
+                    plantAndMachinery = boxRetriever.ac128E(),
+                    fixturesAndFittings = boxRetriever.ac128A(),
+                    officeEquipment = boxRetriever.ac128D(),
+                    motorVehicles = boxRetriever.ac128C(),
+                    total = boxRetriever.ac128()
+                )
+            }
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.increaseFromDepreciationPropertyPlantEquipment.label"),
+                name            = "core:IncreaseFromDepreciationChargeForYearPropertyPlantEquipment",
+                contextSuffix   = "CY",
+                landAndBuildings = boxRetriever.ac129B(),
+                plantAndMachinery = boxRetriever.ac129E(),
+                fixturesAndFittings = boxRetriever.ac129A(),
+                officeEquipment = boxRetriever.ac129D(),
+                motorVehicles = boxRetriever.ac129C(),
+                total = boxRetriever.ac129()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.disposalsDecreaseFromDepreciationPropertyPlantEquipment.label"),
+                name            = "core:DisposalsDecreaseInDepreciationImpairmentPropertyPlantEquipment",
+                landAndBuildings = boxRetriever.ac130B(),
+                plantAndMachinery = boxRetriever.ac130E(),
+                fixturesAndFittings = boxRetriever.ac130A(),
+                officeEquipment = boxRetriever.ac130D(),
+                motorVehicles = boxRetriever.ac130C(),
+                total = boxRetriever.ac130(),
+                contextSuffix   = "CY"
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.otherIncreaseDecreaseInDepreciationPropertyPlantEquipment.label"),
+                name            = "core:OtherIncreaseDecreaseInDepreciationImpairmentPropertyPlantEquipment",
+                contextSuffix   = "CY",
+                landAndBuildings = boxRetriever.ac214B(),
+                plantAndMachinery = boxRetriever.ac214E(),
+                fixturesAndFittings = boxRetriever.ac214A(),
+                officeEquipment = boxRetriever.ac214D(),
+                motorVehicles = boxRetriever.ac214C(),
+                total = boxRetriever.ac214()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.accumulatedDepreciationPropertyPlantEquipmentAtPoAEnd.label", accountsEndDate),
+                name            = "core:AccumulatedDepreciationImpairmentPropertyPlantEquipment",
+                contextSuffix   = "CY_END",
+                landAndBuildings = boxRetriever.ac131B(),
+                plantAndMachinery = boxRetriever.ac131E(),
+                fixturesAndFittings = boxRetriever.ac131A(),
+                officeEquipment = boxRetriever.ac131D(),
+                motorVehicles = boxRetriever.ac131C(),
+                total = boxRetriever.ac131(),
+                isGrandTotal = true
+            )
+
+            @tableSubHeading("ixbrl.full.balance.sheet.tangible.assets.netBookValue.heading")
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.tangibleAssetsNote.netBookCurrentPropertyPlantEquipment.label", accountsEndDate),
+                name            = "core:PropertyPlantEquipment",
+                contextSuffix   = "CY_END",
+                landAndBuildings = boxRetriever.ac132B(),
+                plantAndMachinery = boxRetriever.ac132E(),
+                fixturesAndFittings = boxRetriever.ac132A(),
+                officeEquipment = boxRetriever.ac132D(),
+                motorVehicles = boxRetriever.ac132C(),
+                total = boxRetriever.ac132(),
+                isGrandTotal    = true
+            )
+
+            @boxRetriever.ac206().value.map{ previousPOAEndDate =>
+                @labelAndDisplayNotesFiguresAndTotals(
+                    label           = Messages("ixbrl.full.tangibleAssetsNote.netBookPreviousPropertyPlantEquipment.label", DateFormatter.format(previousPOAEndDate, DateFormat.LongUK)),
+                    name            = "core:PropertyPlantEquipment",
+                    contextSuffix   = "PY_END",
+                    landAndBuildings = boxRetriever.ac133B(),
+                    plantAndMachinery = boxRetriever.ac133E(),
+                    fixturesAndFittings = boxRetriever.ac133A(),
+                    officeEquipment = boxRetriever.ac133D(),
+                    motorVehicles = boxRetriever.ac133C(),
+                    total = boxRetriever.ac133(),
+                    isGrandTotal    = true
+                )
+            }
+        </tbody>
+    </table>
+
+    @boxRetriever.ac5133.value.map { value =>
+        <div class="text-area-display" id="tangible-assets-free-text-note">
+            @ixbrlTextNote(text = value, ixbrlName = "core:PropertyPlantEquipmentFree-textComment", context = "CY")
+        </div>
+    }
+}

@@ -1,0 +1,16 @@
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+
+@(noteId: String, sectionName: String, noteType: AccountsRendering.NoteType.Value, boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(noteBody:  Xml)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+
+@if(AccountsRendering.isNoteVisible(noteType, boxRetriever)) {
+    <div id="@noteId" class="page">
+        @pageHeader(boxRetriever)
+        @notesHeader(boxRetriever)
+        @noteBody
+
+        @frs10xPageBreak(documentState, noteId, sectionName)
+    </div>
+}

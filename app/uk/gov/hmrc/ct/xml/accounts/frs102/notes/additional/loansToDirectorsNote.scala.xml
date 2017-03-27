@@ -1,0 +1,93 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xDirectorsBoxRetriever
+@import scala.collection.mutable
+@import scala.collection.mutable.ListBuffer
+@import uk.gov.hmrc.ct.accounts.frs102.boxes.loansToDirectors.LoanToDirector
+
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState,
+    accountsApproval: uk.gov.hmrc.ct.accounts.approval.boxes.AccountsApproval)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormatter, DateFormat}
+@import uk.gov.hmrc.ct.xml.RetrieverTypeConverter._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.IxbrlDirectors
+
+@loansToDirectors = @{boxRetriever.loansToDirectors().loans}
+@freeText = @{boxRetriever.loansToDirectors().ac7501.value}
+@baseId = @{"LoansToDirectorsNote"}
+@poaStartDate = @{DateFormatter.format(boxRetriever.ac3().value, DateFormat.LongUK)}
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+@hasPreviousPoA = @{boxRetriever.ac206().value.isDefined}
+
+@allDirectors = @{ IxbrlDirectors(boxRetriever, accountsApproval) }
+
+@findDirectorIndex(directorName: Option[String]) = @{ allDirectors.director(directorName).index }
+
+@noteType = @{ NoteType.LoansToDirectors }
+@loansPerPage = @{ 2 }
+
+@getLoanNumber(pageIndex: Int, loanIndex: Int) = @{ pageIndex * loansPerPage + loanIndex + 1 }
+
+@loansPages = @{
+    val pagesCount = Math.ceil(loansToDirectors.length / loansPerPage.toDouble).toInt
+    val pages = Array.fill(pagesCount)(ListBuffer[LoanToDirector]())
+
+    for ((loan, index) <- loansToDirectors.zipWithIndex) {
+        pages(index / loansPerPage) += loan
+    }
+
+    pages.map(_.toList)
+}
+
+@if(loansPages.length > 0) {
+    @for((page, pageIndex) <- loansPages.zipWithIndex) {
+        @notesPage(baseId + (pageIndex + 1).toString, "AdditionalNotes", noteType, boxRetriever, documentState) {
+            <h2>@{AccountsRendering.getNoteNumber(noteType, boxRetriever)}.@{pageIndex + 1}. @Messages("ixbrl.abridged.loansToDirectors.note.title")</h2>
+            <table class="split-equally">
+                <tbody>
+                @for((loan, index) <- page.zipWithIndex) {
+                    @noteNonNumericRowCurrentOnly(s"$baseId-${getLoanNumber(pageIndex, index)}-director-name", loan.ac304A, "ixbrl.abridged.loansToDirectors.nameOfDirector.label", "uk-bus:NameEntityOfficer", s"Director${findDirectorIndex(loan.ac304A.value)}_CY")
+                    @noteNonNumericRowCurrentOnly(s"$baseId-${getLoanNumber(pageIndex, index)}-description", loan.ac305A, "ixbrl.abridged.loansToDirectors.descriptionOfTransaction.label", "direp:DescriptionSpecificAdvanceOrCreditItsConditionsIndicativeInterestRateDirectors", s"LoanToDirector${getLoanNumber(pageIndex, index)}_CY", vertical = true)
+                    @if(hasPreviousPoA) {
+                        @noteFigureRowCurrentOnly(s"$baseId-${getLoanNumber(pageIndex, index)}-balance-at-start", loan.ac306A, "ixbrl.abridged.loansToDirectors.balanceAt.label", "AmountSpecificAdvanceOrCreditDirectors", s"LoanToDirector${getLoanNumber(pageIndex, index)}_PY_END", Seq(poaStartDate), "direp")
+                    }
+                    @noteFigureRowCurrentOnly(s"$baseId-${getLoanNumber(pageIndex, index)}-advances-credits-made", loan.ac307A, "ixbrl.abridged.loansToDirectors.advancesOrCreditsMade.label", "AmountSpecificAdvanceOrCreditMadeInPeriodDirectors", s"LoanToDirector${getLoanNumber(pageIndex, index)}_CY", nameSchema = "direp")
+                    @noteFigureRowCurrentOnly(s"$baseId-${getLoanNumber(pageIndex, index)}-advances-credits-repaid", loan.ac308A, "ixbrl.abridged.loansToDirectors.advancesOrCreditsRepaid.label", "AmountSpecificAdvanceOrCreditRepaidInPeriodDirectors", s"LoanToDirector${getLoanNumber(pageIndex, index)}_CY", nameSchema = "direp")
+                    @noteFigureRowCurrentOnly(s"$baseId-${getLoanNumber(pageIndex, index)}-balance-at-end", loan.ac309A, "ixbrl.abridged.loansToDirectors.balanceAt.label", "AmountSpecificAdvanceOrCreditDirectors", s"LoanToDirector${getLoanNumber(pageIndex, index)}_CY_END", Seq(poaEndDate), "direp")
+
+                    <tr>
+                        <td colspan="2">
+                        @if(index < page.length - 1) {
+                            <hr />
+                        } else {
+                            <p></p>
+                        }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            @* Show text box only on the last page *@
+            @if(pageIndex == loansPages.length - 1) {
+                @freeText.map { text =>
+                    <div class="text-area-display" id="@baseId-free-text-note">
+                    @ixbrlTextNote(text, "direp:GeneralDescriptionAdvancesCreditsToDirectorsIncludingTermsInterestRates", "CY")
+                    </div>
+                }
+            }
+        }
+    }
+} else {
+    @notesPage(baseId, "AdditionalNotes", noteType, boxRetriever, documentState) {
+        <h2>@{AccountsRendering.getNoteNumber(noteType, boxRetriever)}. @Messages("ixbrl.abridged.loansToDirectors.note.title")</h2>
+        @freeText.map { text =>
+            <div class="text-area-display" id="@baseId-free-text-note">
+            @ixbrlTextNote(text, "direp:GeneralDescriptionAdvancesCreditsToDirectorsIncludingTermsInterestRates", "CY")
+            </div>
+        }
+    }
+}

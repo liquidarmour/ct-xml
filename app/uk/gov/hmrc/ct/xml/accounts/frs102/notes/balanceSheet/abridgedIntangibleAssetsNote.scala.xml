@@ -1,0 +1,180 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.box.CtOptionalInteger
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever
+@(boxRetriever: Frs102AccountsBoxRetriever with FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.balanceSheet.FiguresHelper._
+
+@accountsStartDate = @{ DateFormatter.format(boxRetriever.ac3().value, DateFormat.LongUK) }
+@accountsEndDate = @{ DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK) }
+
+@tableSubHeading(headingKey: String, showCurrency: Boolean = false) = {
+    @defining(if(showCurrency) "&#163;" else "") { currency =>
+        <tr>
+            <th>@Messages(headingKey)</th>
+            <td class="text--right figure">@Xml(currency)</td>
+        </tr>
+    }
+}
+
+@labelAndDisplayGoodwillOtherAndTotalFigures(id: String, label: String, name: String, box: CtOptionalInteger, contextPrefix: String, isTotal: Boolean = false, isGrandTotal: Boolean = false, bracketsIfNegative: Boolean = false) = {
+    <tr id="@id">
+        <td id="@id-label">@label</td>
+        @labelAndDisplayFigures(id, label, name, box, contextPrefix, isTotal, isGrandTotal, bracketsIfNegative)
+    </tr>
+}
+
+@noteType = @{ NoteType.IntangibleAssets }
+
+@notesPage("IntangibleAssetsNote", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+    <div class="pagecontent">
+        <ul>
+            <li>
+                <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.abridged.intangibleAssetsNote.title")</h2>
+                <table cellspacing="10">
+                    <thead>
+                        <tr>
+                            <th class="text--right figure"></th>
+                            <th class="text--right figure">@Messages("ixbrl.abridged.intangibleAssetsNote.total")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @tableSubHeading("ixbrl.abridged.intangibleAssetsNote.cost", showCurrency = true)
+
+                        @boxRetriever.ac206().value.map{ _ =>
+                            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                                id              = "ac114",
+                                label           = Messages("ixbrl.abridged.intangibleAssetsNote.costAtPoaStart", accountsStartDate),
+                                name            = "core:IntangibleAssetsGrossCost",
+                                box             = boxRetriever.ac114(),
+                                contextPrefix   = "PY_END"
+                            )
+                        }
+
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac115",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.additions"),
+                            name            = "core:TotalAdditionsIncludingFromBusinessCombinationsIntangibleAssets",
+                            box             = boxRetriever.ac115(),
+                            contextPrefix   = "CY"
+                        )
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac116",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.disposals"),
+                            name            = "core:DisposalsIntangibleAssets",
+                            box             = boxRetriever.ac116(),
+                            contextPrefix   = "CY"
+                        )
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac209",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.revaluations"),
+                            name            = "core:TotalIncreaseDecreaseFromRevaluationsIntangibleAssets",
+                            box             = boxRetriever.ac209(),
+                            contextPrefix   = "CY",
+                            bracketsIfNegative = true
+                        )
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac210",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.transfers"),
+                            name            = "core:IncreaseDecreaseDueToTransfersBetweenClassesIntangibleAssets",
+                            box             = boxRetriever.ac210(),
+                            contextPrefix   = "CY",
+                            bracketsIfNegative = true
+                        )
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac117",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.costAtPoaEnd", accountsEndDate),
+                            name            = "core:IntangibleAssetsGrossCost",
+                            box             = boxRetriever.ac117(),
+                            contextPrefix   = "CY_END",
+                            isGrandTotal         = true
+                        )
+
+                        @tableSubHeading("ixbrl.abridged.intangibleAssetsNote.amortisation")
+
+                        @boxRetriever.ac118().value.map{ _ =>
+                            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                                id              = "ac118",
+                                label           = Messages("ixbrl.abridged.intangibleAssetsNote.amortisationAtPoaStart", accountsStartDate),
+                                name            = "core:AccumulatedAmortisationImpairmentIntangibleAssets",
+                                box             = boxRetriever.ac118(),
+                                contextPrefix   = "PY_END"
+                            )
+                        }
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac119",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.amortisationDuringPeriod"),
+                            name            = "core:IncreaseFromAmortisationChargeForYearIntangibleAssets",
+                            box             = boxRetriever.ac119(),
+                            contextPrefix   = "CY"
+                        )
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac120",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.amortisationOnDisposals"),
+                            name            = "core:DisposalsDecreaseInAmortisationImpairmentIntangibleAssets",
+                            box             = boxRetriever.ac120(),
+                            contextPrefix   = "CY"
+                        )
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac211",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.amortisationOtherAdjustments"),
+                            name            = "core:OtherIncreaseDecreaseInAmortisationImpairmentIntangibleAssets",
+                            box             = boxRetriever.ac211(),
+                            contextPrefix   = "CY",
+                            bracketsIfNegative = true
+                        )
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac121",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.amortisationAtPoaEnd", accountsEndDate),
+                            name            = "core:AccumulatedAmortisationImpairmentIntangibleAssets",
+                            box             = boxRetriever.ac121(),
+                            contextPrefix   = "CY_END",
+                            isGrandTotal         = true
+                        )
+
+                        @tableSubHeading("ixbrl.abridged.intangibleAssetsNote.netBookValue")
+
+                        @labelAndDisplayGoodwillOtherAndTotalFigures(
+                            id              = "ac122",
+                            label           = Messages("ixbrl.abridged.intangibleAssetsNote.netBookValueAtPoaEnd", accountsEndDate),
+                            name            = "core:IntangibleAssets",
+                            box             = boxRetriever.ac122(),
+                            contextPrefix   = "CY_END",
+                            isGrandTotal    = true
+                        )
+
+                        @boxRetriever.ac206().value.map{ previousPOAEndDate =>
+                            @labelAndDisplayGoodwillOtherAndTotalFigures(
+                                id              = "ac123",
+                                label           = Messages("ixbrl.abridged.intangibleAssetsNote.netBookValueAtPoaEnd", DateFormatter.format(previousPOAEndDate, DateFormat.LongUK)),
+                                name            = "core:IntangibleAssets",
+                                box             = boxRetriever.ac123(),
+                                contextPrefix   = "PY_END",
+                                isGrandTotal    = true
+                            )
+                        }
+                    </tbody>
+                </table>
+
+                @boxRetriever.ac5123().value.map { note =>
+                    @ixbrlTextNote(text=note, ixbrlName="core:IntangibleAssetsFree-textComment", context="CY")
+                }
+            </li>
+        </ul>
+    </div>
+}

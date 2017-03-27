@@ -1,0 +1,19 @@
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+
+@noteType = @{ NoteType.CreditorsWithinOneYear }
+
+@notesPage("CreditorsWithinYearNote", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+    @boxRetriever.ac5058A().value.map { noteValue =>
+        <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.abridged.creditorsWithinYear.note.title")</h2>
+
+        <div class="text-area-display" id="creditors-within-year-text-note">
+            @ixbrlTextNote(text = noteValue, ixbrlName = "core:CreditorsFree-textComment", context = "CreditorsWithinOneYear_CY")
+        </div>
+    }
+}

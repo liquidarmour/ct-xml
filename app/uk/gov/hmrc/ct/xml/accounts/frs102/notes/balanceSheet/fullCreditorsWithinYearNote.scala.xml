@@ -1,0 +1,43 @@
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.FullAccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+
+@noteType = @{ NoteType.CreditorsWithinOneYear }
+
+@if(boxRetriever.ac58.hasValue || boxRetriever.ac59.hasValue) {
+    @notesPage("CreditorsWithinYearNote", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+        <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever).@Messages("ixbrl.full.creditorsWithinYear.note.title")</h2>
+
+        <table class="wrap">
+            <thead>
+            @notesTableHeader(boxRetriever, "creditors-within-one-year")
+            </thead>
+            <tbody>
+                @figureRow("ac142", boxRetriever.ac142(), boxRetriever.ac143(), "ixbrl.full.creditors.bankLoansAndOverdrafts.label", "BankBorrowingsOverdrafts", boxRetriever,
+                    currentContext = "CreditorsWithinOneYear_CY_END", previousContext = "CreditorsWithinOneYear_PY_END")
+                @figureRow("ac144", boxRetriever.ac144(), boxRetriever.ac145(), "ixbrl.full.creditors.amountDueUnderFinanceLeases.label", "FinanceLeaseLiabilitiesPresentValueTotal", boxRetriever,
+                    currentContext = "CreditorsWithinOneYear_CY_END", previousContext = "CreditorsWithinOneYear_PY_END")
+                @figureRow("ac146", boxRetriever.ac146(), boxRetriever.ac147(), "ixbrl.full.creditors.tradeCreditors.label", "TradeCreditorsTradePayables", boxRetriever,
+                    currentContext = "CreditorsWithinOneYear_CY_END", previousContext = "CreditorsWithinOneYear_PY_END")
+                @figureRow("ac148", boxRetriever.ac148(), boxRetriever.ac149(), "ixbrl.full.creditors.taxationAndSocialSecurity.label", "TaxationSocialSecurityPayable", boxRetriever,
+                    currentContext = "CreditorsWithinOneYear_CY_END", previousContext = "CreditorsWithinOneYear_PY_END")
+                @figureRow("ac150", boxRetriever.ac150(), boxRetriever.ac151(), "ixbrl.full.creditors.accrualsAndDeferredIncome.label", "AccruedLiabilitiesDeferredIncome", boxRetriever,
+                    currentContext = "CreditorsWithinOneYear_CY_END", previousContext = "CreditorsWithinOneYear_PY_END")
+                @figureRow("ac152", boxRetriever.ac152(), boxRetriever.ac153(), "ixbrl.full.creditors.otherCreditors.label", "OtherCreditors", boxRetriever,
+                    currentContext = "CreditorsWithinOneYear_CY_END", previousContext = "CreditorsWithinOneYear_PY_END")
+                @figureTotal("ac154", boxRetriever.ac154(), boxRetriever.ac155(), "ixbrl.full.creditors.total.label", "Creditors", boxRetriever,
+                    currentContext = "CreditorsWithinOneYear_CY_END", previousContext = "CreditorsWithinOneYear_PY_END")
+            </tbody>
+        </table>
+
+        @boxRetriever.ac5058A().value.map { noteValue =>
+            <div class="text-area-display" id="creditors-within-year-text-note">
+                @ixbrlTextNote(text = noteValue, ixbrlName = "core:CreditorsFree-textComment", context = "CreditorsWithinOneYear_CY")
+            </div>
+        }
+    }
+}

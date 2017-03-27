@@ -1,0 +1,23 @@
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+
+@noteType = @{ NoteType.PostBalanceSheetEvents }
+
+@notesPage("PostBalanceSheetEventsNote", "AdditionalNotes", noteType, boxRetriever, documentState) {
+    <ul>
+        <li>
+            <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.abridged.postBalanceSheetEvents.note.title")</h2>
+
+            @boxRetriever.ac7901.value.map { noteText =>
+                <div class="text-area-display" id="post-balance-sheet-events-note-free-text-note">
+                    @ixbrlTextNote(text = noteText, ixbrlName = "core:DescriptionEventAfterReportingDate", context = "POST_CY")
+                </div>
+            }
+        </li>
+    </ul>
+}

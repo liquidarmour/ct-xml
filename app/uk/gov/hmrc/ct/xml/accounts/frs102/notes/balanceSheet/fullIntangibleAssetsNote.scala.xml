@@ -1,0 +1,233 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.box.CtOptionalInteger
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.FullAccountsBoxRetriever
+
+@(boxRetriever: FullAccountsBoxRetriever with FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.balanceSheet.FiguresHelper._
+@import uk.gov.hmrc.ct.box.CtBoxIdentifier
+
+@accountsStartDate = @{ DateFormatter.format(boxRetriever.ac3().value, DateFormat.LongUK) }
+@accountsEndDate = @{ DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK) }
+@showPreviousYear = @{ boxRetriever.ac206().value.nonEmpty }
+
+@showGoodwill = @{ boxRetriever.acq5021().orFalse }
+@showOther = @{ boxRetriever.acq5022().orFalse }
+
+@tableSubHeading(headingKey: String, showCurrency: Boolean = false) = {
+    @defining(if(showCurrency) "&#163;" else "") { currency =>
+        <tr>
+            <th>@Messages(headingKey)</th>
+            @if(showGoodwill) {
+                <td class="text--center">@Xml(currency)</td>
+            }
+            @if(showOther) {
+                <td class="text--center">@Xml(currency)</td>
+            }
+            <td class="text--center">@Xml(currency)</td>
+        </tr>
+    }
+}
+
+@labelAndDisplayNotesFiguresAndTotals(label: String,
+    name: String,
+    contextSuffix: String,
+    goodwill: CtOptionalInteger with CtBoxIdentifier,
+    other: CtOptionalInteger with CtBoxIdentifier,
+    total: CtOptionalInteger with CtBoxIdentifier,
+    isTotal: Boolean = false,
+    isGrandTotal: Boolean = false) = {
+    <tr id="@{total.id}-row" class="figures">
+        <td>@label</td>
+        @if(showGoodwill) {
+            @noteFigureCell(
+                box = goodwill,
+                contextRef = s"NetGoodwill_$contextSuffix",
+                fullName = name,
+                isTotal = isTotal,
+                isGrandTotal = isGrandTotal
+            )
+        }
+        @if(showOther) {
+            @noteFigureCell(
+                box = other,
+                contextRef = s"IntangibleAssetsOtherThanGoodwill_$contextSuffix",
+                fullName = name,
+                isTotal = isTotal,
+                isGrandTotal = isGrandTotal
+            )
+        }
+        @noteFigureCell(
+            box = total,
+            contextRef = contextSuffix,
+            fullName = name,
+            isTotal = isTotal,
+            isGrandTotal = isGrandTotal
+        )
+    </tr>
+}
+
+@noteType = @{ NoteType.IntangibleAssets }
+
+@notesPage("IntangibleAssetsNote", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+    <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.full.intangibleAssetsNote.title")</h2>
+
+    <table class="wrap">
+        <thead>
+            <tr>
+                <th class="text--right figure"></th>
+                @if(showGoodwill) {
+                    <th class="text--right figure">@Messages("ixbrl.full.intangibleAssetsNote.goodwill")</th>
+                }
+                @if(showOther) {
+                    <th class="text--right figure">@Messages("ixbrl.full.intangibleAssetsNote.other")</th>
+                }
+                <th class="text--right figure">@Messages("ixbrl.full.intangibleAssetsNote.total")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @tableSubHeading("ixbrl.full.intangibleAssetsNote.cost", showCurrency = true)
+
+            @if(showPreviousYear) {
+                @labelAndDisplayNotesFiguresAndTotals(
+                    label           = Messages("ixbrl.full.intangibleAssetsNote.costAtPoaStart", accountsStartDate),
+                    name            = "core:IntangibleAssetsGrossCost",
+                    contextSuffix   = "PY_END",
+                    goodwill = boxRetriever.ac114A(),
+                    other = boxRetriever.ac114B(),
+                    total = boxRetriever.ac114()
+                )
+            }
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.additions"),
+                name            = "core:TotalAdditionsIncludingFromBusinessCombinationsIntangibleAssets",
+                contextSuffix   = "CY",
+                goodwill = boxRetriever.ac115A(),
+                other = boxRetriever.ac115B(),
+                total = boxRetriever.ac115()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.disposals"),
+                name            = "core:DisposalsIntangibleAssets",
+                contextSuffix   = "CY",
+                goodwill = boxRetriever.ac116A(),
+                other = boxRetriever.ac116B(),
+                total = boxRetriever.ac116()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.revaluations"),
+                name            = "core:TotalIncreaseDecreaseFromRevaluationsIntangibleAssets",
+                contextSuffix   = "CY",
+                goodwill = boxRetriever.ac209A(),
+                other = boxRetriever.ac209B(),
+                total = boxRetriever.ac209()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.transfers"),
+                name            = "core:IncreaseDecreaseDueToTransfersBetweenClassesIntangibleAssets",
+                contextSuffix   = "CY",
+                goodwill = boxRetriever.ac210A(),
+                other = boxRetriever.ac210B(),
+                total = boxRetriever.ac210()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.costAtPoaEnd", accountsEndDate),
+                name            = "core:IntangibleAssetsGrossCost",
+                contextSuffix   = "CY_END",
+                goodwill = boxRetriever.ac117A(),
+                other = boxRetriever.ac117B(),
+                total = boxRetriever.ac117(),
+                isGrandTotal = true
+            )
+
+            @tableSubHeading("ixbrl.full.intangibleAssetsNote.amortisation")
+
+            @if(showPreviousYear) {
+                @labelAndDisplayNotesFiguresAndTotals(
+                    label           = Messages("ixbrl.full.intangibleAssetsNote.amortisationAtPoaStart", accountsStartDate),
+                    name            = "core:AccumulatedAmortisationImpairmentIntangibleAssets",
+                    contextSuffix   = "PY_END",
+                    goodwill = boxRetriever.ac118A(),
+                    other = boxRetriever.ac118B(),
+                    total = boxRetriever.ac118()
+                )
+            }
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.amortisationDuringPeriod"),
+                name            = "core:IncreaseFromAmortisationChargeForYearIntangibleAssets",
+                contextSuffix   = "CY",
+                goodwill = boxRetriever.ac119A(),
+                other = boxRetriever.ac119B(),
+                total = boxRetriever.ac119()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.amortisationOnDisposals"),
+                name            = "core:DisposalsDecreaseInAmortisationImpairmentIntangibleAssets",
+                goodwill = boxRetriever.ac120A(),
+                other = boxRetriever.ac120B(),
+                total = boxRetriever.ac120(),
+                contextSuffix   = "CY"
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.amortisationOtherAdjustments"),
+                name            = "core:OtherIncreaseDecreaseInAmortisationImpairmentIntangibleAssets",
+                contextSuffix   = "CY",
+                goodwill = boxRetriever.ac211A(),
+                other = boxRetriever.ac211B(),
+                total = boxRetriever.ac211()
+            )
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.amortisationAtPoaEnd", accountsEndDate),
+                name            = "core:AccumulatedAmortisationImpairmentIntangibleAssets",
+                contextSuffix   = "CY_END",
+                goodwill = boxRetriever.ac121A(),
+                other = boxRetriever.ac121B(),
+                total = boxRetriever.ac121(),
+                isGrandTotal = true
+            )
+
+            @tableSubHeading("ixbrl.full.intangibleAssetsNote.netBookValue")
+
+            @labelAndDisplayNotesFiguresAndTotals(
+                label           = Messages("ixbrl.full.intangibleAssetsNote.netBookValueAtPoaEnd", accountsEndDate),
+                name            = "core:IntangibleAssets",
+                contextSuffix   = "CY_END",
+                goodwill = boxRetriever.ac122A(),
+                other = boxRetriever.ac122B(),
+                total = boxRetriever.ac122(),
+                isGrandTotal    = true
+            )
+
+            @boxRetriever.ac206().value.map{ previousPOAEndDate =>
+                @labelAndDisplayNotesFiguresAndTotals(
+                    label           = Messages("ixbrl.full.intangibleAssetsNote.netBookValueAtPoaEnd", DateFormatter.format(previousPOAEndDate, DateFormat.LongUK)),
+                    name            = "core:IntangibleAssets",
+                    contextSuffix   = "PY_END",
+                    goodwill = boxRetriever.ac123A(),
+                    other = boxRetriever.ac123B(),
+                    total = boxRetriever.ac123(),
+                    isGrandTotal    = true
+                )
+            }
+        </tbody>
+    </table>
+
+    @boxRetriever.ac5123().value.map { note =>
+        @ixbrlTextNote(text=note, ixbrlName="core:IntangibleAssetsFree-textComment", context="CY")
+    }
+}

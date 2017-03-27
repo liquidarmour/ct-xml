@@ -1,0 +1,32 @@
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.FullAccountsBoxRetriever
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+
+@noteType = @{ NoteType.Dividends }
+
+@ac7210 = @{
+    boxRetriever match {
+        case br: FullAccountsBoxRetriever => br.ac7210().value
+        case _ => None
+    }
+}
+
+@notesPage("DividendsNote", "AdditionalNotes", noteType, boxRetriever, documentState) {
+    <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.dividends.note.title")</h2>
+    <table>
+        <tbody>
+            @notesTableHeader(boxRetriever, "dividends-note")
+            @notesFigureRow("dividendsNote", boxRetriever.ac7210A(), boxRetriever.ac7210B(), "ixbrl.dividends.paid.label", "DividendsPaid", "CY", "PY")
+        </tbody>
+    </table>
+    @ac7210.map { noteText =>
+        <div class="text-area-display" id="additional-information-free-text-note">
+            @ixbrlTextNote(text = noteText, ixbrlName = "core:DividendsFree-textComment", context = "CY")
+        </div>
+    }
+}

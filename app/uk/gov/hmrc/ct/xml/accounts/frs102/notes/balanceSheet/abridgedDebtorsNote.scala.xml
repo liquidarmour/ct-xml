@@ -1,0 +1,38 @@
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@(boxRetriever: Frs102AccountsBoxRetriever with FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+
+@ac5052A = @{boxRetriever.ac5052A.value}
+@ac5052B = @{boxRetriever.ac5052B.value}
+
+@noteType = @{ NoteType.Debtors }
+
+@notesPage("DebtorsNotes", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+    <ul>
+        <li>
+            <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). Debtors</h2>
+            @if(ac5052A.isDefined) {
+                <table cellspacing="10" id="debtors-note-table">
+                    <tbody>
+                        @notesTableHeader(boxRetriever, "debtors-note")
+                        @notesFigureRow("ac5052", boxRetriever.ac5052A(), boxRetriever.ac5052C(), "ixbrl.abridged.debtors.note.after.one.year.label", "Debtors", "Debtors_CY_END", "Debtors_PY_END")
+                    </tbody>
+                </table>
+            }
+            @ac5052B.map { noteText =>
+                <div class="text-area-display" id="debtors-free-text-note">
+                    @ixbrlTextNote(text = noteText, ixbrlName = "core:DebtorsFree-textComment", context = "CY")
+                </div>
+            }
+        </li>
+    </ul>
+}

@@ -1,0 +1,3 @@
+@(id: String, label: String)(implicit messages: Messages)
+
+<tr><th class="strong" id="@id">@Messages(label)</th></tr>

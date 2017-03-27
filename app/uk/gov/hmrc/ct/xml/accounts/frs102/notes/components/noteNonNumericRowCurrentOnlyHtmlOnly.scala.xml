@@ -1,0 +1,29 @@
+@import uk.gov.hmrc.ct.box.CtOptionalString
+
+@(id: String, box: CtOptionalString, labelMsgKey: String, vertical: Boolean = false)(implicit messages: Messages)
+
+@if(box.value.nonEmpty) {
+    @if(vertical) {
+        <tr>
+            <td id="@{s"$id-label"}" colspan="2">@{Messages(labelMsgKey)}</td>
+        </tr>
+        <tr>
+            @box.value.map { value =>
+                <td id="@{s"$id-curr-val"}" class="strong figure" colspan="2" style="text-align: left">
+                    <span>@value</span>
+                </td>
+            }
+        </tr>
+    } else {
+        <tr>
+            <td id="@{s"$id-label"}">@{Messages(labelMsgKey)}</td>
+
+            @box.value.map { value =>
+                <td id="@{s"$id-curr-val"}" class="strong figure">
+                    <span>@value</span>
+                </td>
+            }
+        </tr>
+    }
+}
+

@@ -1,0 +1,11 @@
+@import uk.gov.hmrc.ct.box.CtOptionalInteger
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+
+@(id: String, currentBox: CtOptionalInteger, name: String, currentContext: String = "CY_END", nameSchema: String = "core")(implicit messages: Messages)
+
+@currentBox.value.map{ value =>
+    <div id="@{s"$id-curr-val"}" style="display: none;">
+        @figure(name, currentContext, value, nameSchema)
+    </div>
+}
+

@@ -1,0 +1,116 @@
+@import uk.gov.hmrc.ct.xml.helpers.TextHelpers
+@import scala.collection.mutable.ListBuffer
+
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+
+@ac320NoteValue = @{ if(boxRetriever.ac320.orFalse) Messages("ixbrl.abridged.accounting.policies.ac320.value") else boxRetriever.ac320A.value.getOrElse("") }
+
+@noteType = @{ NoteType.AccountingPolicies }
+@totalLinesAvailableOnThePage = @{ 29 }
+
+@measureTextHeight(text: String) = @{ TextHelpers.measureTextHeight(13, text, 692) }
+
+@ac320Height = @{ measureTextHeight(ac320NoteValue) }
+@ac321Height = @{ boxRetriever.ac321.value.map(measureTextHeight).getOrElse(0) }
+@ac322Height = @{ boxRetriever.ac322.value.map(measureTextHeight).getOrElse(0) }
+@ac323Height = @{ boxRetriever.ac323.value.map(measureTextHeight).getOrElse(0) }
+@ac324Height = @{ boxRetriever.ac324.value.map(measureTextHeight).getOrElse(0) }
+@ac7110AHeight = @{ boxRetriever.ac7110A.value.map(measureTextHeight).getOrElse(0) }
+
+@boxesHeights = @{
+    Seq(
+        ("AC320", ac320Height),
+        ("AC321", ac321Height),
+        ("AC322", ac322Height),
+        ("AC323", ac323Height),
+        ("AC324", ac324Height),
+        ("AC7110A", ac7110AHeight)
+    )
+}
+
+@pagesBoxes = @{
+    // Mutability has its place in the world ... or something
+    var currentPage = ListBuffer.empty[String]
+    val pages = ListBuffer(currentPage)
+    var currentPageHeight = 0
+
+    for (boxAndHeight <- boxesHeights) {
+        currentPageHeight += boxAndHeight._2
+        if (currentPageHeight > totalLinesAvailableOnThePage) {
+            currentPageHeight = boxAndHeight._2
+            currentPage = ListBuffer(boxAndHeight._1)
+            pages += currentPage
+        } else {
+            currentPage += boxAndHeight._1
+        }
+    }
+
+    pages
+}
+
+@for((pageBoxes, index) <- pagesBoxes.zipWithIndex) {
+    @notesPage("AccountingPoliciesNotes" + index, "AdditionalNotes", noteType, boxRetriever, documentState) {
+        <ul>
+            <li>
+                <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.abridged.accounting.policies.note.title") @if(index > 0) { @Messages("ixbrl.abridged.accounting.policies.note.continued") }</h2>
+
+                @if(pageBoxes.contains("AC320")) {
+                    <p class="strong">@Messages("ixbrl.notes.accountingPolicies.ac320")</p>
+                    <div class="text-area-display" id="basis-of-measurement-and-preparation-text-note">
+                        @ixbrlTextNote(text = ac320NoteValue, ixbrlName = "core:GeneralDescriptionBasisMeasurementUsedInPreparingFinancialStatements", context = "CY")
+                    </div>
+                }
+
+                @if(pageBoxes.contains("AC321")) {
+                    @boxRetriever.ac321.value.map { noteText =>
+                        <p class="strong">@Messages("ixbrl.notes.accountingPolicies.ac321")</p>
+                        <div class="text-area-display" id="turnover-policy-free-text-note">
+                            @ixbrlTextNote(text = noteText, ixbrlName = "core:RevenueRecognitionPolicy", context = "CY")
+                        </div>
+                    }
+                }
+
+                @if(pageBoxes.contains("AC322")) {
+                    @boxRetriever.ac322.value.map { noteText =>
+                        <p class="strong">@Messages("ixbrl.notes.accountingPolicies.ac322")</p>
+                        <div class="text-area-display" id="tangible-fixed-assets-depreciation-policy-free-text-note">
+                            @ixbrlTextNote(text = noteText, ixbrlName = "core:PropertyPlantEquipmentPolicy", context = "CY")
+                        </div>
+                    }
+                }
+
+                @if(pageBoxes.contains("AC323")) {
+                    @boxRetriever.ac323.value.map { noteText =>
+                        <p class="strong">@Messages("ixbrl.notes.accountingPolicies.ac323")</p>
+                        <div class="text-area-display" id="intangible-fixed-assets-amortisation-policy-free-text-note">
+                            @ixbrlTextNote(text = noteText, ixbrlName = "core:IntangibleAssetsPolicy", context = "CY")
+                        </div>
+                    }
+                }
+
+                @if(pageBoxes.contains("AC324")) {
+                    @boxRetriever.ac324.value.map { noteText =>
+                        <p class="strong">@Messages("ixbrl.notes.accountingPolicies.ac324")</p>
+                        <div class="text-area-display" id="valuation-information-and-policy-free-text-note">
+                            @ixbrlTextNote(text = noteText, ixbrlName = "core:ValuationFinancialInstrumentsPolicy", context = "CY")
+                        </div>
+                    }
+                }
+
+                @if(pageBoxes.contains("AC7110A")) {
+                    @boxRetriever.ac7110A.value.map { noteText =>
+                        <p class="strong">@Messages("ixbrl.notes.accountingPolicies.ac7110")</p>
+                        <div class="text-area-display" id="other-accounting-policies-free-text-note">@noteText</div>
+                    }
+                }
+            </li>
+        </ul>
+    }
+
+}

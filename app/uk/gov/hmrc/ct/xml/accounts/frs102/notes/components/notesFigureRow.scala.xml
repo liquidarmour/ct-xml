@@ -1,0 +1,28 @@
+@import uk.gov.hmrc.ct.box.CtOptionalInteger
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+
+@(id: String, currentBox: CtOptionalInteger, previousBox: CtOptionalInteger, figureMessageLabel: String, name: String,
+        currentContext: String = "CY_END", previousContext: String = "PY_END", unitRef: String = "GBP")(implicit messages: Messages)
+
+@if(currentBox.value.nonEmpty || previousBox.value.nonEmpty){
+    <tr class="figures">
+        <td id="@{s"$id-label"}">@{Messages(figureMessageLabel)}</td>
+
+        @if(currentBox.value.isEmpty) {
+            <td id="@{s"$id-empty-curr-val"}"></td>
+        } else {
+            <td id="@{s"$id-curr-val"}" class="strong figure">
+                @figure(name, currentContext, currentBox.value.get, unitRef = unitRef)
+            </td>
+        }
+
+        @if(previousBox.value.isEmpty) {
+            <td id="@{s"$id-empty-prev-val"}"></td>
+        } else {
+            <td id="@{s"$id-prev-val"}" class="figure">
+                @figure(name, previousContext, previousBox.value.get, unitRef = unitRef)
+            </td>
+        }
+    </tr>
+}
+

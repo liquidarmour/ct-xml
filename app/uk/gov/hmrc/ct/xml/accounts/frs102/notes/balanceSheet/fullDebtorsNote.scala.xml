@@ -1,0 +1,42 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.FullAccountsBoxRetriever
+@(boxRetriever: FullAccountsBoxRetriever with FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+
+@ac5052B = @{boxRetriever.ac5052B.value}
+@noteType = @{ NoteType.Debtors }
+@isNotEmpty = @{
+    boxRetriever.ac140().hasValue ||
+        boxRetriever.ac141().hasValue ||
+        boxRetriever.ac5052A().hasValue ||
+        boxRetriever.ac5052C().hasValue
+}
+
+@notesPage("DebtorsNotes", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+    <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). Debtors</h2>
+    @if(isNotEmpty) {
+        <table cellspacing="10" id="debtors-note-table">
+            <tbody>
+                @notesTableHeader(boxRetriever, "debtors-note")
+                @notesFigureRow("ac134", boxRetriever.ac134(), boxRetriever.ac135(), "ixbrl.full.debtors.tradeDebtors", "TradeDebtorsTradeReceivables", "CY_END", "PY_END")
+                @notesFigureRow("ac138", boxRetriever.ac138(), boxRetriever.ac139(), "ixbrl.full.debtors.prepaymentsAndIncome", "PrepaymentsAccruedIncome", "CY_END", "PY_END")
+                @notesFigureRow("ac136", boxRetriever.ac136(), boxRetriever.ac137(), "ixbrl.full.debtors.otherDebtors", "OtherDebtors", "CY_END", "PY_END")
+                @notesFigureTotalRow("ac140", boxRetriever.ac140(), boxRetriever.ac141(), "ixbrl.full.debtors.total", "Debtors", "CY_END", "PY_END")
+                @notesFigureRow("ac5052", boxRetriever.ac5052A(), boxRetriever.ac5052C(), "ixbrl.full.debtors.afterOneYear", "Debtors", "Debtors_CY_END", "Debtors_PY_END")
+            </tbody>
+        </table>
+    }
+    @ac5052B.map { noteText =>
+        <div class="text-area-display" id="debtors-free-text-note">
+            @ixbrlTextNote(text = noteText, ixbrlName = "core:DebtorsFree-textComment", context = "CY")
+        </div>
+    }
+}

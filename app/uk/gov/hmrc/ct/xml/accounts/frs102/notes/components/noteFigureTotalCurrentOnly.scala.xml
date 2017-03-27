@@ -1,0 +1,17 @@
+@import uk.gov.hmrc.ct.box.CtOptionalInteger
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+
+@(id: String, currentBox: CtOptionalInteger, figureMessageLabel: String, name: String, currentContext: String = "CY_END", labelArgs: Seq[String] = Seq.empty)(implicit messages: Messages)
+
+@if(currentBox.value.nonEmpty){
+    <tr class="figures">
+        <td id="@{s"$id-label"}">@{Messages(figureMessageLabel, labelArgs:_*)}</td>
+
+        @currentBox.value.map{ value =>
+            <td id="@{s"$id-curr-val"}" class="strong total">
+                @figure(name, currentContext, value)
+            </td>
+        }
+    </tr>
+}
+

@@ -1,0 +1,31 @@
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever
+@(boxRetriever: Frs102AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState,
+    returnType: uk.gov.hmrc.ct.version.ReturnType)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.IxbrlSectionStatus
+
+@noteType = @{ NoteType.ProfitBeforeTax }
+
+@sectionName = @{
+    if(isLimitedByGuaranteeCompany(boxRetriever)){
+        "SurplusOrDeficitNotes"
+    }else{
+        "ProfitAndLossNotes"
+    }
+}
+
+
+@if(IxbrlSectionStatus(boxRetriever, returnType).isProfitAndLossEnabled) {
+    @notesPage("ProfitBeforeTaxNote", sectionName, noteType, boxRetriever, documentState) {
+        @boxRetriever.ac5032().value.map { noteText =>
+            <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever).@Messages(prependLbgPrefix("ixbrl.abridged.profit.loss.profitBeforeTax.note.title", boxRetriever))</h2>
+        @ixbrlTextNote(text = noteText, ixbrlName = "core:GainsLossesBeforeTaxFree-textComment", context = "CY")
+        }
+    }
+}

@@ -1,0 +1,58 @@
+@import uk.gov.hmrc.ct.version.ReturnType
+@import uk.gov.hmrc.ct.xml.helpers.DocumentState
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.FullAccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+        returnType: ReturnType,
+        accountsApproval: uk.gov.hmrc.ct.accounts.approval.boxes.AccountsApproval)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.additional.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.balanceSheet.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.profitAndLoss.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.xml._
+
+@pagesToRender = @{
+    import AccountsRendering.NoteType._
+
+    val documentState = new DocumentState()
+    val titlePage = frs10xTitlePage(boxRetriever, documentState)
+    val contentsPageIndex = documentState.getNextPageNumber
+
+    val pagesToRender = scala.collection.mutable.ListBuffer(
+        frs10xCompanyInformation(boxRetriever, documentState, accountsApproval),
+        frs10xDirectorsReport(boxRetriever, documentState, returnType, accountsApproval),
+        frs10xProfitAndLoss(boxRetriever, documentState, returnType),
+        frs10xBalanceSheet(boxRetriever, documentState, accountsApproval)
+    )
+
+    // Dynamically render note pages ... They must have updated indices
+    val notesToRender = AccountsRendering.getVisibleNotes(boxRetriever).flatMap {
+        case IntangibleAssets => Some(fullIntangibleAssetsNote(boxRetriever, documentState))
+        case TangibleAssets => Some(fullTangibleAssetsNote(boxRetriever, documentState))
+        case Debtors => Some(fullDebtorsNote(boxRetriever, documentState))
+        case CreditorsWithinOneYear => Some(fullCreditorsWithinYearNote(boxRetriever, documentState))
+        case CreditorsAfterOneYear => Some(fullCreditorsAfterYearNote(boxRetriever, documentState))
+        case RevaluationReserve => Some(revaluationReserveNote(boxRetriever, documentState))
+        case ProfitBeforeTax => Some(profitBeforeTaxNote(boxRetriever, documentState, returnType))
+        case AccountingPolicies => Some(accountingPoliciesNote(boxRetriever, documentState))
+        case Dividends => Some(dividendsNote(boxRetriever, documentState))
+        case Employees => Some(employeesNote(boxRetriever, documentState))
+        case FinancialCommitments => Some(financialCommitmentsNote(boxRetriever, documentState))
+        case LoansToDirectors => Some(loansToDirectorsNote(boxRetriever, documentState, accountsApproval))
+        case ChangesInPresentationAndPriorPeriodAdjustments => Some(changesInPresentationAndPriorPeriodAdjustmentsNote(boxRetriever, documentState))
+        case RelatedPartyTransactions => Some(relatedPartyTransactionsNote(boxRetriever, documentState))
+        case PostBalanceSheetEvents => Some(postBalanceSheetEventsNote(boxRetriever, documentState))
+        case _ => throw new UnsupportedOperationException("Trying to render unknown note.")
+    }
+
+    Seq(frs10xAccountsHeader(boxRetriever, returnType, accountsApproval),
+        titlePage,
+        frs10xContentsPage(boxRetriever, documentState, contentsPageIndex)) ++ pagesToRender ++ notesToRender
+}
+
+<div class="wholedoc" id="abridgedAccounts">
+@for(page <- pagesToRender) {
+    @page
+}
+</div>

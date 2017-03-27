@@ -1,0 +1,94 @@
+@import uk.gov.hmrc.ct.accounts.frs102.boxes.relatedPartyTransactions.RelatedPartyTransaction
+@import scala.collection.mutable.ListBuffer
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormatter, DateFormat}
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+
+@relatedPartyTransactions = @{boxRetriever.relatedPartyTransactions().transactions}
+@freeText = @{boxRetriever.relatedPartyTransactions().ac7806.value}
+@baseId = @{"RelatedPartyTransactionsNote"}
+@poaStartDate = @{DateFormatter.format(boxRetriever.ac3().value, DateFormat.LongUK)}
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+@hasPreviousPoA = @{boxRetriever.ac206().value.isDefined}
+
+@noteType = @{ NoteType.RelatedPartyTransactions }
+
+@transactionsPerPage = @{ 2 }
+@getTransactionNumber(pageIndex: Int, transactionIndex: Int) = @{ pageIndex * transactionsPerPage + transactionIndex + 1 }
+
+@transactionPages = @{
+    val pagesCount = Math.ceil(relatedPartyTransactions.length / transactionsPerPage.toDouble).toInt
+    val pages = Array.fill(pagesCount)(ListBuffer[RelatedPartyTransaction]())
+
+    for ((transaction, index) <- relatedPartyTransactions.zipWithIndex) {
+        pages(index / transactionsPerPage) += transaction
+    }
+
+    pages.map(_.toList)
+}
+
+@if(transactionPages.length > 0) {
+    @if(transactionPages.length > 0) {
+        @for((page, pageIndex) <- transactionPages.zipWithIndex) {
+            @notesPage(baseId + (pageIndex + 1).toString, "AdditionalNotes", noteType, boxRetriever, documentState) {
+                <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever).@{pageIndex + 1}. @Messages("ixbrl.abridged.relatedPartyTransactions.note.title")</h2>
+                <table class="split-equally">
+                    <tbody>
+                    @for((transaction, index) <- page.zipWithIndex) {
+                        @noteNonNumericRowCurrentOnly(s"$baseId-${getTransactionNumber(pageIndex, index)}-name", transaction.ac299A, "ixbrl.abridged.relatedPartyTransactions.nameOfRelatedParty.label", "core:NameAssociate", s"Associate${getTransactionNumber(pageIndex, index)}_CY")
+                        @noteNonNumericRowCurrentOnlyHtmlOnly(s"$baseId-${getTransactionNumber(pageIndex, index)}-relationship", transaction.ac300A, "ixbrl.abridged.relatedPartyTransactions.descriptionOfRelationship.label", vertical = true)
+                        @noteNonNumericRowCurrentOnly(s"$baseId-${getTransactionNumber(pageIndex, index)}-description", transaction.ac301A, "ixbrl.abridged.relatedPartyTransactions.descriptionOfTransaction.label", "core:DescriptionNatureTransactionsBalancesWithRelatedParties", s"RelatedParty${getTransactionNumber(pageIndex, index)}_CY", vertical = true)
+
+                        @transaction.ac7801.value.map { moneyGivenByRelatedParty =>
+                            @if(moneyGivenByRelatedParty) {
+                                @if(hasPreviousPoA) {
+                                    @noteFigureRowCurrentOnly(s"$baseId-${getTransactionNumber(pageIndex, index)}-balance-at-start", transaction.ac302A, "ixbrl.abridged.relatedPartyTransactions.balanceAt.label", "BalancesAmountsOwedToRelatedParties", s"RelatedParty${getTransactionNumber(pageIndex, index)}_PY_END", Seq(poaStartDate))
+                                }
+
+                                @noteFigureRowCurrentOnly(s"$baseId-${getTransactionNumber(pageIndex, index)}-balance-at-end", transaction.ac303A, "ixbrl.abridged.relatedPartyTransactions.balanceAt.label", "BalancesAmountsOwedToRelatedParties", s"RelatedParty${getTransactionNumber(pageIndex, index)}_CY_END", Seq(poaEndDate))
+                            } else {
+                                @if(hasPreviousPoA) {
+                                    @noteFigureRowCurrentOnly(s"$baseId-${getTransactionNumber(pageIndex, index)}-balance-at-start", transaction.ac302A, "ixbrl.abridged.relatedPartyTransactions.balanceAt.label", "BalancesAmountsOwedByRelatedParties", s"RelatedParty${getTransactionNumber(pageIndex, index)}_PY_END", Seq(poaStartDate))
+                                }
+
+                                @noteFigureRowCurrentOnly(s"$baseId-${getTransactionNumber(pageIndex, index)}-balance-at-end", transaction.ac303A, "ixbrl.abridged.relatedPartyTransactions.balanceAt.label", "BalancesAmountsOwedByRelatedParties", s"RelatedParty${getTransactionNumber(pageIndex, index)}_CY_END", Seq(poaEndDate))
+                            }
+                        }
+                        <tr>
+                            <td colspan="2">
+                                @if(index < page.length - 1) {
+                                    <hr />
+                                } else {
+                                    <p></p>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                @* Show text box only on the last page *@
+                @if(pageIndex == transactionPages.length - 1) {
+                    @freeText.map { text =>
+                        <div class="text-area-display" id="@baseId-free-text-note">
+                        @ixbrlTextNote(text, "core:GeneralDescriptionLoansOwedByRelatedPartiesIncludingTermsGuaranteesReceived", "CY")
+                        </div>
+                    }
+                }
+            }
+        }
+    }
+} else {
+    @notesPage(baseId, "AdditionalNotes", noteType, boxRetriever, documentState) {
+        <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.abridged.relatedPartyTransactions.note.title")</h2>
+        @freeText.map { text =>
+            <div class="text-area-display" id="@baseId-free-text-note">
+            @ixbrlTextNote(text, "core:GeneralDescriptionLoansOwedByRelatedPartiesIncludingTermsGuaranteesReceived", "CY")
+            </div>
+        }
+    }
+}

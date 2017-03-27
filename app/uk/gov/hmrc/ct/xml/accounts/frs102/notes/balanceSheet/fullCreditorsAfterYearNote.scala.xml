@@ -1,0 +1,37 @@
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs102.retriever.FullAccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs102.notes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType
+
+@noteType = @{ NoteType.CreditorsAfterOneYear }
+
+@if(boxRetriever.ac64().hasValue || boxRetriever.ac65().hasValue) {
+    @notesPage("CreditorsAfterYearNote", "BalanceSheetNotes", noteType, boxRetriever, documentState) {
+        <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever).@Messages("ixbrl.full.creditorsAfterOneYear.note.title")</h2>
+
+        <table class="wrap">
+            <thead>
+                @notesTableHeader(boxRetriever, "creditors-after-one-year")
+            </thead>
+            <tbody>
+                @figureRow("ac156", boxRetriever.ac156(), boxRetriever.ac157(), "ixbrl.full.creditors.bankLoansAndOverdrafts.label", "BankBorrowingsOverdrafts", boxRetriever,
+                    currentContext = "CreditorsAfterOneYear_CY_END", previousContext = "CreditorsAfterOneYear_PY_END")
+                @figureRow("ac158", boxRetriever.ac158(), boxRetriever.ac159(), "ixbrl.full.creditors.amountDueUnderFinanceLeases.label", "FinanceLeaseLiabilitiesPresentValueTotal", boxRetriever,
+                    currentContext = "CreditorsAfterOneYear_CY_END", previousContext = "CreditorsAfterOneYear_PY_END")
+                @figureRow("ac160", boxRetriever.ac160(), boxRetriever.ac161(), "ixbrl.full.creditors.otherCreditors.label", "OtherCreditors", boxRetriever,
+                    currentContext = "CreditorsAfterOneYear_CY_END", previousContext = "CreditorsAfterOneYear_PY_END")
+                @figureTotal("ac162", boxRetriever.ac162(), boxRetriever.ac163(), "ixbrl.full.creditors.total.label", "Creditors", boxRetriever,
+                    currentContext = "CreditorsAfterOneYear_CY_END", previousContext = "CreditorsAfterOneYear_PY_END")
+            </tbody>
+        </table>
+
+        @boxRetriever.ac5064A().value.map { noteValue =>
+            <div class="text-area-display" id="creditors-after-year-text-note">
+                @ixbrlTextNote(text = noteValue, ixbrlName = "core:CreditorsFree-textComment", context = "CreditorsAfterOneYear_CY")
+            </div>
+        }
+    }
+}

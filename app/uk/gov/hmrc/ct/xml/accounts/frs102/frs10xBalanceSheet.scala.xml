@@ -1,0 +1,96 @@
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever
+@(boxRetriever: Frs102AccountsBoxRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState,
+    accountsApproval: uk.gov.hmrc.ct.accounts.approval.boxes.AccountsApproval)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.xml.frs10xAccountsApproval
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.xml.frs10xBalanceSheetStatements
+
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+
+<div id="BalanceSheet" class="page">
+    @pageHeader(boxRetriever)
+
+    <h2 class="text--center">Balance sheet</h2>
+    <p class="text--center"><strong>As at <ix:nonNumeric contextRef="CY_END" name="uk-bus:BalanceSheetDate" format="ixt:datelonguk">@poaEndDate</ix:nonNumeric></strong></p>
+    <table cellspacing="10">
+        <thead>
+            @tableHeader(boxRetriever, "balance-sheet")
+        </thead>
+        <tbody>
+            @tableSubHeader("fixed-assets-heading", "ixbrl.abridged.balance.sheet.fixed.assets.heading")
+            @figureRow("ac42", boxRetriever.ac42(), boxRetriever.ac43(), "ixbrl.abridged.balance.sheet.intangible.assets.label", "IntangibleAssets", boxRetriever,
+                notes = AccountsRendering.getNumbersForNotes(Seq(IntangibleAssets), boxRetriever).mkString(", "),
+                hasNoteIndex = true
+            )
+            @figureRow("ac44", boxRetriever.ac44(), boxRetriever.ac45(), "ixbrl.abridged.balance.sheet.tangible.assets.label", "PropertyPlantEquipment", boxRetriever,
+                notes = AccountsRendering.getNumbersForNotes(Seq(TangibleAssets), boxRetriever).mkString(", "),
+                hasNoteIndex = true
+            )
+            @figureTotal("ac48", boxRetriever.ac48(), boxRetriever.ac49(), "ixbrl.abridged.balance.sheet.total.fixed.assets.label", "FixedAssets", boxRetriever, hasNoteIndex = true)
+
+            @tableSubHeader("current-assets-heading", "ixbrl.abridged.balance.sheet.current.assets.heading")
+            @figureRow("ac50", boxRetriever.ac50(), boxRetriever.ac51(), "ixbrl.abridged.balance.sheet.stocks.label", "TotalInventories", boxRetriever, hasNoteIndex = true)
+            @figureRow("ac52", boxRetriever.ac52(), boxRetriever.ac53(), "ixbrl.abridged.balance.sheet.debtors.label", "Debtors", boxRetriever,
+                notes = AccountsRendering.getNumbersForNotes(Seq(Debtors), boxRetriever).mkString(", "),
+                hasNoteIndex = true
+            )
+            @figureRow("ac54", boxRetriever.ac54(), boxRetriever.ac55(), "ixbrl.abridged.balance.sheet.cash.bank.in.hand.label", "CashBankOnHand", boxRetriever, hasNoteIndex = true)
+            @figureTotal("ac56", boxRetriever.ac56(), boxRetriever.ac57(), "ixbrl.abridged.balance.sheet.total.current.assets.label", "CurrentAssets", boxRetriever, hasNoteIndex = true)
+            @figureRow("ac138B", boxRetriever.ac138B(), boxRetriever.ac139B(), "ixbrl.abridged.balance.sheet.prepayments.accrued.income.label", "PrepaymentsAccruedIncomeNotExpressedWithinCurrentAssetSubtotal", boxRetriever, hasNoteIndex = true)
+            @figureRow("ac58", boxRetriever.ac58(), boxRetriever.ac59(), "ixbrl.abridged.balance.sheet.creditors.within.one.year.label", "Creditors", boxRetriever, "CreditorsWithinOneYear_CY_END", "CreditorsWithinOneYear_PY_END",
+                notes = AccountsRendering.getNumbersForNotes(Seq(CreditorsWithinOneYear), boxRetriever).mkString(", "),
+                hasNoteIndex = true
+            )
+            @figureTotal("ac60", boxRetriever.ac60(), boxRetriever.ac61(), "ixbrl.abridged.balance.sheet.net.current.assets.liabilities.label", "NetCurrentAssetsLiabilities", boxRetriever, hasNoteIndex = true)
+            @figureRow("ac62", boxRetriever.ac62(), boxRetriever.ac63(), "ixbrl.abridged.balance.sheet.total.assets.less.liabilities.label", "TotalAssetsLessCurrentLiabilities", boxRetriever, hasNoteIndex = true)
+            @figureRow("ac64", boxRetriever.ac64(), boxRetriever.ac65(), "ixbrl.abridged.balance.sheet.creditors.after.one.year.label", "Creditors", boxRetriever, "CreditorsAfterOneYear_CY_END", "CreditorsAfterOneYear_PY_END",
+                notes = AccountsRendering.getNumbersForNotes(Seq(CreditorsAfterOneYear), boxRetriever).mkString(", "),
+                hasNoteIndex = true
+            )
+            @figureRow("ac66", boxRetriever.ac66(), boxRetriever.ac67(), "ixbrl.abridged.balance.sheet.provision.for.liabilities.label", "ProvisionsForLiabilitiesBalanceSheetSubtotal", boxRetriever, hasNoteIndex = true)
+            @figureRow("ac150B", boxRetriever.ac150B(), boxRetriever.ac151B(), "ixbrl.abridged.balance.sheet.accruals.deferred.income.label", "AccruedLiabilitiesNotExpressedWithinCreditorsSubtotal", boxRetriever, hasNoteIndex = true)
+            @figureTotal("ac68", boxRetriever.ac68(), boxRetriever.ac69(), prependLbgPrefix("ixbrl.abridged.balance.sheet.total.net.assets.liabilities.label", boxRetriever), "NetAssetsLiabilities", boxRetriever, hasNoteIndex = true)
+        </tbody>
+    </table>
+    <p class="text--center">The notes form part of these financial statements</p>
+
+    @frs10xPageBreak(documentState, "BalanceSheet", "BalanceSheet")
+</div>
+
+<div id="BalanceSheetContinued" class="page">
+    @pageHeader(boxRetriever)
+
+    <h2 class="text--center">Balance sheet continued</h2>
+    <p class="text--center"><strong>As at @poaEndDate</strong></p>
+    <table cellspacing="10">
+        <tbody>
+            @tableHeader(boxRetriever, "balance-sheet-continued")
+            @if(isLimitedByGuaranteeCompany(boxRetriever)) {
+                @tableSubHeader("capital-reserves-heading", "ixbrl.abridged.balance.sheet.reserves.heading")
+            } else {
+                @tableSubHeader("capital-reserves-heading", "ixbrl.abridged.balance.sheet.capital.reserves.heading")
+                @figureRow("ac70", boxRetriever.ac70(), boxRetriever.ac71(), "ixbrl.abridged.balance.sheet.called.up.share.capital.label", "Equity", boxRetriever, "ShareCapital_CY_END", "ShareCapital_PY_END", hasNoteIndex = true)
+            }
+            @figureRow("ac76", boxRetriever.ac76(), boxRetriever.ac77(), "ixbrl.abridged.balance.sheet.revaluation.reserve.label", "Equity", boxRetriever, "RevaluationReserve_CY_END", "RevaluationReserve_PY_END",
+                notes = AccountsRendering.getNumbersForNotes(Seq(RevaluationReserve), boxRetriever).mkString(", "),
+                hasNoteIndex = true
+            )
+            @figureRow("ac74", boxRetriever.ac74(), boxRetriever.ac75(), prependLbgPrefix("ixbrl.abridged.balance.sheet.profit.loss.account.label", boxRetriever), "Equity", boxRetriever, "RetainedEarningsAccumulatedLosses_CY_END", "RetainedEarningsAccumulatedLosses_PY_END", hasNoteIndex = true)
+            @figureTotal("ac80", boxRetriever.ac80(), boxRetriever.ac81(), prependLbgPrefix("ixbrl.abridged.balance.sheet.total.shareholders.funds.label", boxRetriever), "Equity", boxRetriever, hasNoteIndex = true)
+        </tbody>
+    </table>
+
+    @frs10xBalanceSheetStatements(boxRetriever)
+
+    @frs10xAccountsApproval(boxRetriever, "balance-sheet", accountsApproval)
+
+    <p class="text--center">The notes form part of these financial statements</p>
+
+    @frs10xPageBreak(documentState, "BalanceSheetContinued", "BalanceSheet")
+</div>
