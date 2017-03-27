@@ -1,0 +1,11 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>You need to complete these Supplementary Pages if</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>the charity/CASC claims exemption from tax on all or any part of its income and gains.</span>
+        }
+    }
+}

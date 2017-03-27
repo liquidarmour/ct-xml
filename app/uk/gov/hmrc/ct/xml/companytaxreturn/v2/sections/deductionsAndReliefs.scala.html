@@ -1,0 +1,308 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b30 = @{intValue(data, intFromCT600 { (br) => br.b30.value },
+                        intFromCT600E { (br) => 0 })}
+@b37 = @{intValue(data, intFromCT600 { (br) => br.b37.value },
+                        intFromCT600E { (br) => 0 })}
+@b35 = @{optional(data, optionFromCT600[Int] { (br) => Some(br.b35().value) })}
+
+@questionBox(id="deductionsAndReliefs", title = Some("<h2>Deductions and reliefs</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("22")
+            <span>CVS loss relief, and losses on unquoted shares under S573 ICTA 1988</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B22",
+                boxNumber = Some("22"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("23")
+            <i>Put an 'X' in box 23 if the entry in box 22 includes CVS loss relief, complete and attach form CT600G</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B23",
+                boxNumber = Some("23")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("24")
+            <span>Management expenses under S75 ICTA 1988</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B24",
+                boxNumber = Some("24"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("25")
+            <span>Interest distributions under S468L ICTA 1988</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B25",
+                boxNumber = Some("25"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("26")
+            <span>Schedule A losses for this or previous accounting period under S392A ICTA 1988</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B26",
+                boxNumber = Some("26"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("27")
+            <span>Capital allowances for the purposes of management of the business</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B27",
+                boxNumber = Some("27"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("28")
+            <span>Non-trade deficits for this accounting period from loan relationships and derivative contracts (financial instruments)</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B28",
+                boxNumber = Some("28"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("29")
+            <span>Non-trading losses on intangible fixed assets</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B29",
+                boxNumber = Some("29"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("30")
+            <span>Trading losses of this or a later accounting period under S393A ICTA 1988</span>
+        }
+        @questionCell(3) {
+            @numberFieldForInt(
+                value = b30,
+                numberOfDigits = 1,
+                id = "B30",
+                boxNumber = Some("30"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("31")
+            <span>Put an 'X' in box 31 if amounts carried back from later accounting periods are included in box 30</span>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B31",
+                boxNumber = Some("31")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("32")
+            <span>Non-trade capital allowances</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B32",
+                boxNumber = Some("32"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("33")
+            <span>Total of deductions and reliefs</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("total of boxes 22, 24 to 30 and 32")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B33",
+                boxNumber = Some("33"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("34")
+            <span>Profits before charges and group relief</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("box 21 minus box 33")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B34",
+                boxNumber = Some("34"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("35")
+            <span>Charges paid</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b35,
+                numberOfDigits = 1,
+                id = "B35",
+                boxNumber = Some("35"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("36")
+            <span>Group relief</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B36",
+                boxNumber = Some("36"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("37")
+            <span>Profits chargeable to corporation tax</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("box 34 minus boxes 35 and 36")
+            @numberFieldForBigDecimal(
+                value = b37,
+                numberOfDigits = 1,
+                id = "B37",
+                boxNumber = Some("37"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("169")
+            <span>Ring fence profits included</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B169",
+                boxNumber = Some("169"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

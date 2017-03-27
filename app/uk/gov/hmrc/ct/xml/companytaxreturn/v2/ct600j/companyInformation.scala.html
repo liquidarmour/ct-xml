@@ -1,0 +1,90 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.ct600j.v2.retriever.CT600JBoxRetriever
+
+@(boxRetriever: CT600JBoxRetriever with FilingAttributesBoxValueRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@companyName = @{
+    stringValue(
+        boxRetriever,
+        stringFromCT600 { (br) => br.b155.value },
+        stringFromCT600E{ (br) => br.e1020.value },
+        defaultValue("")
+    )
+}
+
+@fromDate = @{
+    dateValue(
+        boxRetriever,
+        dateFromComputations { (br) => br.cp1.value },
+        dateFromCT600E { (br) => br.e1021.value }
+    )
+}
+
+@toDate = @{
+    dateValue(
+        boxRetriever,
+        dateFromComputations { (br) => br.cp2.value },
+        dateFromCT600E { (br) => br.e1022.value }
+    )
+}
+
+@questionBox(title = Some("<h2>Company information</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Company name</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @textField(
+                value = companyName,
+                id = "CT600JCompanyName",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Tax reference as shown on the CT603</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @numberField(
+                value = boxRetriever.utr().value,
+                numberOfDigits = 13,
+                id = "CT600JUTR"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <b>Period covered by this supplementary page <i>(cannot exceed 12 months)</i></b>
+        }
+    }
+    @questionRow() {
+        @questionCell(4) {
+            <span>from <i>(dd/mm/yyyy)</i></span>
+        }
+        @questionCell(4) {
+            <span>to <i>(dd/mm/yyyy)</i></span>
+        }
+    }
+    @questionRow() {
+        @questionCell(4) {
+            @dateField(
+                value = fromDate,
+                id = "CT600JStartDate"
+            )
+        }
+        @questionCell(4) {
+            @dateField(
+                value = toDate,
+                id = "CT600JEndDate"
+            )
+        }
+    }
+}

@@ -1,0 +1,283 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.ct600e.v2.retriever.CT600EBoxRetriever
+
+@(data: CT600EBoxRetriever with FilingAttributesBoxValueRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Information required</h2>")) {
+    <p>Enter details of any income received from the following sources, claimed as exempt from tax in the hands of the charity/CASC. Enter the figure included in the charity's/CASC's accounts for the period covered by this return</p>
+    <p><i>Do not include amounts which are not taxable. Non-exempt amounts should be entered on form CT600 in the appropriate boxes.</i></p>
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            <span>Type of income</span>
+        }
+        @questionCell(3) {
+            <span>Amount</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E5")
+            <span>Enter total turnover from exempt trading activities </span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e5().value,
+                numberOfDigits = 1,
+                id = "E5",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E5"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E6")
+            <span>Investment income - exclude any amounts included on form CT600</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e6().value,
+                numberOfDigits = 1,
+                id = "E6",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E6"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E7")
+            <span>UK land and buildings - exclude any amounts included on form CT600</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e7().value,
+                numberOfDigits = 1,
+                id = "E7",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E7"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E8")
+            <span>Deed of covenant - exclude any amounts included on form CT600</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e8().value,
+                numberOfDigits = 1,
+                id = "E8",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E8"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E9")
+            <span>Gift Aid or Millennium Gift Aid - exclude any amounts included on form CT600</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e9().value,
+                numberOfDigits = 1,
+                id = "E9",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E9"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E10")
+            <span>Other charities - exclude any amounts included on form CT600</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e10().value,
+                numberOfDigits = 1,
+                id = "E10",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E10"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E11")
+            <span>Gifts of shares or securities received</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e11().value,
+                numberOfDigits = 1,
+                id = "E11",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E11"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E12")
+            <span>Gifts of real property received </span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e12().value,
+                numberOfDigits = 1,
+                id = "E12",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E12"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E13")
+            <span>Other sources </span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e13().value,
+                numberOfDigits = 1,
+                id = "E13",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E13"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    <p>Enter details of expenditure as shown in the charity's/CASC's accounts for the period covered by these Supplementary Pages</p>
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            <span>Type of expenditure</span>
+        }
+        @questionCell(3) {
+            <span>Amount</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E14")
+            <span>Trading costs in relation to exempt activities (in box E5)</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e14().value,
+                numberOfDigits = 1,
+                id = "E14",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E14"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E15")
+            <span>UK land and buildings in relation to exempt activities (in box E7)</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e15().value,
+                numberOfDigits = 1,
+                id = "E15",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E15"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E16")
+            <span>All general administration costs</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e16().value,
+                numberOfDigits = 1,
+                id = "E16",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E16"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E17")
+            <span>All grants and donations made within the UK</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e17().value,
+                numberOfDigits = 1,
+                id = "E17",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E17"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E18")
+            <span>All grants and donations made outside the UK</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e18().value,
+                numberOfDigits = 1,
+                id = "E18",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E18"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E19")
+            <span>Other expenditure not included above, or not used in calculating figures entered on the form CT600</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e19().value,
+                numberOfDigits = 1,
+                id = "E19",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E19"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

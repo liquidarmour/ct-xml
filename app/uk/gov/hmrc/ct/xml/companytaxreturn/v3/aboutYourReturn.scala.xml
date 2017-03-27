@@ -1,0 +1,21 @@
+@import uk.gov.hmrc.ct.ct600.v3.retriever.AboutThisReturnBoxRetriever
+
+@(boxRetriever: AboutThisReturnBoxRetriever)
+
+@B40 = @{ boxRetriever.b40().value.getOrElse(false) }
+@B45 = @{ boxRetriever.b45().value.getOrElse(false) }
+@B50 = @{ boxRetriever.b50().value }
+@B55 = @{ boxRetriever.b55().value.getOrElse(false) }
+
+@if(B40) {
+    <ThisPeriod>yes</ThisPeriod>
+}
+@if(B45) {
+    <EarlierPeriod>yes</EarlierPeriod>
+}
+@if(B50) {
+    <MultipleReturns>yes</MultipleReturns>
+}
+@if(B55) {
+    <ProvisionalFigures>yes</ProvisionalFigures>
+}

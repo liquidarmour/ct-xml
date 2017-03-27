@@ -1,0 +1,313 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b122 = @{optional(data, optionFromCT600[Int] { (br) => br.b122().value })}
+
+@questionBox() {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+        }
+        @questionCell(3) {
+            <span>Arising</span>
+        }
+        @questionCell(3) {
+            <span>Maximum available for surrender as group relief</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("122-123")
+            <span>Trading losses Case I</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S393 ICTA 1988")
+            @optionalNumberFieldForInt(
+                value = b122,
+                numberOfDigits = 1,
+                id = "B122",
+                boxNumber = Some("122"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S393A ICTA 1988")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B123",
+                boxNumber = Some("123"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("124")
+            <span>Trading losses Case V</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S393 ICTA 1988")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B124",
+                boxNumber = Some("124"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("125-126")
+            <span>Non-trade deficits on loan relationships and derivative contracts</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S82 FA 1996")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B125",
+                boxNumber = Some("125"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S83 FA 1996")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B126",
+                boxNumber = Some("126"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("127-128")
+            <span>Schedule A losses</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S392A ICTA 1988")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B127",
+                boxNumber = Some("127"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S403 ICTA 1988")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B128",
+                boxNumber = Some("128"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("129")
+            <span>Overseas property business losses Case V</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S392B ICTA 1988")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B129",
+                boxNumber = Some("129"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("130")
+            <span>Losses Case VI</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S396 ICTA 1988")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B130",
+                boxNumber = Some("130"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("131")
+            <span>Capital losses</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S16 TCGA 1992")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B131",
+                boxNumber = Some("131"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("132-133")
+            <span>Non-trading losses on intangible fixed assets</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S29 FA 2002")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B132",
+                boxNumber = Some("132"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S403 ICTA 1988")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B133",
+                boxNumber = Some("133"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("134")
+            <span>Excess non-trade capital allowances</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S403 ICTA 1988")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B134",
+                boxNumber = Some("134"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("135")
+            <span>Excess charges</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S403 ICTA 1988")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B135",
+                boxNumber = Some("135"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("136-137")
+            <span>Excess management expenses </span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S75 ICTA 1988")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B136",
+                boxNumber = Some("136"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S403 ICTA 1988")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B137",
+                boxNumber = Some("137"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("138")
+            <span>Excess interest distributions</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("calculated under S468L(7) ICTA 1988")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B138",
+                boxNumber = Some("138"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+        }
+    }
+}

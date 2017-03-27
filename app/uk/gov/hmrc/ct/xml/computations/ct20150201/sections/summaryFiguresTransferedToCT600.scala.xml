@@ -1,0 +1,176 @@
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+@import uk.gov.hmrc.ct.xml.computations.components.xml.{compsPlainValue, ixbrlNonFraction}
+@import uk.gov.hmrc.ct.xml.computations.ct20150201.xml.compsHeader2
+
+<div class="figuresTransferred page-break" id="figures_transferred">
+    @compsHeader2(boxRetriever, ctUtr)
+    <h2>Summary: figures transferred to CT600 </h2>
+    <table>
+        <tr>
+            <th colspan="3"></th>
+            <th class="figure">&#163;</th>
+        </tr>
+
+        @if(boxRetriever.cp256().value > 0) {
+            <tr>
+                <td colspan="3">Trading and professional profits:</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:AdjustedTradingProfitOfThisPeriod", "CY_Comps_Duration", boxRetriever.cp256.value)
+                </td>
+            </tr>
+        }
+
+        @if(boxRetriever.cp257().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Trading losses brought forward:</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:TradingLossesBroughtForward", "CY_Comps_Duration", boxRetriever.cp257.value.get)
+                </td>
+            </tr>
+        }
+
+        @if(boxRetriever.cp258().value > 0) {
+            <tr>
+                <td colspan="3">Net trading and professional profits: </td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:NetTradingProfits", "CY_Comps_Duration", boxRetriever.cp258.value)
+                </td>
+            </tr>
+        }
+
+        <tr>
+            <td colspan="3">Profits and gains from non-trading loan relationships: </td>
+            <td class="figure">
+            @ixbrlNonFraction("ct-comp:ProfitsAndGainsFromNon-tradingLoanRelationships", "CY_Comps_Duration", boxRetriever.cp259.value)
+            </td>
+        </tr>
+        @if(boxRetriever.cp265().value > 0) {
+            <tr>
+                <td colspan="3">Profits before other deductions and reliefs: </td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:ProfitsBeforeOtherDeductionsAndReliefs", "CY_Comps_Duration", boxRetriever.cp265.value)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp264().value > 0) {
+            <tr>
+                <td colspan="3">Trading losses of this or later accounting period:		</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:TradingLossesOfThisOrLaterAP", "CY_Comps_Duration", boxRetriever.cp264.value)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp286().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Losses claimed from a later accounting period:		</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:LossesBroughtBack", "CY_Trade_Duration", boxRetriever.cp286.value.get)
+                </td>
+            </tr>
+        }
+        @boxRetriever.cp285().value.map{cp285=>
+            <tr>
+                <td colspan="3">End date of accounting period from which trading loss is being brought back:
+                </td>
+                <td class="figure">
+                    <ix:nonNumeric name="ct-comp:PeriodFromWhichLossBroughtBack" contextRef="CY_Trade_Duration" format="ixt:datelonguk">@dateFormat(cp285, LongUK)</ix:nonNumeric>
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp305().value > 0) {
+            <tr>
+                <td colspan="3">Qualifying charitable donations:</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:QualifyingDonations", "CY_Comps_Duration", boxRetriever.cp305.value)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp295().value > 0) {
+            <tr>
+                <td colspan="3" class="strong">Total Profits chargeable to Corporation Tax: </td>
+                <td class="figure strong">
+                @ixbrlNonFraction("ct-comp:TotalProfitsChargeableToCorporationTax", "CY_Comps_Duration", boxRetriever.cp295.value)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp186().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Trade capital allowances machinery and plant main pool: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp186.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp668().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Trade capital allowances machinery and plant special rate pool: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp668.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp91().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Main pool balancing charge: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp91.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp670().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Special rate pool balancing charge: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp670.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp81().value > 0) {
+            <tr>
+                <td colspan="3"> Expenditure on machinery and plant on which First Year
+                    Allowance is claimed:</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:MainPoolTotalExpenditureQualifyingForFYA", "CY_Trade_Duration", boxRetriever.cp81.value)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp253().value > 0) {
+            <tr>
+                <td colspan="3">Qualifying expenditure on other machinery and plant: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp253.value)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="3">Trading losses: </td>
+            <td class="figure">
+            @compsPlainValue(boxRetriever.cp118.value)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">Expenditure on designated environmentally friendly
+                machinery and plant: </td>
+            <td class="figure">
+            @ixbrlNonFraction("ct-comp:MainPoolRelevantFirstYearExpenditure", "CY_Trade_Duration", boxRetriever.cp252.value.getOrElse(0))
+            </td>
+        </tr>
+        @if(boxRetriever.cp88().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Trade Annual Investment Allowance: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp88().value.get)
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

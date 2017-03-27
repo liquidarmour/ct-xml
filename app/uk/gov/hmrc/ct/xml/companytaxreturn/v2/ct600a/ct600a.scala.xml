@@ -1,0 +1,75 @@
+@import uk.gov.hmrc.ct.xml.model.submit.hmrc.ct600a.Ct600aModel
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CompanyCT600Helpers
+@import uk.gov.hmrc.ct.ct600a.v2.retriever.CT600ABoxRetriever
+
+@(ct600Helper: V2CompanyCT600Helpers, data: CT600ABoxRetriever)
+
+<LoansByCloseCompanies>
+    <BeforeEndPeriod>@ct600Helper.beforeEndPeriod</BeforeEndPeriod>
+    @if(data.a2.isPositive) {
+    <LoansInformation>
+
+        @for(loan <- ct600Helper.loans){
+        <Loan>
+            <Name>@loan.name</Name>
+            <AmountOfLoan>@poundsPence(loan.amount)</AmountOfLoan>
+        </Loan>
+        }
+        @boxToPoundsPence(data.a2).map{v=> <TotalLoans>@v</TotalLoans> }
+        @boxToPoundsPence(data.a3).map{v=> <TaxChargeable>@v</TaxChargeable> }
+    </LoansInformation>
+    }
+    @if(data.a4.isPositive || data.a5.isPositive) {
+    <ReliefEarlierThan>
+        @ct600Helper.loans.filter(_.isRepaymentReliefEarlierThanDue(data.cp2.value)).map{ loan =>
+        <Loan>
+            <Name>@loan.name</Name>
+            <AmountRepaid>@poundsPence(loan.totalAmountRepaid)</AmountRepaid>
+            <Date>@loan.lastRepaymentDate</Date>
+        </Loan>
+        }
+        @for(wrapper <- ct600Helper.writeOffsReliefEarlierThan){
+        <Loan>
+            <Name>@wrapper.loan.name</Name>
+            <AmountReleasedOrWrittenOff>@poundsPence(wrapper.writeOff.amountWrittenOff)</AmountReleasedOrWrittenOff>
+            <Date>@wrapper.writeOff.dateWrittenOff</Date>
+        </Loan>
+        }
+
+        @data.a4.value.map{v=> @if(v > 0){<TotalAmountRepaid>@poundsPence(v)</TotalAmountRepaid>}}
+        @data.a5.value.map{v=> @if(v > 0){<TotalAmountReleasedOrWritten>@poundsPence(v)</TotalAmountReleasedOrWritten>}}
+        @data.a6.value.map{v=> @if(v > 0){<TotalLoans>@poundsPence(v)</TotalLoans>}}
+        @data.a7.value.map{v=> @if(v > 0){<ReliefDue>@poundsPence(v)</ReliefDue>}}
+    </ReliefEarlierThan>
+    }
+    @if(ct600Helper.shouldShowLoanLaterReliefNow) {
+    <LoanLaterReliefNow>
+        @for(loan <- ct600Helper.repaymentsLaterReliefNow){
+        <Loan>
+            <Name>@loan.name</Name>
+            <AmountRepaid>@poundsPence(loan.totalAmountRepaid)</AmountRepaid>
+            <Date>@loan.lastRepaymentDate</Date>
+        </Loan>
+        }
+        @for(wrapper <- ct600Helper.writeOffsLaterReliefNow){
+        <Loan>
+            <Name>@wrapper.loan.name</Name>
+            <AmountReleasedOrWrittenOff>@poundsPence(wrapper.writeOff.amountWrittenOff)</AmountReleasedOrWrittenOff>
+            <Date>@wrapper.writeOff.dateWrittenOff</Date>
+        </Loan>
+        }
+        @data.a8.value.map{v=> @if(v > 0){<TotalAmountRepaid>@poundsPence(v)</TotalAmountRepaid>}}
+        @data.a9.value.map{v=> @if(v > 0){<TotalAmountReleasedOrWritten>@poundsPence(v)</TotalAmountReleasedOrWritten>}}
+        @data.a10.value.map{v=> @if(v > 0){<TotalLoans>@poundsPence(v)</TotalLoans>}}
+        @data.a11.value.map{v=> @if(v > 0){<ReliefDue>@poundsPence(v)</ReliefDue>}}
+    </LoanLaterReliefNow>
+    }
+    @data.a12.value.map{v=>
+    <TotalLoansOutstanding>@poundsPence(v)</TotalLoansOutstanding>
+    }
+    @data.a13.map{v=>
+    <TaxPayableS419>@poundsPence(v)</TaxPayableS419>
+    }
+</LoansByCloseCompanies>

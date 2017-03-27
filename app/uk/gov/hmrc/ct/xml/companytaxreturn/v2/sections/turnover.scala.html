@@ -1,0 +1,43 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b1 = @{intValue(data, intFromCT600 { (br) => br.b1.value },
+                       intFromCT600E { (br) => 0 })}
+
+@questionBox(title = Some("<h2>Turnover</h2>")) {
+    @questionRow() {
+        @questionCell(9) {
+            @questionNumber("1")
+            <span>Total turnover from trade or profession</span>
+        }
+        @questionCell(3) {
+            @numberFieldForBigDecimal(
+                value = b1,
+                numberOfDigits = 1,
+                id = "B1",
+                boxNumber = Some("1"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(6) {
+            @questionNumber("2")
+            <span>Banks, building societies, insurance companies and other financial concerns.</span>
+            <i>Put an 'X' in this box if you do not have a recognised turnover and have not made an entry in box 1</i>
+        }
+        @questionCell(6) {
+            @checkboxField(
+                value = false,
+                id = "B2",
+                boxNumber = Some("2")
+            )
+        }
+    }
+}

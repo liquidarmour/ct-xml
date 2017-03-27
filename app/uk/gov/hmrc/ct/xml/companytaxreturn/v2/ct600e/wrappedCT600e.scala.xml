@@ -1,0 +1,93 @@
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat.XML
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CharityCT600Helpers
+@import uk.gov.hmrc.ct.xml.retrievers.V2CharityCT600BoxRetriever
+
+@(ct600Helper: V2CharityCT600Helpers, data: V2CharityCT600BoxRetriever, accountsXml: play.twirl.api.Xml, attachments: Seq[play.twirl.api.Xml], accountsAreIxbrl: Boolean)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.ct600e.{xml => ct600eXml}
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.xml.{aboutYourReturn, overpaymentsAndRepayments}
+
+<CompanyTaxReturn ReturnType="@{ct600Helper.returnType}" Short="yes" xmlns="http://www.govtalk.gov.uk/taxation/CT/3">
+
+    <CompanyInformation>
+        <CompanyName>@{data.e1020().value}</CompanyName>
+        @data.ac1().value.find(_.nonEmpty).map{ crn =>
+        <RegistrationNumber>@crn</RegistrationNumber>
+        }
+        <Reference>@{data.utr().value}</Reference>
+        @if(ct600Helper.companyType != 0){<CompanyType>@{ct600Helper.companyType}</CompanyType>}
+        <CompanyAddress>
+            @{ct600Helper.companyAddress.line1.map(l => <Line>{l}</Line>)}
+            @{ct600Helper.companyAddress.line2.map(l => <Line>{l}</Line>)}
+            @{ct600Helper.companyAddress.line3.map(l => <Line>{l}</Line>)}
+            @{ct600Helper.companyAddress.line4.map(l => <AdditionalLine>{l}</AdditionalLine>)}
+            @{ct600Helper.companyAddress.postcode.map(l => <PostCode>{l}</PostCode>)}
+        </CompanyAddress>
+        <PeriodCovered>
+            <From>@{dateFormat(data.e1021().value, XML)}</From>
+            <To>@{dateFormat(data.e1022().value, XML)}</To>
+        </PeriodCovered>
+    </CompanyInformation>
+    <ReturnInfoSummary>
+        @aboutYourReturn(ct600Helper, data)
+        <Accounts>
+            <ThisPeriodAccounts>yes</ThisPeriodAccounts>
+            @if(!accountsAreIxbrl){<NoAccountsReason>PDF accounts attached with explanation</NoAccountsReason>}
+        </Accounts>
+        <Computations>
+            <NoComputationsReason>Not within charge to CT</NoComputationsReason>
+        </Computations>
+        <SupplementaryPages>
+            <CT600E>yes</CT600E>
+            @if(ct600Helper.taq01) {
+            <CT600J>yes</CT600J>
+            }
+        </SupplementaryPages>
+    </ReturnInfoSummary>
+    <CompanyTaxCalculation>
+        <Income>
+            <TradingAndProfessional>
+                <Profits>0.00</Profits>
+            </TradingAndProfessional>
+        </Income>
+        <ChargeableProfits>0.00</ChargeableProfits>
+        <NetCorporationTaxChargeable>0.00</NetCorporationTaxChargeable>
+        <TaxPayable>0.00</TaxPayable>
+    </CompanyTaxCalculation>
+    @overpaymentsAndRepayments(ct600Helper, data)
+    @if(data.cato10){
+    <Declaration>
+        <AcceptDeclaration>yes</AcceptDeclaration>
+        <Name>@data.cato11.value.getOrElse("")</Name>
+        <Status>@data.cato12.value.getOrElse("")</Status>
+    </Declaration>
+    }
+    @ct600eXml.ct600e(data)
+
+    @if(ct600Helper.taq01){
+    <TaxAvoidanceSchemes>
+        @ct600Helper.taxAvoidance.map{v =>
+        <AvoidanceSchemes>
+            <ReferenceNumber>@v.schemeReferenceNumber</ReferenceNumber>
+            @v.advantagedInAccountingPeriod.map{ advantagedInAccountingPeriod =>
+            <AccountingPeriod>@advantagedInAccountingPeriod</AccountingPeriod>
+            }
+        </AvoidanceSchemes>
+        }
+    </TaxAvoidanceSchemes>
+    }
+
+    <AttachedFiles>
+        @if(accountsAreIxbrl){
+        <XBRLsubmission>
+            @accountsXml
+        </XBRLsubmission>
+        }
+        @if(!accountsAreIxbrl) {
+            @accountsXml
+        }
+        @attachments.map{ attachment => @attachment }
+    </AttachedFiles>
+</CompanyTaxReturn>

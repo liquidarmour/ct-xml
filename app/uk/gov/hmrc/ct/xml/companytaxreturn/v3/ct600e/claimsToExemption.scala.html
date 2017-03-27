@@ -1,0 +1,128 @@
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+
+@(boxRetriever: CT600EBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(id = "ct600e-claims-to-exemption", title = Some("<h2>Claims to exemption <sub>(this section should be completed in all cases)</sub></h2>")) {
+    @questionRow(id = "ct600e-claims-to-exemption-e5") {
+        @questionCell(6) {
+            <strong>Charity/CASC repayment reference</strong>
+        }
+        @questionCell(6) {
+            @textField(
+                value = boxRetriever.e5().value,
+                id = "E5",
+                boxNumber = Some("E5"),
+                boxNumberColor = "white",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600e-claims-to-exemption-e10") {
+        @questionCell(6) {
+            <strong>Charity Commission registration number, or OSCR number (if applicable)</strong>
+        }
+        @questionCell(6) {
+            @optionalTextField(
+                value = boxRetriever.e10().value,
+                id = "E10",
+                boxNumber = Some("E10"),
+                boxNumberColor = "white",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Put an 'X' in the relevant box if during the period covered by these supplementary pages:</strong>
+        }
+    }
+    @questionRow(id = "ct600e-claims-to-exemption-e15") {
+        @questionCell(6) {
+            <strong>The company was a charity/CASC and is claiming E15 exemption from all tax on all or part of its income and gains</strong>
+            <i>(Also put an 'X' in box E15 if the company was a charity/CASC but had no income or gains in the period)</i>
+        }
+        @questionCell(6) {
+            @optionalCheckboxField(
+                value = boxRetriever.e15().value,
+                boxNumber = Some("E15"),
+                id = "E15",
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-claims-to-exemption-e20") {
+        @questionCell(6) {
+            <strong>All income and gains are exempt from tax and have been, or will be, applied for charitable or qualifying purposes only</strong>
+        }
+        @questionCell(6) {
+            @optionalCheckboxField(
+                value = boxRetriever.e20().value,
+                boxNumber = Some("E20"),
+                id = "E20",
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-claims-to-exemption-e25") {
+        @questionCell(6) {
+            <strong>Some of the income and gains may not be exempt or have not been applied for charitable or qualifying purposes only, and I have completed form CT600</strong>
+        }
+        @questionCell(6) {
+            @optionalCheckboxField(
+                value = boxRetriever.e25().value,
+                boxNumber = Some("E25"),
+                id = "E25",
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>I claim exemption from tax</strong>
+        }
+    }
+    @questionRow(id = "ct600e-claims-to-exemption-e30") {
+        @questionCell(6) {
+            <strong>Name</strong>
+        }
+        @questionCell(6) {
+            @optionalTextField(
+                value = boxRetriever.e30().value,
+                id = "E30",
+                boxNumber = Some("E30"),
+                boxNumberColor = "white",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600e-claims-to-exemption-e35") {
+        @questionCell(6) {
+            <strong>Status</strong>
+        }
+        @questionCell(6) {
+            @optionalTextField(
+                value = boxRetriever.e35().value,
+                id = "E35",
+                boxNumber = Some("E35"),
+                boxNumberColor = "white",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600e-claims-to-exemption-e40") {
+        @questionCell(6) {
+            <strong>Date</strong>
+            <i>DD MM YYYY</i>
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.e40().value,
+                id = "E40",
+                boxNumber = Some("E40"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+}

@@ -1,0 +1,24 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.ct600j.v2.retriever.CT600JBoxRetriever
+
+@(boxRetriever: CT600JBoxRetriever with FilingAttributesBoxValueRetriever)
+
+<div id="ct600j">
+    <div class="page-break small-heading-margin">
+        <div class="ct600--header">
+            <div class="ct600--header-logo">
+                    <!-- Placeholder for the header logo -->
+            </div>
+            <div class="ct600--header-title">
+                <h1>Company Tax Return form - Supplementary page</h1>
+                <h1>Disclosure of Tax Avoidance Schemes</h1>
+                <h2>CT600J (2011) Version 2</h2>
+                <h3>for notifiable arrangements on or after 18 March 2004</h3>
+            </div>
+        </div>
+
+        @companyInformation(boxRetriever)
+        @importantPoints()
+        @disclosableTaxAvoidanceSchemes(boxRetriever)
+    </div>
+</div>

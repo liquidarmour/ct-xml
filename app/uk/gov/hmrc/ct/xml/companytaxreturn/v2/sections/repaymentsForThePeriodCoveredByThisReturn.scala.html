@@ -1,0 +1,186 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Repayments for the period covered by this return</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("141")
+            <span>Repayment of corporation tax</span>
+        }
+        @questionCell(4, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B141",
+                boxNumber = Some("141"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("142")
+            <span>Repayment of income tax</span>
+        }
+        @questionCell(4, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B142",
+                boxNumber = Some("142"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("143")
+            <span>Payable Research and Development tax credit</span>
+        }
+        @questionCell(4, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B143",
+                boxNumber = Some("143"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("168")
+            <span>Payable film tax credit</span>
+        }
+        @questionCell(4, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B168",
+                boxNumber = Some("168"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("144")
+            <span>Payable land remediation or life assurance company tax credit</span>
+        }
+        @questionCell(4, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B144",
+                boxNumber = Some("144"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("175")
+            <span>Payable capital allowances first-year tax credit</span>
+        }
+        @questionCell(4, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B175",
+                boxNumber = Some("175"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Surrender under S102 FA 1989 (including surrenders under Regulation 9 of the Instalments Regulations) Repayments of advance corporation tax cannot be surrendered.</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("145")
+            <span>The following amount is to be surrendered under S102 FA 1989, and either</span>
+        }
+        @questionCell(4, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B145",
+                boxNumber = Some("145"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("146")
+            <span>the joint Notice is attached</span>
+            <br/>
+            <span>or</span>
+        }
+        @questionCell(2) {
+            @optionalCheckboxField(
+                value = None,
+                boxNumber = Some("146"),
+                id = "B146"
+            )
+        }
+        @questionCell(4) {
+            <i>(put an 'X' in either box 146 or box 147)</i>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("147")
+            <span>will follow</span>
+        }
+        @questionCell(2) {
+            @optionalCheckboxField(
+                value = None,
+                boxNumber = Some("147"),
+                id = "B147"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("148")
+            <span>Please stop repayment of the following amount until I send you the Notice</span>
+        }
+        @questionCell(4, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B148",
+                boxNumber = Some("148"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

@@ -1,0 +1,65 @@
+@import uk.gov.hmrc.ct.ct600a.v3.retriever.CT600ABoxRetriever
+
+@(boxRetriever: CT600ABoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(id = "ct600a-company-information", title = Some("<h2>Company information</h2>")) {
+    @questionRow(id = "ct600a-company-information-a1") {
+        @questionCell(4) {
+            @boxNumber("A1", white = true)
+            <strong>Company name</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @textField(
+                value = boxRetriever.a1().value,
+                id = "A1",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600a-company-information-a2") {
+        @questionCell(4) {
+            @boxNumber("A2", white = true)
+            <strong>Tax reference</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @numberField(
+                value = boxRetriever.a2().value,
+                numberOfDigits = 10,
+                id = "AC2"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Period covered by this supplementary page (cannot exceed 12 months)</strong>
+        }
+    }
+    @questionRow(id = "ct600a-company-information-a3") {
+        @questionCell(4) {
+            @boxNumber("A3", white = true)
+            <strong>from</strong>
+            <i>DD MM YYYY</i>
+        }
+        @questionCell(8, alignRight = true) {
+            @dateField(
+                value = boxRetriever.a3().value,
+                id = "A3"
+            )
+        }
+    }
+    @questionRow(id = "ct600a-company-information-a4") {
+        @questionCell(4) {
+            @boxNumber("A4", white = true)
+            <strong>to</strong>
+            <i>DD MM YYYY</i>
+        }
+        @questionCell(8, alignRight = true) {
+            @dateField(
+                value = boxRetriever.a4().value,
+                id = "A4"
+            )
+        }
+    }
+}

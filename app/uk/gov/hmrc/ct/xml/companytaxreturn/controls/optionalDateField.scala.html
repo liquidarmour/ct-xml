@@ -1,0 +1,53 @@
+@(value: Option[org.joda.time.LocalDate],
+  id: String,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default")
+
+@getValueFromString(str: String, index: Int) = @{
+    if (str.length <= index) {
+        Html("&nbsp;")
+    } else {
+        Html(str(index).toString)
+    }
+}
+
+@day = @{
+    if(value.nonEmpty){
+        value.get.toString("dd")
+    } else {
+        ""
+    }
+}
+
+@month = @{
+    if(value.nonEmpty){
+        value.get.toString("MM")
+    } else {
+        ""
+    }
+}
+
+@year = @{
+    if(value.nonEmpty){
+        value.get.toString("yyyy")
+    } else {
+        ""
+    }
+}
+
+<div @if(id.nonEmpty) { id="@id" } class="input-box-container">
+    @if(boxNumber.nonEmpty) {
+        <div class="input-box-number input-box-number--@boxNumberColor"><span>@boxNumber.get</span></div>
+    }
+
+    <div class="input-box input-box--digit-width"><span>@getValueFromString(day, 0)</span></div>
+    <div class="input-box input-box--digit-width margin-right-small"><span>@getValueFromString(day, 1)</span></div>
+
+    <div class="input-box input-box--digit-width"><span>@getValueFromString(month, 0)</span></div>
+    <div class="input-box input-box--digit-width margin-right-small"><span>@getValueFromString(month, 1)</span></div>
+
+    <div class="input-box input-box--digit-width"><span>@getValueFromString(year, 0)</span></div>
+    <div class="input-box input-box--digit-width"><span>@getValueFromString(year, 1)</span></div>
+    <div class="input-box input-box--digit-width"><span>@getValueFromString(year, 2)</span></div>
+    <div class="input-box input-box--digit-width"><span>@getValueFromString(year, 3)</span></div>
+</div>

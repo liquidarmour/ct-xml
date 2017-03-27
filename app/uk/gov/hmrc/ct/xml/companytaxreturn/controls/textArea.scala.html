@@ -1,0 +1,11 @@
+@(value: String,
+  id: String,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default",
+  widthClass: Option[String] = None)
+
+@optionalTextArea(Some(value),
+    id = id,
+    boxNumber = boxNumber,
+    boxNumberColor = boxNumberColor,
+    widthClass = widthClass)

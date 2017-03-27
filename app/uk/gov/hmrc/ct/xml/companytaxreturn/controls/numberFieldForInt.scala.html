@@ -1,0 +1,27 @@
+@(value: Int,
+  numberOfDigits: Int,
+  id: String,
+  prefix: Option[String] = None,
+  suffix: Option[String] = None,
+  showDecimalPlaces: Boolean = false,
+  onlyWholeNumbers: Boolean = true,
+  disabled: Boolean = false,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default",
+  inline: Boolean = false,
+  containerCss: Option[String] = None)
+
+@optionalNumberFieldForInt(
+    value = Some(value),
+    numberOfDigits = numberOfDigits,
+    prefix = prefix,
+    suffix = suffix,
+    showDecimalPlaces = showDecimalPlaces,
+    onlyWholeNumbers = onlyWholeNumbers,
+    disabled = disabled,
+    boxNumber = boxNumber,
+    boxNumberColor = boxNumberColor,
+    inline = inline,
+    containerCss = containerCss,
+    id = id
+)

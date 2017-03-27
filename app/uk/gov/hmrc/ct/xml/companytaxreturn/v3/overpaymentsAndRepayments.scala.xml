@@ -1,0 +1,63 @@
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.ct600.v3.retriever.RepaymentsBoxRetriever
+
+@(boxRetriever: RepaymentsBoxRetriever)
+
+@B860 = @{ boxRetriever.b860().value }
+@B865 = @{ boxRetriever.b865().value }
+@B870 = @{ boxRetriever.b870().value }
+@B920 = @{ boxRetriever.b920().value.toString }
+@B925 = @{ boxRetriever.b925().value.toString }
+@B930 = @{ boxRetriever.b930().value.toString }
+@B935 = @{ boxRetriever.b935().value.toString }
+@B940 = @{ boxRetriever.b940().value }
+@B955 = @{ boxRetriever.b955().value }
+@B960_1 = @{ boxRetriever.b960_1().value }
+@B960_2 = @{ boxRetriever.b960_2().value }
+@B960_3 = @{ boxRetriever.b960_3().value }
+@B960_5 = @{ boxRetriever.b960_5().value }
+@B965 = @{ boxRetriever.b965().value }
+
+<OverpaymentsAndRepayments>
+    @if(B860.isDefined) {
+    <OwnRepaymentsLowerLimit Currency="GBP">@poundsPence(B860)</OwnRepaymentsLowerLimit> <!-- B860v3 -->
+    }
+    <!--
+        DO NOT INCLUDE B865v3 and B870v3 IF THEY ARE ZERO
+        -->
+    <RepaymentsForThePeriodCoveredByThisReturn>
+        @if(B865.getOrElse(BigDecimal(0)) != BigDecimal(0)) {
+        <CorporationTax>@poundsPence(B865)</CorporationTax> <!-- B865v3 -->
+        }
+        @if(B870.getOrElse(BigDecimal(0)) != BigDecimal(0)) {
+        <IncomeTax>@poundsPence(B870)</IncomeTax> <!-- B870v3 -->
+        }
+    </RepaymentsForThePeriodCoveredByThisReturn>
+    @if(!B920.isEmpty) {
+    <BankAccountDetails>
+        <BankName>@B920</BankName> <!-- B920v3 -->
+        <SortCode>@B925</SortCode> <!-- B925v3 -->
+        <AccountNumber>@B930</AccountNumber> <!-- B930v3 -->
+        <AccountName>@B935</AccountName> <!-- B935v3 -->
+        @if(B940.nonEmpty) {
+            <BuildingSocReference>@B940</BuildingSocReference> <!-- B940v3 -->
+        }
+    </BankAccountDetails>
+    }
+    @if(B955.isDefined && B960_1.isDefined && B965.isDefined) {
+    <PaymentToPerson>
+        <Recipient>@B955.get</Recipient> <!-- B955v3 -->
+        <Address>
+            <Line>@B960_1.get</Line>
+            <Line>@B960_2.get</Line>
+            @if(B960_3.nonEmpty) {
+            <Line>@B960_3.get</Line>
+            }
+            @if(B960_5.nonEmpty) {
+            <PostCode>@B960_5.get</PostCode>
+            }
+        </Address>
+        <NomineeReference>@B965.get</NomineeReference> <!-- B965v3 -->
+    </PaymentToPerson>
+    }
+</OverpaymentsAndRepayments>

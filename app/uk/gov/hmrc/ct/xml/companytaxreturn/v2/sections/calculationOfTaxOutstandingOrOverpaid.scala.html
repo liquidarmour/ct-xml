@@ -1,0 +1,201 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+@import uk.gov.hmrc.ct.xml.helpers.DisableTwirlImplicits._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b79 = @{optional(data, optionFromCT600[BigDecimal] { (br) => br.b79().value })}
+@b80 = @{optional(data, optionFromCT600[Boolean] { (br) => br.b80().value })}
+@b84 = @{optional(data, optionFromCT600[BigDecimal] { (br) => Some(br.b84().value) })}
+@b85 = @{optional(data, optionFromCT600[BigDecimal] { (br) => Some(br.b85().value) })}
+@b86 = @{decimalValue(data, decimalFromCT600 { (br) => br.b86().value },
+                            decimalFromCT600E { (br) => 0 })}
+
+@questionBox(id="calculationOfTaxOutstanding", title = Some("<h2>Calculation of tax outstanding or overpaid</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("78")
+            <span>Net corporation tax liability</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("box 70 minus box 77")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B78",
+                boxNumber = Some("78"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("79")
+            <span>Tax payable under S419 ICTA 1988</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = b79,
+                numberOfDigits = 1,
+                id = "B79",
+                boxNumber = Some("79"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("80")
+            <span>Put an 'X' in box 80 if you completed box A11 in the Supplementary Pages CT600A</span>
+        }
+        @questionCell(3) {
+            @optionalCheckboxField(
+                value = b80,
+                boxNumber = Some("80"),
+                id = "B80"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("81")
+            <span>Tax payable under S747 ICTA 1988</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B81",
+                boxNumber = Some("81"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("82")
+            <span>Tax payable under S501A ICTA 1988</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B82",
+                boxNumber = Some("82"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("83")
+            <span>Tax chargeable</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("total of boxes 78, 79, 81 and 82")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B83",
+                boxNumber = Some("83"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("84")
+            <span>Income tax deducted from gross income included in profits</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = b84,
+                numberOfDigits = 1,
+                id = "B84",
+                boxNumber = Some("84"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("85")
+            <span>Income tax repayable to the company</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = b85,
+                numberOfDigits = 1,
+                id = "B85",
+                boxNumber = Some("85"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("86")
+            <span>Tax payable - this is your self-assessment of tax payable</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("box 83 minus box 84")
+            @numberFieldForBigDecimal(
+                value = b86,
+                numberOfDigits = 1,
+                id = "B86",
+                boxNumber = Some("86"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

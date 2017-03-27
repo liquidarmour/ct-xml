@@ -1,0 +1,126 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Reliefs and deductions in terms of tax</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("71")
+            <span>CVS investment relief</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B71",
+                boxNumber = Some("71"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("72")
+            <span>Community investment relief</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B72",
+                boxNumber = Some("72"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("73")
+            <span>Double taxation relief</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B73",
+                boxNumber = Some("73"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("74")
+            <i>Put an 'X' in box 74 if box 73 includes an Underlying Rate relief claim</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B74",
+                boxNumber = Some("74")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("75")
+            <i>Put an 'X' in box 75 if box 73 includes any amount carried back from a later period</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B75",
+                boxNumber = Some("75")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("76")
+            <span>Advance corporation tax</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B76",
+                boxNumber = Some("76"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("77")
+            <span>Total reliefs and deductions in terms of tax</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("total of boxes 71, 72, 73 and 76")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B77",
+                boxNumber = Some("77"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

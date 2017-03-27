@@ -1,0 +1,104 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b190 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b190().value) })}
+@b205 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b205().value })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-income-continued", title = Some("<h2>Income continued</h2>")) {
+    @questionRow(id = "ct600-income-continued-b180", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("180", default = true)
+            <strong>Non-exempt dividends or distributions from non-UK resident companies</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B180",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-continued-b185", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("185", default = true)
+            <strong>Income from which Income Tax has been deducted</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B185",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-continued-b190", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("190", default = true)
+            <strong>Income from a property business</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b190,
+                id = "B190",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-continued-b195", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("195", default = true)
+            <strong>Non-trading gains on intangible fixed assets</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B195",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-continued-b200", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("200", default = true)
+            <strong>Tonnage Tax profits</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B200",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-continued-b205") {
+        @questionCell(6) {
+            @boxNumber("205", default = true)
+            <strong>Income not falling under any other heading</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b205,
+                id = "B205",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

@@ -1,0 +1,33 @@
+@import uk.gov.hmrc.ct.ct600.v2.retriever.ReturnStatementsBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper
+
+@(ct600Helper: V2CT600Helper[_], data: ReturnStatementsBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.helpers.DisableTwirlImplicits._
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+
+    @if(data.rsq1) {
+        <ThisPeriod>yes</ThisPeriod>
+    }
+    @if(data.rsq2) {
+        <EarlierPeriod>yes</EarlierPeriod>
+    }
+    @if(data.rsq3) {
+        <MultipleReturns>yes</MultipleReturns>
+    }
+    @if(data.rsq4) {
+        <ProvisionalFigures>yes</ProvisionalFigures>
+    }
+    @if(ct600Helper.taq01) {
+        <RegisteredAvoidanceScheme>yes</RegisteredAvoidanceScheme>
+    }
+    @if(data.rsq7 || data.rsq8) {
+        <TransferPricing>
+            @if(data.rsq7) {
+                <Adjustment>yes</Adjustment>
+            }
+            @if(data.rsq8) {
+                <SME>yes</SME>
+            }
+        </TransferPricing>
+    }

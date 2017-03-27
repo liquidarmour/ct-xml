@@ -1,0 +1,36 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b860 = @{optional(boxRetriever, optionFromRepayments[Int] { (br) => br.b860().value })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-small-repayments", title = Some("<h2 class=\"margin-top-none\">Small repayments</h2>")) {
+    @questionRow(id = "ct600-small-repayments-b860", css = rowClass) {
+        @questionCell(3) {
+            @boxNumber("860", default = true)
+            <strong>Do not repay sums of</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = b860,
+                id = "B860",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+        @questionCell(3) {
+            <strong>or less.</strong>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Read the overpayments and repayments section of the Company Tax Return Guide for specific guidance on when and how to make an entry in this box.</strong>
+        }
+    }
+}

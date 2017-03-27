@@ -1,0 +1,25 @@
+@import uk.gov.hmrc.ct.xml.model.submit.hmrc.ct600a.Ct600aModel
+
+@(data: Ct600aModel)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox() {
+    @questionRow() {
+        @questionCell(8) {
+            @questionNumber("A12")
+            <span>Total of all loans outstanding at end of return period - including all loans outstanding at the end of the return period, whether they were made in this period or an earlier one.</span>
+        }
+        @questionCell(4) {
+            @numberField(
+                value = data.section4.a12,
+                numberOfDigits = 1,
+                id = "A12",
+                boxNumber = Some("A12"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

@@ -1,0 +1,82 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox() {
+    <p>Only complete part 3:</p>
+    <ul>
+        <li>where the loan was made during the return period, and</li>
+        <li>where repayment, release or write off was more than nine months after the end of the period in which the loan was made, and</li>
+        <li>the return is submitted after the date on which relief is due (if the return is sent in very late, at least twenty-one months after the end of the return period).</li>
+    </ul>
+    <p>If you are unsure whether or not to complete part 3, apply the following questions to each claim.</p>
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <span>Put an 'X' in this box if the loan was made in the return period. </span>
+            <br />
+            <span>If it was not, then you cannot complete part 3; if it was then go on to the next box</span>
+        }
+        @questionCell(4) {
+            @checkboxField(
+                value = false,
+                id = "LoanMadeInReturnPeriod"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+        }
+        @questionCell(3) {
+            <i>dd/mm/yyyy</i>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <span>End date of accounting period in which the loan was repaid, released or written off</span>
+        }
+        @questionCell(1, alignRight = true) {
+            <span>a</span>
+        }
+        @questionCell(3) {
+            @optionalDateField(
+                value = None,
+                id = "CT600AAPEnd"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <span>Enter the date 9 months after the end of that accounting period</span>
+        }
+        @questionCell(1, alignRight = true) {
+            <span>b</span>
+        }
+        @questionCell(3) {
+            @optionalDateField(
+                value = None,
+                id = "CT600AAPEndPlusNine"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <span>Date you are sending in the company tax return for the period in which the loan was made</span>
+        }
+        @questionCell(1, alignRight = true) {
+            <span>c</span>
+        }
+        @questionCell(3) {
+            @optionalDateField(
+                value = None,
+                id = "CT600ADateLoanMade"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <p>If the date at c is earlier than the date at b you cannot complete part 3, but can make a separate claim for the relief which is not due until the date in b.</p>
+            <p>If the date at c is later than the date at b you can complete part 3 below to obtain the relief now.</p>
+        }
+    }
+}

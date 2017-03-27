@@ -1,0 +1,4 @@
+@(size: Integer, alignCenter: Boolean = false, alignRight: Boolean = false, alignTop: Boolean = false)(content: Html)
+<div class="ct600--question-cell cell-size-@size @if(alignCenter) { text-align--center } @if(alignRight){ text-align--right } @if(alignTop) { vertical-align--top }">
+    @content
+</div>

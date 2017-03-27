@@ -1,0 +1,79 @@
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat.XML
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.ct600e.{xml=> ct600eXml}
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.xml.{aboutYourReturn, overpaymentsAndRepayments}
+@import uk.gov.hmrc.ct.ct600j.v3.retriever.CT600JBoxRetriever
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+@import uk.gov.hmrc.ct.xml.retrievers.V3BaseCT600BoxRetriever
+@(data: V3BaseCT600BoxRetriever with CT600EBoxRetriever, accountsXml: play.twirl.api.Xml, attachments: Seq[play.twirl.api.Xml], accountsAreIxbrl: Boolean, returnType: String)
+
+<CompanyTaxReturn ReturnType="@{returnType}" xmlns="http://www.govtalk.gov.uk/taxation/CT/5">
+
+    <CompanyInformation>
+        <CompanyName>@{data.e1().value}</CompanyName>
+        @data.ac1().value.find(_.nonEmpty).map{ crn =>
+        <RegistrationNumber>@crn</RegistrationNumber>
+        }
+        <Reference>@{data.utr().value}</Reference>
+        <CompanyType>@{data.companyType.value.hmrcCode}</CompanyType>
+        <PeriodCovered>
+            <From>@{dateFormat(data.e3().value, XML)}</From>
+            <To>@{dateFormat(data.e4().value, XML)}</To>
+        </PeriodCovered>
+    </CompanyInformation>
+    <ReturnInfoSummary>
+        @aboutYourReturn(data)
+        @if(data.b65) {
+        <RegisteredAvoidanceScheme>yes</RegisteredAvoidanceScheme>
+        }
+        <Accounts>
+            <ThisPeriodAccounts>yes</ThisPeriodAccounts>
+            @if(!accountsAreIxbrl){<NoAccountsReason>PDF accounts attached with explanation</NoAccountsReason>}
+        </Accounts>
+        <Computations>
+            <NoComputationsReason>Not within charge to CT</NoComputationsReason>
+        </Computations>
+        <SupplementaryPages>
+            <CT600E>yes</CT600E>
+        @if(data.b65) {
+            <CT600J>yes</CT600J>
+        }
+        </SupplementaryPages>
+
+    </ReturnInfoSummary>
+    <CompanyTaxCalculation>
+        <Income>
+        </Income>
+        <ChargeableProfits Currency="GBP">0.00</ChargeableProfits>
+        <NetCorporationTaxChargeable Currency="GBP">0.00</NetCorporationTaxChargeable>
+    </CompanyTaxCalculation>
+    <CalculationOfTaxOutstandingOrOverpaid>
+        <TaxPayable Currency="GBP">0.00</TaxPayable>
+    </CalculationOfTaxOutstandingOrOverpaid>
+    @overpaymentsAndRepayments(data)
+    <Declaration>
+        <AcceptDeclaration>yes</AcceptDeclaration>
+        <Name>@{data.b975.value.getOrElse("")}</Name>
+        <Status>@{data.b985.value.getOrElse("")}</Status>
+    </Declaration>
+
+    @ct600eXml.ct600e(data)
+
+    @(data match{
+        case br: CT600JBoxRetriever => uk.gov.hmrc.ct.xml.companytaxreturn.v3.ct600j.xml.ct600j(br)
+        case _ => {}
+    })
+
+    <AttachedFiles>
+        @if(accountsAreIxbrl){
+        <XBRLsubmission>
+            @accountsXml
+        </XBRLsubmission>
+        }
+        @if(!accountsAreIxbrl) @{accountsXml}
+        @attachments.map{ attachment => @attachment }
+    </AttachedFiles>
+</CompanyTaxReturn>

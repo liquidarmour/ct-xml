@@ -1,0 +1,75 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b760 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b760().value) })}
+@b765 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b765().value) })}
+@b775 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b775().value) })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-qualifying-expenditure", title = Some("<h2>Qualifying expenditure</h2>")) {
+    @questionRow(id = "ct600-qualifying-expenditure-b760", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("760", default = true)
+            <strong>Machinery and plant on which first year allowance is claimed</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b760,
+                id = "B760",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-qualifying-expenditure-b765", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("765", default = true)
+            <strong>Designated environmentally friendly machinery and plant</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b765,
+                id = "B765",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-qualifying-expenditure-b770", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("770", default = true)
+            <strong>Machinery and plant on long-life assets and integral features</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B770",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-qualifying-expenditure-b775") {
+        @questionCell(6) {
+            @boxNumber("775", default = true)
+            <strong>Other machinery and plant</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b775,
+                id = "B775",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

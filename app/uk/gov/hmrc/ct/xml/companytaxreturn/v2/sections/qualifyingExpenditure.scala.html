@@ -1,0 +1,81 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b118 = @{optional(data, optionFromCT600[Int] { (br) => Some(br.b118().value) })}
+@b174 = @{optional(data, optionFromCT600[Int] { (br) => Some(br.b174().value) })}
+@b121 = @{optional(data, optionFromCT600[Int] { (br) => Some(br.b121().value) })}
+
+@questionBox(title = Some("<h2>Qualifying expenditure</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("118")
+            <span>Machinery and plant on which first year allowance is claimed</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b118,
+                numberOfDigits = 1,
+                id = "B118",
+                boxNumber = Some("118"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("174")
+            <span>Designated environmentally friendly machinery and plant</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b174,
+                numberOfDigits = 1,
+                id = "B174",
+                boxNumber = Some("174"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("120")
+            <span>Machinery and plant on long-life assets and integral features</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B120",
+                boxNumber = Some("120"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("121")
+            <span>Other machinery and plant</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b121,
+                numberOfDigits = 1,
+                id = "B121",
+                boxNumber = Some("121"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

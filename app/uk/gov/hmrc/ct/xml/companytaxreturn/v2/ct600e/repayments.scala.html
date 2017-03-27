@@ -1,0 +1,162 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.ct600e.v2.retriever.CT600EBoxRetriever
+
+@(data: CT600EBoxRetriever with FilingAttributesBoxValueRetriever)
+
+    @import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Repayments</h2>")) {
+    <p>Enter details of repayments of Income Tax/payments of Transitional Relief for income arising during the period covered by these Supplementary Pages</p>
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+
+        }
+        @questionCell(3) {
+            <span>Income Tax</span>
+        }
+        @questionCell(3) {
+            <span>Transitional Relief</span>
+            <br />
+            <i>Charities only</i>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <span>E1/E1a Amount already claimed for period using form R68(2000) or R68(CASC)</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e1().value,
+                numberOfDigits = 1,
+                id = "E1",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E1"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "E1a",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E1a"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <span>E2/E2b Total repayment/payment due</span>
+            <br />
+            <span>and either</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e2().value,
+                numberOfDigits = 1,
+                id = "E2",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E2"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "E2b",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E2b"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <span>E3/E3c Further repayment/payment due</span>
+            <br />
+            <span>Where E2/E2b is more than E1/E1a</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e3().value,
+                numberOfDigits = 1,
+                id = "E3",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E3"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "E3c",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E3c"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <span>or</span>
+            <br />
+            <span>E4/E4d Amounts overclaimed for period</span>
+            <br />
+            <span>Where E1/E1a is more than E2/E2b</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e4().value,
+                numberOfDigits = 1,
+                id = "E4",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E4"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "E4d",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E4d"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <i>If any of the amounts in boxes E3/E3c have been included in any repayment/payment claim on form R68(2000) or R68(CASC) put an 'X' in this box.</i>
+        }
+        @questionCell(6) {
+            @optionalCheckboxField(
+                value = data.e1013().value,
+                id = "E1013"
+            )
+        }
+    }
+}

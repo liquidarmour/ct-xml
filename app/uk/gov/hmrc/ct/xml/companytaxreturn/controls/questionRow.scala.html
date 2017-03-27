@@ -1,0 +1,4 @@
+@(id: String = "", css: Option[String] = None)(content: Html)
+<div @if(id.nonEmpty) {id="@id"} class="ct600--question-row @if(css.nonEmpty){ @css.get }">
+    @content
+</div>

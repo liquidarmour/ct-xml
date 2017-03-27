@@ -1,0 +1,27 @@
+@(value: BigDecimal,
+  numberOfDigits: Int,
+  id: String,
+  prefix: Option[String] = None,
+  suffix: Option[String] = None,
+  showDecimalPlaces: Boolean = true,
+  onlyWholeNumbers: Boolean = false,
+  disabled: Boolean = false,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default",
+  inline: Boolean = false,
+  containerCss: Option[String] = None)
+
+@optionalNumberFieldForBigDecimal(
+    value = Some(value),
+    numberOfDigits = numberOfDigits,
+    prefix = prefix,
+    suffix = suffix,
+    showDecimalPlaces = showDecimalPlaces,
+    onlyWholeNumbers = onlyWholeNumbers,
+    disabled = disabled,
+    boxNumber = boxNumber,
+    boxNumberColor = boxNumberColor,
+    inline = inline,
+    containerCss = containerCss,
+    id = id
+)

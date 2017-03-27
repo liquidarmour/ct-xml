@@ -1,0 +1,29 @@
+@import uk.gov.hmrc.ct.xml.model.submit.hmrc.ct600a.Ct600aModel
+
+@(data: Ct600aModel)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox() {
+    @questionRow() {
+        @questionCell(8) {
+            @questionNumber("A13")
+            <span>Tax payable under S419 ICTA 1988 </span>
+            <br />
+            <i>Copy the figure in box A13 to box 79 on form CT600</i>
+        }
+        @questionCell(4) {
+            @fieldDescription("box A3 minus total of boxes A7 and A11")
+            @numberField(
+                value = data.section5.a13,
+                numberOfDigits = 1,
+                id = "A13",
+                boxNumber = Some("A13"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

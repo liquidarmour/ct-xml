@@ -1,0 +1,387 @@
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter._
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.xml.retrievers.V3BaseCT600BoxRetriever
+@import uk.gov.hmrc.ct.ct600a.v3.retriever.CT600ABoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@import uk.gov.hmrc.ct.ct600j.v3.retriever.CT600JBoxRetriever
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+
+@(boxRetriever: V3BaseCT600BoxRetriever, accountsXml: play.twirl.api.Xml, computationsXmlEncoded: String, accountsAreIxbrl: Boolean, attachments: Seq[play.twirl.api.Xml], returnType: String)
+
+@AC1 = @{ boxRetriever.ac1().value.find(_.nonEmpty)}
+@A70 = @{ optional(boxRetriever, optionFromCT600A[BigDecimal]{ (br) => br.a70().value })}
+@B1 = @{ boxRetriever.b1().value.toString }
+@B3 = @{ boxRetriever.b3().value.toString }
+@B4 = @{ boxRetriever.b4().value.toString }
+@companyType = @{ boxRetriever.companyType().value}
+@B30 = @{ boxRetriever.b30().value }
+@B35 = @{ boxRetriever.b35().value }
+@B65 = @{ boxRetriever.b65().value.getOrElse(false) }
+@B95 = @{ boxRetriever.b95().value }
+@B115 = @{ optional(boxRetriever, optionFromAboutThisReturn[Boolean]{ (br) => Some(br.b115().value) }).getOrElse(false)}
+@B140 = @{ boxRetriever.b140().value.getOrElse(false) }
+@B145 = @{ boxRetriever.b145().value }
+@B150 = @{ boxRetriever.b150().value.getOrElse(false) }
+@B155 = @{ boxRetriever.b155().value }
+@B160 = @{ boxRetriever.b160().value }
+@B165 = @{ boxRetriever.b165().value }
+@B170 = @{ boxRetriever.b170().value }
+@B190 = @{ boxRetriever.b190().value }
+@B205 = @{ boxRetriever.b205().value }
+@B235 = @{ boxRetriever.b235().value }
+@B275 = @{ boxRetriever.b275().value }
+@B280 = @{ boxRetriever.b280().value }
+@B295 = @{ boxRetriever.b295().value }
+@B300 = @{ boxRetriever.b300().value }
+@B305 = @{ boxRetriever.b305().value }
+@B315 = @{ boxRetriever.b315().value }
+@B330 = @{ boxRetriever.b330().value.toString }
+@B335 = @{ boxRetriever.b335().value }
+@B340 = @{ boxRetriever.b340().value }
+@B345 = @{ boxRetriever.b345().value }
+@B380 = @{ boxRetriever.b380().value }
+@B385 = @{ boxRetriever.b385().value }
+@B390 = @{ boxRetriever.b390().value }
+@B395 = @{ boxRetriever.b395().value }
+@B430 = @{ boxRetriever.b430().value }
+@B440 = @{ boxRetriever.b440().value }
+@B475 = @{ boxRetriever.b475().value }
+@B480 = @{ boxRetriever.b480().value }
+@B485 = @{ boxRetriever.b485().value }
+@B510 = @{ boxRetriever.b510().value }
+@B515 = @{ boxRetriever.b515().value }
+@B520 = @{ boxRetriever.b520().value }
+@B525 = @{ boxRetriever.b525().value }
+@B528 = @{ boxRetriever.b528().value }
+@B595 = @{ boxRetriever.b595().value }
+@B600 = @{ boxRetriever.b600().value }
+@B605 = @{ boxRetriever.b605().value }
+@B620 = @{ boxRetriever.b620().value }
+@B690 = @{ boxRetriever.b690().value }
+@B695 = @{ boxRetriever.b695().value }
+@B700 = @{ boxRetriever.b700().value }
+@B705 = @{ boxRetriever.b705().value }
+@B710 = @{ boxRetriever.b710().value }
+@B735 = @{ boxRetriever.b735().value }
+@B750 = @{ boxRetriever.b750().value }
+@B755 = @{ boxRetriever.b755().value }
+@B760 = @{ boxRetriever.b760().value }
+@B765 = @{ boxRetriever.b765().value }
+@B775 = @{ boxRetriever.b775().value }
+@B780 = @{ boxRetriever.b780().value }
+@B860 = @{ boxRetriever.b860().value }
+@B865 = @{ boxRetriever.b865().value }
+@B870 = @{ boxRetriever.b870().value }
+@B920 = @{ boxRetriever.b920().value.toString }
+@B925 = @{ boxRetriever.b925().value.toString }
+@B930 = @{ boxRetriever.b930().value.toString }
+@B935 = @{ boxRetriever.b935().value.toString }
+@B940 = @{ boxRetriever.b940().value }
+@B955 = @{ boxRetriever.b955().value }
+@B960_1 = @{ boxRetriever.b960_1().value }
+@B960_2 = @{ boxRetriever.b960_2().value }
+@B960_3 = @{ boxRetriever.b960_3().value }
+@B960_5 = @{ boxRetriever.b960_5().value }
+@B965 = @{ boxRetriever.b965().value }
+@B975 = @{ boxRetriever.b975().value }
+@B980 = @{ boxRetriever.b980().value }
+@B985 = @{ boxRetriever.b985().value }
+@CP2 = @{ boxRetriever.cp2().value }
+@CP7 = @{ boxRetriever.cp7().value }
+
+@budgetChangesEnabled = @{ true /* Comes from feature flags */ }
+
+<CompanyTaxReturn ReturnType="@{returnType}" xmlns="http://www.govtalk.gov.uk/taxation/CT/5">
+    <CompanyInformation>
+        <CompanyName>@B1</CompanyName> <!-- B1v3 -->
+        @AC1.map{ crn =>
+        <RegistrationNumber>@crn</RegistrationNumber>
+        }
+        <Reference>@B3</Reference> <!-- B3v3 -->
+        <CompanyType>@companyType.hmrcCode</CompanyType> <!-- B4v3 -->
+        <PeriodCovered>
+            <From>@formatXml(B30)</From> <!-- B30v3 -->
+            <To>@formatXml(B35)</To> <!-- B35v3 -->
+        </PeriodCovered>
+    </CompanyInformation>
+
+    <ReturnInfoSummary>
+        @aboutYourReturn(boxRetriever)
+        @if(B65) {
+            <RegisteredAvoidanceScheme>yes</RegisteredAvoidanceScheme> <!-- B65v3 -->
+        }
+        <Accounts>
+        @if(accountsAreIxbrl) {
+            <ThisPeriodAccounts>yes</ThisPeriodAccounts>
+        } else {
+            <ThisPeriodAccounts>yes</ThisPeriodAccounts> <NoAccountsReason>PDF accounts attached with explanation</NoAccountsReason>
+        }
+        </Accounts>
+        <Computations>
+                <!--	<NoComputationsReason>Company dormant</NoComputationsReason> -->
+            <ThisPeriodComputations>yes</ThisPeriodComputations>
+        </Computations>
+        @if(B95 || B115 || B140) {
+            <SupplementaryPages>
+                @if(B95) {
+                    <CT600A>yes</CT600A>
+                }
+                @if(B115) {
+                    <CT600E>yes</CT600E>
+                }
+                @if(B140) {
+                    <CT600J>yes</CT600J>
+                }
+            </SupplementaryPages>
+        }
+    </ReturnInfoSummary>
+
+    <Turnover>
+        <Total Currency="GBP">@poundsPence(CP7)</Total>  <!-- B145v3 TODO fix me-->
+
+        @if(B150) {
+            <OtherFinancialConcerns>yes</OtherFinancialConcerns> <!-- B150v3 -->
+        }
+    </Turnover>
+
+    <CompanyTaxCalculation>
+        <Income>
+            <Trading>
+                <Profits>@poundsPence(B155)</Profits>  <!-- B155v3 -->
+                @if(B160.isDefined) {
+                    <LossesBroughtForward>@poundsPence(B160)</LossesBroughtForward> <!-- B160v3 -->
+                }
+                <NetProfits Currency="GBP">@poundsPence(B165)</NetProfits>  <!-- B165v3 -->
+            </Trading>
+            <NonTradingLoanProfitsAndGains>@poundsPence(B170)</NonTradingLoanProfitsAndGains> <!-- B170v3 -->
+            <PropertyBusinessIncome>@poundsPence(B190)</PropertyBusinessIncome>  <!-- B190v3 -->
+            @if(B205.isDefined) {
+                <OtherIncome>@poundsPence(B205)</OtherIncome> <!-- B205v3 -->
+            }
+        </Income>
+        <ProfitsBeforeOtherDeductions Currency="GBP">@poundsPence(B235)</ProfitsBeforeOtherDeductions>  <!-- B235v3 -->
+        <DeductionsAndReliefs>
+            <TradingLosses Currency="GBP">@poundsPence(B275)</TradingLosses>  <!-- B275v3 -->
+            @if(B280) {
+                <TradingLossesCarriedBack>yes</TradingLossesCarriedBack> <!-- B280v3 -->
+            }
+            <Total>@poundsPence(B295)</Total> <!-- B295v3 -->
+        </DeductionsAndReliefs>
+        <ChargesAndReliefs>
+            <ProfitsBeforeDonationsAndGroupRelief Currency="GBP">@poundsPence(B300)</ProfitsBeforeDonationsAndGroupRelief> <!-- B300v3 -->
+            <QualifyingDonations>@poundsPence(B305)</QualifyingDonations> <!-- B305v3 -->
+        </ChargesAndReliefs>
+        <ChargeableProfits Currency="GBP">@poundsPence(B315)</ChargeableProfits> <!-- B315v3 -->
+        <CorporationTaxChargeable>
+            <FinancialYearOne>
+                <Year>@B330</Year> <!-- B330v3 -->
+                <Details>
+                    <Profit>@poundsPence(B335)</Profit> <!-- B335v3 -->
+                    <TaxRate>@{B340 * 100}</TaxRate> <!-- B340v3 -->
+                    <Tax Currency="GBP">@poundsPence(B345)</Tax> <!-- B345v3 -->
+                </Details>
+            </FinancialYearOne>
+            @if(B380.nonEmpty) {
+                <FinancialYearTwo>
+                    <Year>@B380</Year> <!-- B380v3 -->
+                    <Details>
+                        <Profit>@poundsPence(B385)</Profit> <!-- B385v3 -->
+                        <TaxRate>@{B390 * 100}</TaxRate> <!-- B390v3 -->
+                        <Tax Currency="GBP">@poundsPence(B395)</Tax> <!-- B395v3 -->
+                    </Details>
+                </FinancialYearTwo>
+            }
+        </CorporationTaxChargeable>
+        <CorporationTax Currency="GBP">@poundsPence(B430)</CorporationTax> <!-- B430v3 -->
+        <NetCorporationTaxChargeable Currency="GBP">@poundsPence(B440)</NetCorporationTaxChargeable> <!-- B440v3 -->
+    </CompanyTaxCalculation>
+
+    <CalculationOfTaxOutstandingOrOverpaid>
+        <NetCorporationTaxLiability Currency="GBP">@poundsPence(B475)</NetCorporationTaxLiability> <!-- B475v3 -->
+        @if(B480.isDefined) {
+            @if(B95) {
+                <LoansToParticipators Currency="GBP">@poundsPence(B480)</LoansToParticipators> <!-- B480v3 -->
+                }
+        }
+        <!-- B485v3 should be completed if [A70] is greater than 0 -->
+        @if(A70.getOrElse(BigDecimal(0)) > 0) {
+            @if(B485) {
+                <CT600AreliefDue>yes</CT600AreliefDue> <!-- B485v3 -->
+            }
+        }
+        <TaxChargeable Currency="GBP">@poundsPence(B510)</TaxChargeable> <!-- B510v3 -->
+        <IncomeTax>
+            @if(B515.isDefined) {
+                <DeductedIncomeTax Currency="GBP">@poundsPence(B515)</DeductedIncomeTax> <!-- B515v3 -->
+            }
+            <!-- DO NOT COMPLETE IF 0 or negative! *** -->
+            @if(B520.getOrElse(BigDecimal(0)) > 0) {
+                <TaxRepayable Currency="GBP">@poundsPence(B520)</TaxRepayable> <!-- B520v3  -->
+            }
+        </IncomeTax>
+        <TaxPayable Currency="GBP">@poundsPence(B525)</TaxPayable> <!-- B525v3 -->
+        @if(budgetChangesEnabled && B528.nonEmpty) {
+            <TaxPayableIncludingRestitutionTax Currency="GBP">@poundsPence(B528)</TaxPayableIncludingRestitutionTax> <!-- B528v3 -->
+        }
+    </CalculationOfTaxOutstandingOrOverpaid>
+
+    <TaxReconciliation>
+        @if(B595.isDefined) {
+            <TaxAlreadyPaid Currency="GBP">@poundsPence(B595)</TaxAlreadyPaid> <!-- B595v3 -->
+        }
+        <TaxOutstandingOrOverpaid>
+                <!-- DO NOT COMPLETE B600v3 IF  NEGATIVE! -->
+            @if(B600.getOrElse(BigDecimal(-1)) >= 0) {
+                <TaxOutstanding Currency="GBP">@poundsPence(B600)</TaxOutstanding> <!-- B600v3 -->
+                }
+
+            <!--  DO NOT COMPLETE B605v3 IF NEGATIVE! -->
+            @if(B605.getOrElse(BigDecimal(-1)) >= 0) {
+                <TaxOverpaid Currency="GBP">@poundsPence(B605)</TaxOverpaid> <!-- B605v3 -->
+            }
+        </TaxOutstandingOrOverpaid>
+    </TaxReconciliation>
+
+    <IndicatorsAndInformation>
+    @if(B620.isDefined) {
+        <FrankedInvestmentIncome Currency="GBP">@poundsPence(B620)</FrankedInvestmentIncome> <!-- B620v3 -->
+    }
+    </IndicatorsAndInformation>
+
+    <AllowancesAndCharges>
+        @if(B690.isDefined) {
+            <AIACapitalAllowancesInc Currency="GBP">@poundsPence(B690)</AIACapitalAllowancesInc> <!-- B690v3 -->
+        }
+        <MachineryAndPlantSpecialRatePool>
+            @if(B695.isDefined) {
+                <BalancingCharges>@poundsPence(B695)</BalancingCharges> <!-- B695v3 -->
+            }
+            @if(B700.isDefined) {
+                <CapitalAllowances>@poundsPence(B700)</CapitalAllowances> <!-- B700v3 -->
+            }
+        </MachineryAndPlantSpecialRatePool>
+        <MachineryAndPlantMainPool>
+            @if(B705.isDefined) {
+                <BalancingCharges Currency="GBP">@poundsPence(B705)</BalancingCharges> <!-- B705v3 -->
+            }
+            @if(B710.isDefined) {
+                <CapitalAllowances>@poundsPence(B710)</CapitalAllowances> <!-- B710v3 -->
+            }
+        </MachineryAndPlantMainPool>
+    </AllowancesAndCharges>
+
+    <NotIncluded>
+        @if(B735.isDefined) {
+            <AIACapitalAllowancesNotInc Currency="GBP">@poundsPence(B735)</AIACapitalAllowancesNotInc> <!-- B735v3 -->
+        }
+        <OtherAllowancesAndCharges>
+            @if(B750.isDefined) {
+                <BalancingCharges>@poundsPence(B750)</BalancingCharges> <!-- B750v3 -->
+            }
+            @if(B755.isDefined) {
+                <CapitalAllowances Currency="GBP">@poundsPence(B755)</CapitalAllowances> <!-- B755v3 -->
+            }
+        </OtherAllowancesAndCharges>
+    </NotIncluded>
+
+    <QualifyingExpenditure>
+        <MachineryAndPlantExpenditure Currency="GBP">@poundsPence(B760)</MachineryAndPlantExpenditure> <!-- B760v3 -->
+
+        <DesignatedEnvironmentallyFriendlyMachineryAndPlant>@poundsPence(B765)</DesignatedEnvironmentallyFriendlyMachineryAndPlant> <!-- B765v3 -->
+
+        <OtherMachineryAndPlant Currency="GBP">@poundsPence(B775)</OtherMachineryAndPlant> <!-- B775v3 -->
+    </QualifyingExpenditure>
+
+    <LossesDeficitsAndExcess>
+        <AmountArising>
+            <LossesOfTradesUK>
+                <Arising>@poundsPence(B780)</Arising> <!-- B780v3 -->
+            </LossesOfTradesUK>
+        </AmountArising>
+    </LossesDeficitsAndExcess>
+
+    <OverpaymentsAndRepayments>
+        @if(B860.isDefined) {
+            <OwnRepaymentsLowerLimit Currency="GBP">@poundsPence(B860)</OwnRepaymentsLowerLimit> <!-- B860v3 -->
+            }
+    <!--
+        DO NOT INCLUDE B865v3 and B870v3 IF THEY ARE ZERO
+        -->
+        <RepaymentsForThePeriodCoveredByThisReturn>
+            @if(B865.getOrElse(BigDecimal(0)) != BigDecimal(0)) {
+                <CorporationTax>@poundsPence(B865)</CorporationTax> <!-- B865v3 -->
+            }
+            @if(B870.getOrElse(BigDecimal(0)) != BigDecimal(0)) {
+                <IncomeTax>@poundsPence(B870)</IncomeTax> <!-- B870v3 -->
+            }
+        </RepaymentsForThePeriodCoveredByThisReturn>
+        @if(!B920.isEmpty) {
+            <BankAccountDetails>
+                <BankName>@B920</BankName> <!-- B920v3 -->
+                <SortCode>@B925</SortCode> <!-- B925v3 -->
+                <AccountNumber>@B930</AccountNumber> <!-- B930v3 -->
+                <AccountName>@B935</AccountName> <!-- B935v3 -->
+                @if(B940.nonEmpty) {
+                    <BuildingSocReference>@B940</BuildingSocReference> <!-- B940v3 -->
+                }
+            </BankAccountDetails>
+        }
+        @if(B955.isDefined && B960_1.isDefined && B965.isDefined) {
+            <PaymentToPerson>
+                <Recipient>@B955.get</Recipient> <!-- B955v3 -->
+                <Address>
+                    <Line>@B960_1.get</Line>
+                    <Line>@B960_2.get</Line>
+                    @if(B960_3.nonEmpty) {
+                        <Line>@B960_3.get</Line>
+                    }
+                    @if(B960_5.nonEmpty) {
+                        <PostCode>@B960_5.get</PostCode>
+                    }
+                </Address>
+                <NomineeReference>@B965.get</NomineeReference> <!-- B965v3 -->
+            </PaymentToPerson>
+        }
+    </OverpaymentsAndRepayments>
+
+    <Declaration>
+        <AcceptDeclaration>yes</AcceptDeclaration> <!-- N092 - must be answered YES -->
+        <Name>@{boxRetriever.b975.value.getOrElse("")}</Name> <!-- 975v3 @B975.getOrElse("") TODO-->
+        <Status>@{boxRetriever.b985.value.getOrElse("")}</Status> <!-- 985v3 @B985.getOrElse("") TODO-->
+    </Declaration>
+
+    @if(B95) {
+        @(boxRetriever match{
+            case br: CT600ABoxRetriever => uk.gov.hmrc.ct.xml.companytaxreturn.v3.ct600a.xml.ct600a(br)
+            case _ => {}
+        })
+    }
+
+    @(boxRetriever match{
+        case br: CT600EBoxRetriever => uk.gov.hmrc.ct.xml.companytaxreturn.v3.ct600e.xml.ct600e(br)
+        case _ => {}
+    })
+
+    @(boxRetriever match{
+        case br: CT600JBoxRetriever => uk.gov.hmrc.ct.xml.companytaxreturn.v3.ct600j.xml.ct600j(br)
+        case _ => {}
+    })
+
+    <!-- <WelshReturn>yes</WelshReturn> -->
+
+    <JointAccounts>yes</JointAccounts>
+
+    <AttachedFiles>
+        <XBRLsubmission> <!-- [N107] -->
+            <Computation>
+                <Instance>
+                    <EncodedInlineXBRLDocument>@computationsXmlEncoded</EncodedInlineXBRLDocument>
+                </Instance>
+            </Computation>
+            @if(accountsAreIxbrl) {@accountsXml}
+        </XBRLsubmission>
+        @if(!accountsAreIxbrl) {@accountsXml}
+        @attachments.map { attachment => @attachment }
+    </AttachedFiles>
+</CompanyTaxReturn>

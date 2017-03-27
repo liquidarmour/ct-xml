@@ -1,0 +1,90 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@companyName = @{stringValue(data, stringFromCT600 { (br) => br.b155.value },
+                                   stringFromCT600E{ (br) => br.e1020.value },
+                                   defaultValue(""))}
+@postcode = @{stringValue(data, stringFromRepayments { (br) => br.b1575.value.getOrElse("") } )}
+
+@ct600Helper = @{V2CT600Helper.apply(data)}
+
+@questionBox(title = Some("<h2>Company information</h2>")) {
+    @questionRow() {
+        @questionCell(12) {
+            <span>Company name</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @textField(
+                value = companyName,
+                id = "CT600CompanyName",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(4) {
+            <span>Company registration number</span>
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(4) {
+            <span>Tax Reference as shown on the CT603</span>
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(2) {
+            <span>Type of Company</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(4) {
+            @numberField(
+                value = data.ac1().value.getOrElse(""),
+                numberOfDigits = 10,
+                id = "AC1"
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(4) {
+            @numberField(
+                value = data.utr.value,
+                numberOfDigits = 13,
+                id = "CT600UTR"
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(2) {
+            @textField(
+                value = data.companyType().value.hmrcCode.toString,
+                id = "CT600CompanyType",
+                widthClass = Some("half")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <span>Registered office address</span>
+        }
+    }
+    @questionRow(css = Some("input-like")) {
+        @questionCell(7) {
+            <span>@{ct600Helper.companyAddressLine}</span>
+        }
+        @questionCell(5) {
+            <span>Postcode</span>
+            <span>@postcode</span>
+        }
+    }
+}

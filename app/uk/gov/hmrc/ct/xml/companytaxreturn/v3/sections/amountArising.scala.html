@@ -1,0 +1,180 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b780 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b780().value) })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-amount-arising", title = Some("<h2 class=\"margin-top-none\">Amount arising</h2>"), minimumPadding = true) {
+    @questionRow(css = rowClass) {
+        @questionCell(2) {
+
+        }
+        @questionCell(5) {
+            <strong>Amount</strong>
+        }
+        @questionCell(5) {
+            <strong>Maximum available for surrender as group relief</strong>
+        }
+    }
+    @questionRow(id = "ct600-amount-arising-b780-b785", css = rowClass) {
+        @questionCell(2) {
+            <strong>Losses of trades carried on wholly or partly in the UK</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b780,
+                numberOfDigits = 11,
+                id = "B780",
+                prefix = Some("&pound;"),
+                boxNumber = Some("780")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B785",
+                prefix = Some("&pound;"),
+                boxNumber = Some("785")
+            )
+        }
+    }
+    @questionRow(id = "ct600-amount-arising-b790", css = rowClass) {
+        @questionCell(2) {
+            <strong>Losses of trades carried on wholly outside the UK</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B790",
+                prefix = Some("&pound;"),
+                boxNumber = Some("790")
+            )
+        }
+        @questionCell(5) {
+        }
+    }
+    @questionRow(id = "ct600-amount-arising-b795-b800", css = rowClass) {
+        @questionCell(2) {
+            <strong>Non-trade deficits on loan relationships and derivative contracts</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B795",
+                prefix = Some("&pound;"),
+                boxNumber = Some("795")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B800",
+                prefix = Some("&pound;"),
+                boxNumber = Some("800")
+            )
+        }
+    }
+    @questionRow(id = "ct600-amount-arising-b805-b810", css = rowClass) {
+        @questionCell(2) {
+            <strong>UK property business losses</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B805",
+                prefix = Some("&pound;"),
+                boxNumber = Some("805")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B810",
+                prefix = Some("&pound;"),
+                boxNumber = Some("810")
+            )
+        }
+    }
+    @questionRow(id = "ct600-amount-arising-b815", css = rowClass) {
+        @questionCell(2) {
+            <strong>Overseas property nusiness losses</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B815",
+                prefix = Some("&pound;"),
+                boxNumber = Some("815")
+            )
+        }
+        @questionCell(5) {
+        }
+    }
+    @questionRow(id = "ct600-amount-arising-b820", css = rowClass) {
+        @questionCell(2) {
+            <strong>Losses from miscellaneous transactions</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B820",
+                prefix = Some("&pound;"),
+                boxNumber = Some("820")
+            )
+        }
+        @questionCell(5) {
+        }
+    }
+    @questionRow(id = "ct600-amount-arising-b825", css = rowClass) {
+        @questionCell(2) {
+            <strong>Capital losses</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B825",
+                prefix = Some("&pound;"),
+                boxNumber = Some("825")
+            )
+        }
+        @questionCell(5) {
+        }
+    }
+    @questionRow(id = "ct600-amount-arising-b830-b835") {
+        @questionCell(2) {
+            <strong>Non-trading losses on intangible fixed assets</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B830",
+                prefix = Some("&pound;"),
+                boxNumber = Some("830")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B835",
+                prefix = Some("&pound;"),
+                boxNumber = Some("835")
+            )
+        }
+    }
+}

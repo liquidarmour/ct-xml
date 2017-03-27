@@ -1,0 +1,5 @@
+@(value: String,
+  default: Boolean = false,
+  white: Boolean = false,
+  inline: Boolean = false)
+<div class="box-number @if(inline) { box-number--inline } @if(default){ box-number--default } @if(white){ box-number--white }">@value</div>

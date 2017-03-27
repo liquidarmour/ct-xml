@@ -1,0 +1,211 @@
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+
+@(boxRetriever: CT600EBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+@import uk.gov.hmrc.ct.ct600e.v3.CharityLoansAndInvestments
+
+@e180 = @{
+    boxRetriever.e180().value.contains(CharityLoansAndInvestments.AllLoansAndInvestments)
+}
+
+@questionBox(id = "ct600e-information-required-continued", title = Some("<h2>Information required</h2>")) {
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Charity/CASC assets</strong>
+        }
+    }
+    @questionRow() {
+        @questionCell(2) {
+
+        }
+        @questionCell(5) {
+            <strong>Disposals in period</strong>
+            <br />
+            <strong>(total consideration received)</strong>
+        }
+        @questionCell(5) {
+            <strong>Held at the end of the period</strong>
+            <br />
+            <strong>(use accounts figures)</strong>
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e130-e135") {
+        @questionCell(2) {
+            <strong>Tangible fixed assets</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e130().value,
+                numberOfDigits = 11,
+                id = "E130",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E130"),
+                boxNumberColor = "white"
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e135().value,
+                numberOfDigits = 11,
+                id = "E135",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E135"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e140-e145") {
+        @questionCell(2) {
+            <strong>UK investments (excluding controlled companies)</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e140().value,
+                numberOfDigits = 11,
+                id = "E140",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E140"),
+                boxNumberColor = "white"
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e145().value,
+                numberOfDigits = 11,
+                id = "E145",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E145"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e150-e155") {
+        @questionCell(2) {
+            <strong>Shares in, and loans to, controlled companies</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e150().value,
+                numberOfDigits = 11,
+                id = "E150",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E150"),
+                boxNumberColor = "white"
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e155().value,
+                numberOfDigits = 11,
+                id = "E155",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E155"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e160-e165") {
+        @questionCell(2) {
+            <strong>Overseas investments</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e160().value,
+                numberOfDigits = 11,
+                id = "E160",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E160"),
+                boxNumberColor = "white"
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e165().value,
+                numberOfDigits = 11,
+                id = "E165",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E165"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e170") {
+        @questionCell(7) {
+            <strong>Loans and non-trade debtors</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e170().value,
+                numberOfDigits = 11,
+                id = "E170",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E170"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e175") {
+        @questionCell(7) {
+            <strong>Other current assets</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e175().value,
+                numberOfDigits = 11,
+                id = "E175",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E175"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e180") {
+        @questionCell(7) {
+            <strong>Qualifying investments and loans</strong>
+            <br />
+            <i>Applies to charities only. See CT600 Guide</i>
+        }
+        @questionCell(5) {
+            @checkboxField(
+                value = e180,
+                id = "E180",
+                boxNumber = Some("E180"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e185") {
+        @questionCell(7) {
+            <strong>Value of any non-qualifying investments and loans</strong>
+            <br />
+            <i>Applies to charities only. See CT600 Guide</i>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e185().value,
+                numberOfDigits = 11,
+                id = "E185",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E185"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-continued-e190") {
+        @questionCell(7) {
+            <strong>Number of subsidiary or associated companies the charity E190 controls at the end of the period. Exclude companies that were dormant throughout the period</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e190().value,
+                numberOfDigits = 1,
+                id = "E190",
+                boxNumber = Some("E190"),
+                boxNumberColor = "white",
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+    }
+}

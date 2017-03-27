@@ -1,0 +1,123 @@
+@import uk.gov.hmrc.ct.domain.CompanyTypes
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v2.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+@import uk.gov.hmrc.ct.xml.computations.components.xml.{compsHeader2, compsPlainValue, ixbrlNonFraction}
+
+<div class=" adjustments page-break">
+    @compsHeader2(boxRetriever, ctUtr)
+    <h2>Adjustments </h2>
+    <table>
+        <tr>
+            <th colspan="3"> </th>
+            <th class="figure">&#xa3;</th>
+        </tr>
+        @if(boxRetriever.cp100().value > 0) {
+            <tr>
+                <td colspan="3" scope="row" class="strong">Profit before tax:</td>
+                <td class="figure strong">
+                @ixbrlNonFraction("ct-comp:ProfitLossPerAccounts", "CY_Trade_Duration", boxRetriever.cp100.value)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="4" scope="row" class="strong">Additions</td>
+        </tr>
+        @if(boxRetriever.cp101().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Depreciation:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:AdjustmentsDepreciation", "CY_Trade_Duration", boxRetriever.cp101.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp102().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Disallowable entertaining:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:AdjustmentsEntertaining", "CY_Trade_Duration", boxRetriever.cp102.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp103().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Donations:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:AdjustmentsDonations", "CY_Trade_Duration", boxRetriever.cp103.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp104().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Legal professional fees:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:AdjustmentsAccountancyLegalAndProfessionalFees", "CY_Trade_Duration", boxRetriever.cp104.value.get)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="2">Net loss on sale of fixed assets:</td>
+            <td colspan="2" class="figure">
+            @ixbrlNonFraction("ct-comp:AdjustmentsLossOrProfitOnSale", "CY_Trade_Duration", boxRetriever.cp106().value.getOrElse(0))
+            </td>
+        </tr>
+        @if(boxRetriever.cp107().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Penalties and fines:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:AdjustmentsPenaltiesAndFines", "CY_Trade_Duration", boxRetriever.cp107.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp108().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Unpaid directors' bonuses:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:AdjustmentsAdjustmentsForRemunerationUnpaidWithin9Months", "CY_Trade_Duration", boxRetriever.cp108.value.get)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="4" scope="row">Deductions </td>
+        </tr>
+        <tr>
+            <td colspan="2">Non-trade interest received:</td>
+            <td colspan="2" class="figure">
+            @ixbrlNonFraction("ct-comp:AdjustmentsNon-tradingLoanRelationshipCreditsPerAccounts", "CY_Trade_Duration", boxRetriever.cp114().value)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">Net capital allowances: </td>
+            <td colspan="2" class="figure">
+            @ixbrlNonFraction("ct-comp:CapitalAllowancesBalancingCharges", "CY_Trade_Duration", boxRetriever.cp99().value)
+            </td>
+        </tr>
+
+        <tr>
+            <td class="strong" colspan="4">Adjusted profit/loss </td>
+        </tr>
+        @if(!(boxRetriever.cp118().value > 0) && boxRetriever.cp117().value > 0) {
+            <tr>
+                <td class="strong" colspan="3">Adjusted trading profit for the period: </td>
+                <td class="figure strong">
+                @ixbrlNonFraction("ct-comp:AdjustedProfitForThePeriod", "CY_Trade_Duration", boxRetriever.cp117().value)
+                </td>
+            </tr>
+        }
+
+        @if(boxRetriever.cp118().value > 0) {
+            <tr>
+                <td colspan="3" class="strong">Adjusted trading loss for the period: </td>
+                <td class=" strong figure">
+                @ixbrlNonFraction("ct-comp:AdjustedLossOfPeriod", "CY_Trade_Duration", boxRetriever.cp118().value)
+                </td>
+            </tr>
+        }
+    </table>
+</div>

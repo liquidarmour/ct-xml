@@ -1,0 +1,187 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b690 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b690().value })}
+@b695 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b695().value })}
+@b700 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b700().value })}
+@b705 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b705().value })}
+@b710 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b710().value })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@budgetChangesEnabled = @{ true /* TODO: Comes from feature flags */ }
+
+@* The ID is an acronym of the file name :) *@
+@questionBox(id = "ct600-aacicotpal", title = Some("<h2 class=\"margin-top-none\">Allowances and charges in calculation of trading profits and losses</h2>"), minimumPadding = true) {
+    @questionRow(css = rowClass) {
+        @questionCell(2) {
+
+        }
+        @questionCell(5) {
+            <strong>Capital allowances</strong>
+        }
+        @questionCell(5) {
+            <strong>Balancing charges</strong>
+        }
+    }
+    @questionRow(id = "ct600-aacicotpal- b690", css = rowClass) {
+        @questionCell(2) {
+            <strong>Annual investment allowance</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b690,
+                numberOfDigits = 11,
+                id = "B690",
+                prefix = Some("&pound;"),
+                boxNumber = Some("690")
+            )
+        }
+        @questionCell(5) {
+        }
+    }
+    @questionRow(id = "ct600-aacicotpal-b695-b700", css = rowClass) {
+        @questionCell(2) {
+            <strong>Machinery and plant - special rate pool</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b695,
+                id = "B695",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                boxNumber = Some("695")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b700,
+                numberOfDigits = 11,
+                id = "B800",
+                prefix = Some("&pound;"),
+                boxNumber = Some("700")
+            )
+        }
+    }
+    @questionRow(id = "ct600-aacicotpal-b705-b710", css = rowClass) {
+        @questionCell(2) {
+            <strong>Machinery and plant - main pool</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b705,
+                numberOfDigits = 11,
+                id = "B705",
+                prefix = Some("&pound;"),
+                boxNumber = Some("705")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b710,
+                numberOfDigits = 11,
+                id = "B710",
+                prefix = Some("&pound;"),
+                boxNumber = Some("710")
+            )
+        }
+    }
+    @questionRow(id = "ct600-aacicotpal-b715-b720", css = rowClass) {
+        @questionCell(2) {
+            <strong>Business premises renovation</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B715",
+                prefix = Some("&pound;"),
+                boxNumber = Some("715")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B720",
+                prefix = Some("&pound;"),
+                boxNumber = Some("720")
+            )
+        }
+    }
+    @if(budgetChangesEnabled) {
+        @questionRow(id = "ct600-aacicotpal-b721-b722", css = rowClass) {
+            @questionCell(2) {
+                <strong>Enterprise zones</strong>
+            }
+            @questionCell(5) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B721",
+                    prefix = Some("&pound;"),
+                    boxNumber = Some("721")
+                )
+            }
+            @questionCell(5) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B722",
+                    prefix = Some("&pound;"),
+                    boxNumber = Some("722")
+                )
+            }
+        }
+        @questionRow(id = "ct600-aacicotpal-b723-b724", css = rowClass) {
+            @questionCell(2) {
+                <strong>Zero emissions goods vehicles</strong>
+            }
+            @questionCell(5) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B723",
+                    prefix = Some("&pound;"),
+                    boxNumber = Some("723")
+                )
+            }
+            @questionCell(5) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B724",
+                    prefix = Some("&pound;"),
+                    boxNumber = Some("724")
+                )
+            }
+        }
+    }
+    @questionRow(id = "ct600-aacicotpal-b720-b730") {
+        @questionCell(2) {
+            <strong>Other allowances and charges</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B725",
+                prefix = Some("&pound;"),
+                boxNumber = Some("725")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B730",
+                prefix = Some("&pound;"),
+                boxNumber = Some("730")
+            )
+        }
+    }
+}

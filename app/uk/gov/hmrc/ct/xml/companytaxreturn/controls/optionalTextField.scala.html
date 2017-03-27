@@ -1,0 +1,12 @@
+@(value: Option[String],
+  id: String,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default",
+  widthClass: Option[String] = None)
+
+<div class="input-box-container input-box-container--inline @if(widthClass.nonEmpty){ input-box--@widthClass.get-width }">
+    @if(boxNumber.nonEmpty) {
+        <div class="input-box-number input-box-number--@boxNumberColor"><span>@boxNumber.get</span></div>
+    }
+    <div class="input-box"><span @if(id.nonEmpty){ id="@id" }>@if(value.nonEmpty && !value.get.isEmpty){@value}else{&nbsp;}</span></div>
+</div>

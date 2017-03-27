@@ -1,0 +1,110 @@
+@import uk.gov.hmrc.ct.xml.model.submit.hmrc.ct600a.Ct600aModel
+
+@(data: Ct600aModel)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox() {
+    <p>
+        You must complete part 1 if the company is close and has made a loan to an individual participator, or associate of a participator, during the return period which has not been repaid within the return period.
+        <br />
+        Enter in the table below, details of any outstanding loans made to a participator or associate of a participator during the return period. If the participator or associate has a current or loan account with the company, enter details of each participator's or associate's account. The amount you enter in column 2 of the table is the total of all debit entries on the account, less any credit entries and less any credit balance brought forward from the previous return period. In arriving at this figure you must exclude any credit entries that represent repayment, release or write off of loans made in earlier return periods.
+    </p>
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("A1")
+            <i>Put an 'X' in this box if loans made during the period have been released, or written off before the end of the period</i>
+        }
+        @questionCell(4, alignRight = true) {
+            @checkboxField(
+                value = data.section1.a1,
+                id = "A1",
+                boxNumber = Some("A1")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            @questionNumber("A2")
+            <span>Information about loans made during the return period and outstanding at the end of the period</span>
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <table class="ct600--tax-table margin-all-none">
+                <thead>
+                    <tr>
+                        <th class="cell-size-10">Name of participator or associate</th>
+                        <th class="cell-size-2">Amount of loan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(row <- data.section1.section1Table.rows) {
+                        <tr>
+                            <td class="cell-size-10">@row.nameOfParticipant</td>
+                            <td class="cell-size-2">
+                                &pound; @row.amountOfLoan
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+
+    @questionRow() {
+        @questionCell(8) {
+            <span>Total loans within S419 ICTA 1988 made during the return period which have not been repaid, released or written off before the end of the period</span>
+        }
+        @questionCell(1) {
+            <span>Total </span>
+        }
+        @questionCell(3, alignTop = true) {
+            @numberField(
+                value = data.section1.a2,
+                numberOfDigits = 1,
+                id = "A2",
+                boxNumber = Some("A2"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <i>If a continuation sheet is used, please put an 'X' in box A2A</i>
+        }
+        @questionCell(4, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "A2A",
+                boxNumber = Some("A2A")
+            )
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("A3")
+            <span>Tax chargeable on loans -</span>
+            <br />
+            <i>(Tax due before any relief for loans repaid, released, or written off after the end of the period)</i>
+        }
+        @questionCell(4, alignRight = true) {
+            @fieldDescription("box A2 multiplied by 25%")
+            @numberField(
+                value = data.section1.a3,
+                numberOfDigits = 1,
+                id = "A3",
+                boxNumber = Some("A3"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

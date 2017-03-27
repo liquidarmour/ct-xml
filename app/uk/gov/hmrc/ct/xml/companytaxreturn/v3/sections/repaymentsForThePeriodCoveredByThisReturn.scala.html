@@ -1,0 +1,113 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b865 = @{optional(boxRetriever, optionFromRepayments[BigDecimal] { (br) => br.b865().value })}
+@b870 = @{optional(boxRetriever, optionFromRepayments[BigDecimal] { (br) => br.b870().value })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@* ID contains an acronym for the file name *@
+@questionBox(id = "ct600-rftpcbtyr", title = Some("<h2>Repayments for the period covered by this return</h2>")) {
+    @questionRow(id = "ct600-rftpcbtyr-b865", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("865", white = true)
+            <strong>Repayment of Corporation Tax</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = b865,
+                numberOfDigits = 11,
+                id = "B865",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-rftpcbtyr-b870", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("870", white = true)
+            <strong>Repayment of Income Tax</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = b870,
+                numberOfDigits = 11,
+                id = "B870",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-rftpcbtyr-b875", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("875", white = true)
+            <strong>Payable Research and Development tax credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B875",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-rftpcbtyr-b880", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("880", white = true)
+            <strong>Payable Research and Development expenditure credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B880",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-rftpcbtyr-b885", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("885", white = true)
+            <strong>Payable creative tax credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B885",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-rftpcbtyr-b890", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("890", white = true)
+            <strong>Payable land remediation or life assurance company tax credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B890",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-rftpcbtyr-b895") {
+        @questionCell(6) {
+            @boxNumber("895", white = true)
+            <strong>Payable capital allowances first-year tax credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B895",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+}

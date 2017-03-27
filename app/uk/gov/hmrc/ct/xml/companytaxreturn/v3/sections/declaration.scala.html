@@ -1,0 +1,66 @@
+@import uk.gov.hmrc.ct.ct600.v3.retriever.CT600DeclarationBoxRetriever
+
+@(boxRetriever: CT600DeclarationBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+@import org.joda.time.LocalDate
+@import uk.gov.hmrc.cato.time.DateHelper
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-declaration", title = Some("<h2>Declaration</h2>")) {
+    @questionRow(css = rowClass) {
+        @questionCell(12) {
+            <strong>Declaration</strong>
+            <br />
+            <span>I declare that the information I have given on this Company Tax Return and any supplementary pages is correct and complete to the best of my knowledge and belief.</span>
+            <br />
+            <i>I understand that giving false information in the return, or concealing any part of the company’s profits or tax payable, can lead to both the company and me being prosecuted.</i>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("975", white = true)
+            <strong>Name</strong>
+        }
+    }
+    @questionRow(id = "ct600-declaration-b975", css = rowClass) {
+        @questionCell(12) {
+            @optionalTextField(
+                value = boxRetriever.b975().value,
+                id = "B975",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("980", white = true)
+            <strong>Date </strong>
+            <i>DD MM YYYY</i>
+        }
+    }
+    @questionRow(id = "ct600-declaration-date", css = rowClass) {
+        @questionCell(12) {
+            @optionalDateField(
+                value = Some(DateHelper.now()),
+                id = "CT600DeclarationDate"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("985", white = true)
+            <strong>Status</strong>
+        }
+    }
+    @questionRow(id = "ct600-declaration-b985") {
+        @questionCell(12) {
+            @optionalTextField(
+                value = boxRetriever.b985().value,
+                id = "B985",
+                widthClass = Some("full")
+            )
+        }
+    }
+}

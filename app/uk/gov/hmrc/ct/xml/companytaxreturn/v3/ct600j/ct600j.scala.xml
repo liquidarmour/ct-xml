@@ -1,0 +1,91 @@
+@import org.joda.time.LocalDate
+
+@(boxRetriever: uk.gov.hmrc.ct.ct600j.v3.retriever.CT600JBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.formatXml
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@J5 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j5().value })}
+@J5A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j5A().value })}
+@J10 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j10().value })}
+@J10A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j10A().value })}
+@J15 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j15().value })}
+@J15A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j15A().value })}
+@J20 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j20().value })}
+@J20A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j20A().value })}
+@J25 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j25().value })}
+@J25A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j25A().value })}
+@J30 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j30().value })}
+@J30A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j30A().value })}
+@J35 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j35().value })}
+@J35A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j35A().value })}
+@J40 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j40().value })}
+@J40A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j40A().value })}
+@J45 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j45().value })}
+@J45A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j45A().value })}
+@J50 = @{optional(boxRetriever, optionFromCT600J[String]{ (br) => br.j50().value })}
+@J50A = @{optional(boxRetriever, optionFromCT600J[LocalDate]{ (br) => br.j50A().value })}
+
+
+@if(J5.nonEmpty && J5A.nonEmpty) {
+    <TaxAvoidanceSchemes>
+        <AvoidanceSchemes>
+            <ReferenceNumber>@J5.get</ReferenceNumber>
+            <AccountingPeriod>@formatXml(J5A.get)</AccountingPeriod>
+        </AvoidanceSchemes>
+        @if(J10.nonEmpty && J10A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J10.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J10A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+        @if(J15.nonEmpty && J15A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J15.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J15A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+        @if(J20.nonEmpty && J20A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J20.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J20A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+        @if(J25.nonEmpty && J25A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J25.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J25A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+        @if(J30.nonEmpty && J30A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J30.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J30A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+        @if(J35.nonEmpty && J35A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J35.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J35A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+        @if(J40.nonEmpty && J40A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J40.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J40A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+        @if(J45.nonEmpty && J45A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J45.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J45A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+        @if(J50.nonEmpty && J50A.nonEmpty) {
+            <AvoidanceSchemes>
+                <ReferenceNumber>@J50.get</ReferenceNumber>
+                <AccountingPeriod>@formatXml(J50A.get)</AccountingPeriod>
+            </AvoidanceSchemes>
+        }
+    </TaxAvoidanceSchemes>
+}

@@ -1,0 +1,54 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-chargeable-gains", title = Some("<h2>Chargeable gains</h2>")) {
+    @questionRow(id = "ct600-chargeable-gains-b210", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("210", default = true)
+            <strong>Gross chargeable gains</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B210",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-chargeable-gains-b215", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("215", default = true)
+            <strong>Allowable losses including losses brought forward</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B215",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-chargeable-gains-b220") {
+        @questionCell(6) {
+            @boxNumber("220", default = true)
+            <strong>Net chargeable gains - </strong>
+            <span>box 210 minus box 215</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B220",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

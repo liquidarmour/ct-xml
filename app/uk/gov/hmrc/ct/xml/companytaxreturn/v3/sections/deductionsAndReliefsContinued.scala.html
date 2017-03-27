@@ -1,0 +1,171 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b275 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b275.value) })}
+@b280 = @{optional(boxRetriever, optionFromCT600[Boolean] { (br) => Some(br.b280.value) })}
+@b295 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b295.value) })}
+@b300 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b300.value) })}
+@b305 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b305.value) })}
+@b315 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b315.value) })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-deductions-and-reliefs-continued", title = Some("<h2>Deductions and reliefs <i>continued</i></h2>")) {
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b265", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("265", default = true)
+            <strong>Non-trading losses on intangible fixed assets</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B265",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b275", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("275", default = true)
+            <strong>Total trading losses of this or a later accounting period</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b275,
+                id = "B275",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b280", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("280", default = true)
+            <strong>Put an 'X' in box 280 if amounts carried back from later accounting periods are included in box 275</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalCheckboxField(
+                value = b280,
+                id = "B280"
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b290", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("290", default = true)
+            <strong>Non-trade capital allowances</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B290",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b295", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("295", default = true)
+            <strong>Total of deductions and reliefs - </strong>
+            <br />
+            <span>total of boxes 240 to 275 and 290</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b295,
+                id = "B295",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b300", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("300", default = true)
+            <strong>Profits before qualifying donations and group relief - </strong>
+            <br />
+            <span>box 235 minus box 295</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b300,
+                id = "B300",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b305", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("305", default = true)
+            <strong>Qualifying donations</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b305,
+                id = "B305",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b310", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("310", default = true)
+            <strong>Group relief</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B310",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b315", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("315", default = true)
+            <strong>Profits chargeable to Corporation Tax - </strong>
+            <br />
+            <span>box 300 minus boxes 305 and 310</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b315,
+                id = "B315",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deductions-and-reliefs-continued-b320") {
+        @questionCell(6) {
+            @boxNumber("320", default = true)
+            <strong>Ring fence profits included</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B320",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

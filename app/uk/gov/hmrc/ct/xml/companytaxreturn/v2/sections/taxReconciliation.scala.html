@@ -1,0 +1,238 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b91 = @{optional(data, optionFromCT600[BigDecimal] { (br) => Some(br.b91().value) })}
+
+@b92 = @{decimalValue(data, decimalFromCT600 { (br) => br.b92().value },
+                            decimalFromCT600E { (br) => 0 })}
+
+@b93 = @{decimalValue(data, decimalFromCT600 { (br) => br.b93().value },
+                            decimalFromCT600E { (br) => 0 })}
+
+@questionBox(title = Some("<h2>Tax reconciliation</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("87")
+            <span> Research and Development tax credit, including any vaccines tax credit, or film tax credit</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B87",
+                boxNumber = Some("87"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("88")
+            <span>Land remediation or life assurance company tax credit</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B88",
+                boxNumber = Some("88"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("170")
+            <span>Capital allowances first-year tax credit</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B170",
+                boxNumber = Some("170"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("89")
+            <span>Research and Development tax credit payable, including any vaccines tax credit, or film tax credit payable </span>
+        }
+        @questionCell(3) {
+            @fieldDescription("box 87 minus box 86")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B89",
+                boxNumber = Some("89"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("90")
+            <span>Land remediation or life assurance company tax credit payable</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("total of boxes 87 + 88 minus boxes 86 and 89")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B90",
+                boxNumber = Some("90"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("171")
+            <span>Capital allowances first-year tax credit payable</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("boxes 87, 88 and 170 minus boxes 86, 89 and 90")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B171",
+                boxNumber = Some("171"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("161")
+            <span>Ring fence corporation tax included</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B161",
+                boxNumber = Some("161"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("166")
+            <span>Tax under S501A ICTA 1988 included</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B166",
+                boxNumber = Some("166"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("91")
+            <span>Tax already paid (and not already repaid)</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = b91,
+                numberOfDigits = 1,
+                id = "91",
+                boxNumber = Some("91"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("92")
+            <span>Tax outstanding</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("box 86 minus boxes 87, 88, 170 and 91")
+            @numberFieldForBigDecimal(
+                value = b92,
+                numberOfDigits = 1,
+                id = "B92",
+                boxNumber = Some("92"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("93")
+            <span>Tax overpaid</span>
+        }
+        @questionCell(3) {
+            @fieldDescription("total sum of boxes 87, 88, 170 and 91 minus box 86")
+            @numberFieldForBigDecimal(
+                value = b93,
+                numberOfDigits = 1,
+                id = "B93",
+                boxNumber = Some("93"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("94")
+            <span>Tax refunds surrendered to the company under S102 FA 1989</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "94",
+                boxNumber = Some("94"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

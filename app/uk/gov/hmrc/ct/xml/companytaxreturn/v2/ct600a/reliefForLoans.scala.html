@@ -1,0 +1,154 @@
+@import uk.gov.hmrc.ct.xml.model.submit.hmrc.ct600a.Ct600aModel
+
+@(data: Ct600aModel)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox() {
+    <p>
+        Complete part 3 only if loans made during the return period, that have not been included in part 2, have been repaid, released
+        or written off and where relief is due now (see the notes above under 'Most companies will not need to complete part 3').
+    </p>
+    <p>
+        Example
+        <br />
+        A company makes a loan during the accounting period ended 31 December 2004 and it is all repaid on 30 November 2005.
+        The company's return for the accounting period ended 31 December 2004 is sent to HM Revenue &amp; Customs on 1 December
+        2005. Part 3 of this form should not be completed because, although the loan was repaid more than nine months after the end
+        of the return period, the return is sent earlier than nine months after the end of the return period in which the loan was repaid.
+    </p>
+    <p>
+        Relief for the repayment cannot be given until the due date of the accounting period in which the repayment was made, in
+        this case 1 October 2006 (Ss419(4A) and (4B) ICTA 1988). The company must make a separate claim for relief.
+    </p>
+
+    <p>
+        Example
+        <br />
+        Same as example above except that the return is not sent in until 3 December 2006. Relief for the repayment is due on or after
+        1 October 2006. In this case part 3 can be completed because the repayment was made more than nine months after the end
+        of the accounting period in which the loan was made, and the relief is due at the time the return is sent in.
+    </p>
+
+    @questionRow() {
+        @questionCell(12) {
+            @questionNumber("A8 & A9")
+            <span>9 Information about loans made during the return period which have been repaid, released or written off more than nine months after the end of the period and relief is due now</span>
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <table class="ct600--tax-table margin-all-none">
+                <thead>
+                    <tr>
+                        <th class="cell-size-6">Name of participator or associate</th>
+                        <th class="cell-size-2">Amount repaid</th>
+                        <th class="cell-size-2">Amount released or written off</th>
+                        <th class="cell-size-2">Date of repayment, release or write off</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(row <- data.section3.section3Table.rows) {
+                        <tr>
+                            <td class="cell-size-6">@row.nameOfParticipator</td>
+                            <td class="cell-size-2">
+                                &pound; @row.amountRepaid
+                            </td>
+                            <td class="cell-size-2">
+                                &pound; @row.amountReleasedOrWrittenOff
+                            </td>
+                            <td class="cell-size-2">@row.dateOfRepaymentReleaseOrWriteOff</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+
+    @questionRow() {
+        @questionCell(5, alignRight = true) {
+            <span>Total </span>
+        }
+        @questionCell(3, alignTop = true) {
+            @numberField(
+                value = data.section3.a8,
+                numberOfDigits = 1,
+                id = "A8",
+                boxNumber = Some("A8"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3, alignTop = true) {
+            @numberField(
+                value = data.section3.a9,
+                numberOfDigits = 1,
+                id = "A9",
+                boxNumber = Some("A9"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <i>If a continuation sheet is used, please put an 'X' in box A9A</i>
+        }
+        @questionCell(4, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "A9A",
+                boxNumber = Some("A9A")
+            )
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("A10")
+            <span>
+                Total amount of loans made during the return period which have been repaid, released,
+                or written off more than nine months after the end of the period and relief is due now
+            </span>
+        }
+        @questionCell(4, alignRight = true) {
+            @fieldDescription("total of boxes A8 and A9")
+            @numberField(
+                value = data.section3.a10,
+                numberOfDigits = 1,
+                id = "A10",
+                boxNumber = Some("A10"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("A11")
+            <span>
+                Relief due now for loans repaid, released or written off more than nine months after
+                the end of the period. Put an 'X' in box 80 on form CT600 if you have completed
+                box A11
+            </span>
+        }
+        @questionCell(4, alignRight = true) {
+            @fieldDescription("box A10 multiplied by 25%")
+            @numberField(
+                value = data.section3.a11,
+                numberOfDigits = 1,
+                id = "A11",
+                boxNumber = Some("A11"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

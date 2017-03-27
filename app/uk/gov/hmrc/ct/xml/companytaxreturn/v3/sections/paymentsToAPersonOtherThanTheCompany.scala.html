@@ -1,0 +1,109 @@
+@import uk.gov.hmrc.ct.ct600.v3.retriever.RepaymentsBoxRetriever
+
+@(boxRetriever: RepaymentsBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@rowClass = @{ Some("margin-bottom-medium") }
+@payToSomeoneElse = @{ !boxRetriever.payeeQ1().value.getOrElse(true) }
+
+@* ID contains an acronym for the file name *@
+@questionBox(id = "ct600-ptapottc", title = Some("<h2>Payments to a person other than the company</h2>")) {
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("945", white = true)
+            <strong>Complete the authority below if you want the repayment to be made to a person other than the company</strong>
+            <br />
+            <strong>I, as </strong>
+            <span>(enter status - company secretary, treasurer, liquidator or authorised agent, etc)</span>
+        }
+    }
+    @questionRow(id = "ct600-ptapottc-b945", css = rowClass) {
+        @questionCell(12) {
+            @optionalTextField(
+                value = if (payToSomeoneElse) boxRetriever.b945().value else None,
+                id = "B945",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("950", white = true)
+            <strong>of </strong>
+            <span>(enter company name)</span>
+        }
+    }
+    @questionRow(id = "ct600-ptapottc-b950", css = rowClass) {
+        @questionCell(12) {
+            @optionalTextField(
+                value = if (payToSomeoneElse) boxRetriever.b950().value else None,
+                id = "B950",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("955", default = true)
+            <strong>authorise </strong>
+            <span>(enter name)</span>
+        }
+    }
+    @questionRow(id = "ct600-ptapottc-b955", css = rowClass) {
+        @questionCell(12) {
+            @optionalTextField(
+                value = if (payToSomeoneElse) boxRetriever.b955().value else None,
+                id = "B955",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("960", default = true)
+            <strong>of address </strong>
+            <span>(enter address)</span>
+        }
+    }
+    @questionRow(id = "ct600-ptapottc-nominee-address", css = rowClass) {
+        @questionCell(12) {
+            @nomineeAddressField(boxRetriever)
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("965", default = true)
+            <strong>Nominee reference </strong>
+        }
+    }
+    @questionRow(id = "ct600-ptapottc-b965") {
+        @questionCell(12) {
+            @optionalTextField(
+                value = if (payToSomeoneElse) boxRetriever.b965().value else None,
+                id = "B965",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = rowClass) {
+        @questionCell(12) {
+            <strong>to receive payment on company's behalf</strong>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("970", white = true)
+            <strong>Name</strong>
+        }
+    }
+    @questionRow(id = "ct600-ptapottc-b970") {
+        @questionCell(12) {
+            @optionalTextField(
+                value = if (payToSomeoneElse) boxRetriever.b970().value else None,
+                id = "B970",
+                widthClass = Some("full")
+            )
+        }
+    }
+}

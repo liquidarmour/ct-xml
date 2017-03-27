@@ -1,0 +1,63 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Indicators</h2>")) {
+    @questionRow() {
+        @questionCell(12) {
+            <i>Put an 'X' in the relevant box(es) if, in the period, the company</i>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("95")
+            <i>should have made (whether it has or not) instalment payments under the Corporation Tax (Instalment Payments) Regulations 1998</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B95",
+                boxNumber = Some("95")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("96")
+            <i>is within a group payment arrangement for this period</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B96",
+                boxNumber = Some("96")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("97")
+            <i>has written down or sold intangible assets</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B97",
+                boxNumber = Some("97")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("98")
+            <i>has made cross-border royalty payments</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B98",
+                boxNumber = Some("98")
+            )
+        }
+    }
+}

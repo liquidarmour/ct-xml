@@ -1,0 +1,65 @@
+@import uk.gov.hmrc.ct.ct600j.v3.retriever.CT600JBoxRetriever
+
+@(boxRetriever: CT600JBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(id = "ct600j-company-information", title = Some("<h2>Company information</h2>")) {
+    @questionRow(id = "ct600j-company-information-j1") {
+        @questionCell(4) {
+            @boxNumber("J1", white = true)
+            <strong>Company name</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @textField(
+                value = boxRetriever.j1().value,
+                id = "J1",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-company-information-j2") {
+        @questionCell(4) {
+            @boxNumber("J2", white = true)
+            <strong>Tax reference</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @numberField(
+                value = boxRetriever.j2().value,
+                numberOfDigits = 10,
+                id = "J2"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Period covered by this supplementary page (cannot exceed 12 months)</strong>
+        }
+    }
+    @questionRow(id = "ct600j-company-information-j3") {
+        @questionCell(4) {
+            @boxNumber("J3", white = true)
+            <strong>from</strong>
+            <i>DD MM YYYY</i>
+        }
+        @questionCell(8, alignRight = true) {
+            @optionalDateField(
+                value = Some(boxRetriever.j3().value),
+                id = "J3"
+            )
+        }
+    }
+    @questionRow(id = "ct600j-company-information-j4") {
+        @questionCell(4) {
+            @boxNumber("J4", white = true)
+            <strong>to</strong>
+            <i>DD MM YYYY</i>
+        }
+        @questionCell(8, alignRight = true) {
+            @optionalDateField(
+                value = Some(boxRetriever.j4().value),
+                id = "J4"
+            )
+        }
+    }
+}

@@ -1,0 +1,26 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Land remediation enhanced expenditure</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("104")
+            <span>Enter amount equal to 150% of actual expenditure</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B104",
+                boxNumber = Some("104"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

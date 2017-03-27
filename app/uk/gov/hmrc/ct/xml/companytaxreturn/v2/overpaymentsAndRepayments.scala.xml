@@ -1,0 +1,42 @@
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.ct600.v2.retriever.RepaymentsBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper
+
+@(ct600Helper: V2CT600Helper[_], data: RepaymentsBoxRetriever)
+
+<OverpaymentsAndRepayments>
+    @data.b140.value.map { v =>
+    @if(v == 20) {
+    <SmallRepayments>
+        <NoRepayments20OrLess>yes</NoRepayments20OrLess>
+    </SmallRepayments>
+    }else{
+    <SmallRepayments>
+        <OwnRepaymentsLowerLimit>@poundsPence(v)</OwnRepaymentsLowerLimit>
+    </SmallRepayments>
+    }
+    }
+    @if(data.b149().value.nonEmpty) {
+    <BankAccountDetails>
+        <BankName>@boxToDecryptedString(data.b149)</BankName>
+        <SortCode>@boxToDecryptedString(data.b150)</SortCode>
+        <AccountNumber>@boxToDecryptedString(data.b151)</AccountNumber>
+        <AccountName>@boxToDecryptedString(data.b152)</AccountName>
+        @data.b153.value.map{v => <BuildingSocReference>@boxToDecryptedString(data.b153)</BuildingSocReference>}
+    </BankAccountDetails>
+    }
+    @if(data.b156.value.nonEmpty) {
+    <PaymentToPerson>
+        <Recipient>@data.b156.value.getOrElse("")</Recipient>
+        <Address>
+            @ct600Helper.addressLines.take(3).map { line =>
+            <Line>@line</Line>
+            }
+            @ct600Helper.addressLines.drop(3).headOption.map { line => <AdditionalLine>@line</AdditionalLine> }
+            @data.b1575.value.map { p => <PostCode>@p</PostCode> }
+        </Address>
+        @data.b158.value.map { r => <NomineeReference>@r</NomineeReference> }
+    </PaymentToPerson>
+    }
+</OverpaymentsAndRepayments>

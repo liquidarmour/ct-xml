@@ -1,0 +1,86 @@
+@(value: String,
+  numberOfDigits: Int,
+  id: String,
+  decimals: Option[String] = None,
+  prefix: Option[String] = None,
+  suffix: Option[String] = None,
+  showDecimalPlaces: Boolean = false,
+  onlyWholeNumbers: Boolean = true,
+  disabled: Boolean = false,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default",
+  inline: Boolean = false,
+  containerCss: Option[String] = None)
+
+@import scala.collection.mutable.ListBuffer
+
+<!-- Debug value -->
+<!-- "@value" -->
+<!-- Debug decimals -->
+<!-- "@decimals" -->
+
+@digits = @{
+    val digitsList = ListBuffer[String]()
+
+    var number = 0
+    for (number <- numberOfDigits to 1 by -1) {
+        val digit: String =
+            if (number <= value.length) {
+                value(value.length - number).toString
+            } else {
+                "&nbsp;"
+            }
+
+        digitsList += digit
+    }
+
+    digitsList.toList
+}
+
+@getDecimalPlace(index: Int) = @{
+    if (onlyWholeNumbers) {
+        Html("0")
+    } else if (decimals.isEmpty || index >= decimals.get.length) {
+        Html("&nbsp;")
+    } else {
+        Html(decimals.get(index).toString)
+    }
+}
+
+@getInlineValue = @{
+    if (showDecimalPlaces && value.length > 0 && (onlyWholeNumbers || decimals.nonEmpty)) {
+        value + "." + getDecimalPlace(0).toString() + getDecimalPlace(1).toString()
+    } else {
+        value
+    }
+}
+
+<div @if(id.nonEmpty) { id="@id" } class="input-box-container @if(inline) { input-box-container--inline } @if(containerCss.nonEmpty) { @containerCss.get }">
+    @if(boxNumber.nonEmpty) {
+        <div class="input-box-number input-box-number--@boxNumberColor"><span>@boxNumber.get</span></div>
+    }
+
+    @prefix.map { value =>
+        <div class="input-box input-box--digit-width input-box--disabled"><span>@Html(value)</span></div>
+    }
+
+    @if(inline) {
+        <div class="input-box @if(disabled){ input-box--disabled }">
+            <span>@Html(getInlineValue)</span>
+        </div>
+    } else {
+        @for(digit <- digits) {
+            <div class="input-box input-box--digit-width @if(disabled){ input-box--disabled }"><span>@Html(digit)</span></div>
+        }
+
+        @if(showDecimalPlaces) {
+            <strong class="input-box-dot @if(!onlyWholeNumbers && decimals.isEmpty){no-decimals}">.</strong>
+            <div class="input-box input-box--digit-width @if(onlyWholeNumbers || disabled){ input-box--disabled }"><span>@getDecimalPlace(0)</span></div>
+            <div class="input-box input-box--digit-width @if(onlyWholeNumbers || disabled){ input-box--disabled }"><span>@getDecimalPlace(1)</span></div>
+        }
+    }
+
+    @suffix.map { value =>
+        <div class="input-box input-box--digit-width input-box--disabled input-box--suffix"><span>@value</span></div>
+    }
+</div>

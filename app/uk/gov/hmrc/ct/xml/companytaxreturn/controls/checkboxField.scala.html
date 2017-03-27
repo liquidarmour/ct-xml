@@ -1,0 +1,10 @@
+@(value: Boolean,
+  id: String,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default")
+@optionalCheckboxField(
+    value = Some(value),
+    id = id,
+    boxNumber = boxNumber,
+    boxNumberColor = boxNumberColor
+)

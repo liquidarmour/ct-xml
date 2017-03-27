@@ -1,0 +1,138 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b735 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b735().value })}
+@b750 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b750().value })}
+@b755 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b755().value })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@budgetChangesEnabled = @{ true /* Comes from feature flags */ }
+
+@questionBox(title = Some("<h2>Allowances and charges not included in calculation of trading profits and losses</h2>"), minimumPadding = true) {
+    @questionRow(css = rowClass) {
+        @questionCell(2) {
+
+        }
+        @questionCell(5) {
+            <strong>Capital allowances</strong>
+        }
+        @questionCell(5) {
+            <strong>Balancing charges</strong>
+        }
+    }
+    @questionRow(id = "ct600-aacicotpal-b735", css = rowClass) {
+        @questionCell(2) {
+            <strong>Annual investment allowance</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b735,
+                numberOfDigits = 11,
+                id = "B735",
+                prefix = Some("&pound;"),
+                boxNumber = Some("735")
+            )
+        }
+        @questionCell(5) {
+        }
+    }
+    @questionRow(id = "ct600-aacicotpal-b740-b745", css = rowClass) {
+        @questionCell(2) {
+            <strong>Business premises renovation</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B740",
+                prefix = Some("&pound;"),
+                boxNumber = Some("740")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B745",
+                prefix = Some("&pound;"),
+                boxNumber = Some("745")
+            )
+        }
+    }
+    @if(budgetChangesEnabled) {
+        @questionRow(id = "ct600-aacicotpal-b746-b747", css = rowClass) {
+            @questionCell(2) {
+                <strong>Enterprise zones</strong>
+            }
+            @questionCell(5) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B746",
+                    prefix = Some("&pound;"),
+                    boxNumber = Some("746")
+                )
+            }
+            @questionCell(5) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B747",
+                    prefix = Some("&pound;"),
+                    boxNumber = Some("747")
+                )
+            }
+        }
+        @questionRow(id = "ct600-aacicotpal-b748-b749", css = rowClass) {
+            @questionCell(2) {
+                <strong>Zero emissions goods vehicles</strong>
+            }
+            @questionCell(5) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B748",
+                    prefix = Some("&pound;"),
+                    boxNumber = Some("748")
+                )
+            }
+            @questionCell(5) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B749",
+                    prefix = Some("&pound;"),
+                    boxNumber = Some("749")
+                )
+            }
+        }
+    }
+    @questionRow(id = "ct600-aacicotpal-b750-b755") {
+        @questionCell(2) {
+            <strong>Other allowances and charges</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b750,
+                numberOfDigits = 11,
+                id = "B750",
+                prefix = Some("&pound;"),
+                boxNumber = Some("750")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = b755,
+                numberOfDigits = 11,
+                id = "B755",
+                prefix = Some("&pound;"),
+                boxNumber = Some("755")
+            )
+        }
+    }
+}

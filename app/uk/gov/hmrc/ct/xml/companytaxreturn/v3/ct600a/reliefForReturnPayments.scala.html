@@ -1,0 +1,185 @@
+@import uk.gov.hmrc.ct.ct600a.v3.retriever.CT600ABoxRetriever
+
+@(boxRetriever: CT600ABoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+
+@CP2 = @{ boxRetriever.cp2().value }
+
+<h2>Part 2: Relief for return payments and/or amounts repaid, released or written off within 9 months</h2>
+<table id="ct600a-relief-for-return-payments" class="ct600--tax-table">
+    <thead>
+        <tr>
+            <th class="cell-size-1">A25</th>
+            <th class="cell-size-3 text-align--center">A</th>
+            <th class="cell-size-3 text-align--center">B</th>
+            <th class="cell-size-3 text-align--center">C</th>
+            <th class="cell-size-2 text-align--center">D</th>
+        </tr>
+        <tr>
+            <th class="cell-size-1">&nbsp;</th>
+            <th class="cell-size-3 text-align--center">Name of participator or associate</th>
+            <th class="cell-size-3 text-align--center">Amount repaid/return repayments made</th>
+            <th class="cell-size-3 text-align--center">Amount released or written off</th>
+            <th class="cell-size-2 text-align--center">Date of repayment, release or write–off</th>
+        </tr>
+    </thead>
+    <tbody>
+        @* Line below is a HACK. What's the point of having a template engine which does not allow to create variables in a normal way!? *@
+        @import java.lang.String; var rowNumber = 0
+
+        @for((loan, loanIndex) <- boxRetriever.loansToParticipators().loans.zipWithIndex) {
+            @if(loan.repaymentWithin9Months.nonEmpty && loan.repaymentWithin9Months.get.isReliefEarlierThanDue(CP2)) {
+                @{ rowNumber += 1 }
+                <tr id="ct600a-relief-for-return-payments-@{loanIndex + 1}">
+                    <td class="cell-size-1">@rowNumber</td>
+                    <td class="cell-size-3">@loan.name</td>
+                    <td class="cell-size-3">
+                        &pound; @poundsPence(loan.repaymentWithin9Months.get.amount.getOrElse(0))
+                    </td>
+                    <td class="cell-size-3"></td>
+                    @loan.repaymentWithin9Months.get.date.map { d =>
+                        <td class="cell-size-2">@DateFormatter.formatXml(d)</td>
+                    }
+                </tr>
+            }
+
+            @for((repayment, index) <- loan.otherRepayments.zipWithIndex) {
+                @if(repayment.isReliefEarlierThanDue(CP2)) {
+                    @{ rowNumber += 1 }
+                    <tr id="ct600a-relief-for-return-payments-@{loanIndex + 1}-other-repayment-@{index + 1}">
+                        <td class="cell-size-1">@rowNumber</td>
+                        <td class="cell-size-3">@loan.name</td>
+                        <td class="cell-size-3">
+                            &pound; @poundsPence(repayment.amount.getOrElse(0))
+                        </td>
+                        <td class="cell-size-3"></td>
+                        @repayment.date.map { d =>
+                            <td class="cell-size-2">@DateFormatter.formatXml(d)</td>
+                        }
+                    </tr>
+                }
+            }
+
+            @for((writeOff, index) <- loan.writeOffs.zipWithIndex) {
+                @if(writeOff.isReliefEarlierThanDue(CP2)) {
+                    @{ rowNumber += 1 }
+                    <tr id="ct600a-relief-for-return-payments-@{loanIndex + 1}-write-off-@{index + 1}">
+                        <td class="cell-size-1">@rowNumber</td>
+                        <td class="cell-size-3">@loan.name</td>
+                        <td class="cell-size-3"></td>
+                        <td class="cell-size-3">
+                            &pound; @poundsPence(writeOff.amount.getOrElse(0))
+                        </td>
+                        @writeOff.date.map { d =>
+                            <td class="cell-size-2">@DateFormatter.formatXml(d)</td>
+                        }
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@questionRow(id = "ct600a-relief-for-return-payments-a30-35") {
+    @questionCell(2) {
+    }
+    @questionCell(2) {
+        @textField(
+            value = "Totals",
+            id = "A30",
+            widthClass = Some("full"),
+            boxNumber = Some("A30"),
+            boxNumberColor = "white"
+        )
+    }
+    @questionCell(3) {
+        @optionalNumberFieldForInt(
+            value = boxRetriever.a30().value,
+            numberOfDigits = 1,
+            id = "A30",
+            prefix = Some("&pound;"),
+            inline = true,
+            containerCss = Some("input-box--full-width")
+        )
+    }
+    @questionCell(3) {
+        @optionalNumberFieldForInt(
+            value = boxRetriever.a35().value,
+            numberOfDigits = 1,
+            id = "A35",
+            prefix = Some("&pound;"),
+            inline = true,
+            containerCss = Some("input-box--full-width")
+        )
+    }
+    @questionCell(2) {
+        @boxNumber("A35", white = true, inline = true)
+    }
+}
+@questionRow(id = "ct600a-relief-for-return-payments-a40") {
+    @questionCell(2) {
+    }
+    @questionCell(2) {
+        @textField(
+            value = "Totals",
+            id = "A40",
+            widthClass = Some("full"),
+            boxNumber = Some("A40"),
+            boxNumberColor = "white"
+        )
+    }
+    @questionCell(3) {
+        @optionalNumberFieldForInt(
+            value = boxRetriever.a40().value,
+            numberOfDigits = 1,
+            id = "A40",
+            prefix = Some("&pound;"),
+            inline = true,
+            containerCss = Some("input-box--full-width")
+        )
+    }
+}
+@questionRow() {
+    @questionCell(2) {
+    }
+    @questionCell(2) {
+    }
+    @questionCell(3) {
+        <strong>total amount of boxes A30 and A35</strong>
+    }
+}
+@questionRow(id = "ct600a-relief-for-return-payments-a45") {
+    @questionCell(2) {
+    }
+    @questionCell(2) {
+        @textField(
+            value = "Relief due",
+            id = "A45Label",
+            widthClass = Some("full"),
+            boxNumber = Some("A45"),
+            boxNumberColor = "white"
+        )
+    }
+    @questionCell(3) {
+        @optionalNumberFieldForBigDecimal(
+            value = boxRetriever.a45().value,
+            numberOfDigits = 1,
+            id = "B45",
+            prefix = Some("&pound;"),
+            inline = true,
+            containerCss = Some("input-box--full-width")
+        )
+    }
+}
+@questionRow() {
+    @questionCell(2) {
+    }
+    @questionCell(2) {
+    }
+    @questionCell(3) {
+        <strong>box A40 multiplied by rate applicable</strong>
+    }
+}

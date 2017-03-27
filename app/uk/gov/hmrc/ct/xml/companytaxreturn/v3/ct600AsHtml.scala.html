@@ -1,0 +1,153 @@
+@import uk.gov.hmrc.ct.ct600.v3.retriever.RepaymentsBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.sections.html._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.ct600a.html.ct600aAsHtml
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.ct600e.html.ct600eAsHtml
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.ct600j.html.ct600jAsHtml
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+@import uk.gov.hmrc.ct.ct600j.v3.retriever.CT600JBoxRetriever
+@import uk.gov.hmrc.ct.ct600a.v3.retriever.CT600ABoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.AboutThisReturnBoxRetriever
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+@import uk.gov.hmrc.ct.ct600.v3.retriever.CT600DeclarationBoxRetriever
+
+@(boxRetriever: BaseBoxRetriever, options: uk.gov.hmrc.ct.xml.model.filing.HtmlRendererOptions)
+
+@b140 = @{
+    boxRetriever match {
+        case t: AboutThisReturnBoxRetriever => optional(t, optionFromAboutThisReturn[Boolean] { (br) => br.b140.value })
+        case _ => Some(false)
+    }
+}
+
+@b95 = @{booleanValue(boxRetriever, booleanFromAboutThisReturn { (br) => br.b95().value }, defaultValue { false })}
+
+@budgetChangesEnabled = @{ true /* Comes from feature flags */ }
+
+<div id="CT600" class="ct600 ct600--v3 @if(budgetChangesEnabled) { no-italics }">
+    @uk.gov.hmrc.ct.xml.companytaxreturn.html.ct600_css()
+    <style type="text/css" rel="stylesheet">
+        .ct600--v3 .ct600--header-logo
+        {
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAA8CAMAAACn4e/8AAAAP1BMVEUAAAAAAAAAAAAAAAAAAAAAAAAAko8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAko8AAAAAko/AReAnAAAAE3RSTlMAQMCA8CDAMBDgUKBg0LCQcKWQ67A38AAABChJREFUWMPtmNkW1SAMRSEkMlP0+P/fahJ7J/X6oPVFzVplSCibqTQQPn0IzyLjIKJjSLhSPnx+ysSFm1D8M5DSARpZU3kQsMofgJSJGR+d0ly5GOKM7gkGe9yVcjWElOECIJwUuhgy7jVW1Dt3XAupEA1FB6ih6eB5juulkGaDJYuZequtE/MSG7B2JaRDl+7ESgu0yOOpSxn9SsjkELZPgVSq4pO0Q+B5JQSkEPYkEXnMCiFcDYkKaeKQ0hQS/wSk0AgrhY/rY0grDJKrIUwaEMvqAkD6EtVcDSF4cDBvAJv5gEFAV0KSfRGHQnAA+rCm7etJV0IEZHVidYCAvmBUglwJCaSVZjxLViiFSyECLt+YCiNfCwkbs7wyJvblf8aO+tzwXNH/wD8+AV3OtHQg/RFvJVZgph13mkCN4XqIy1iAyxp/yu9yiSYa/1GIy3/IvwIZNDw+KOuzgosQZYszuaz22/+T5DEh6qOBE89ERFUGa+5SSPdMvUPcuNGvhCzf9hv4BRIA0x5rS5DU/LWh1oOSaJTypq55SdHesVdyopTfQQaGb8vHC6SArCBPcC5cDYgdBmAKM6AC6SydoGYGAeMJUsmEHeLOS8FKN0iPsaWKpslVQuTpfq0GIvYbylytBgkZ9IAUVo1MlDeQDgkD7Q4x8Zk61GBhjuZo8ArJYBYmbB+JByRinL394XCFjGTu8XNPYpsYanNRfa2hqWKdimFlXyHpNKU3EK1CcDwgySMstSUXsd50LhodroivENXbavxqegfZIORniAno1CSSIDi4344Cm+QJcmhi3miR2juIADN8B5mqr00GulfjRzLmJo0p3CHFinRAS/CWVmt5BwkL+zvIhNiyBM4DTHWjK/Id4hsFeGkiT0u1hwcZxeMciz6uKB6YstyNYpmtoWvzGe98vmBFLNitiDdPTX/lVv9nxSH3Eb9LiSkNuRpSJoBx00aGyfGjNyTJr0I2Vqu4MYCdZfMPPe6I+KuQhOzP/WtRaagvbn6MzxDJd6xY9tTG+B4ysDLXW1vp7F4K8fUbS5pU0fIMIFnZg4EZq392xaw8fnIVxZxP4MOhf0AaZhsTeXT0pEV4aM4agdX8yi9hakNWHMzvII0f854Qv4dsbN/tTHNeKpWK4r0uQPE9cZltUH53SzQHs1RyCMb3EGHMo900OAvG6L0G3boLSvH9BY4YCN0rvq3dhfiYk9wrULNDMvoPISEuBmZ5f+0RNhCfD6mlQqts/r5vfXJgnT2Z7ph9C7E9MxPSjyE+6QPoT3ecpWs2mioDVqE7LF8hZGxbjq+Qaa1r7yAJ3AnzPPAWAlOvhiqMucDWJe5HxXZ/UusHLUb7BrJRj/7dyfx+jd6o0lHKIvHsJkZN/odYldIgG+5aabi/rDnps66oZlfR4XpbWTxV/SpfAMBaQySyFvXFAAAAAElFTkSuQmCC');
+            height: 60px;
+            width: 100px;
+        }
+    </style>
+
+    <div class="page-break small-heading-margin">
+        <div class="ct600--header @if(budgetChangesEnabled) { no-underline }">
+            <div class="ct600--header-logo">
+                <!-- Placeholder for the header logo -->
+            </div>
+            <div class="ct600--header-title">
+                <h1 class="ct600--heading-green">Company Tax Return</h1>
+                <h2 class="ct600--heading-green">
+                    @if(budgetChangesEnabled) {
+                        CT600 (2017) Version 3
+                    } else {
+                        CT600 (2015) Version 3
+                    }
+                </h2>
+                <h3 class="ct600--heading-green">for accounting periods starting on or after 1 April 2015</h3>
+            </div>
+        </div>
+
+        <h2>Your Company Tax Return</h2>
+        <div class="ct600--notice-box">
+            <p>If we send the company a 'Notice' to deliver a Company Tax Return it has to comply by the filing date or we charge a penalty, even if there is no tax to pay.</p>
+            <p>A return includes a Company Tax Return form, any supplementary pages, accounts, computations and any relevant information. The CT600 Guide tells you how the return must be formatted and delivered. It contains general information you may need to deliver your return, links to more detailed advice and box-by–box guidance for this form and the supplementary pages.</p>
+            <p>The forms in the CT600 series set out the information we need and provide a standard format for calculations.</p>
+        </div>
+
+        @companyInformation(boxRetriever)
+        @{
+            boxRetriever match {
+                case t: AboutThisReturnBoxRetriever => aboutThisReturn(t)
+            }
+        }
+    </div>
+
+    <div class="page-break">
+        @{
+            boxRetriever match {
+                case t: AboutThisReturnBoxRetriever => aboutThisReturnContinued(t)
+            }
+        }
+
+        <h2 class="ct600--heading-green margin-bottom-none">Tax calculation</h2>
+        @turnover(boxRetriever)
+        @income(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        @incomeContinued(boxRetriever)
+        @chargeableGains()
+        @profitsBeforeDeductionsAndReliefs(boxRetriever)
+        @deductionsAndReliefs()
+    </div>
+
+    <div class="page-break">
+        @deductionsAndReliefsContinued(boxRetriever)
+        @taxCalculation(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        @reliefsAndDeductionsInTermsOfTax()
+        @calculationOfTaxOutstandingOrOverpaid(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        @taxReconciliation(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        @indicatorsAndInformation(boxRetriever)
+        <h2 class="ct600--heading-green margin-bottom-none">Information about enhanced expenditure</h2>
+        @rndOrCreativeEnhancedExpenditure()
+        @landRemediationEnhancedExpenditure()
+    </div>
+
+    <div class="page-break">
+        <h2 class="ct600--heading-green margin-bottom-none">Information about capital allowances and balancing charges</h2>
+        @allowancesAndChargesInCalculationOfTradingProfitsAndLosses(boxRetriever)
+        @allowancesAndChargesNotIncludedInCalculationOfTradingProfitsAndLosses(boxRetriever)
+        @qualifyingExpenditure(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        <h2 class="ct600--heading-green margin-bottom-none">Losses, deficits and excess amounts</h2>
+        @amountArising(boxRetriever)
+        @excessAmounts()
+    </div>
+
+    <div class="page-break">
+        <h2 class="ct600--heading-green margin-bottom-none">Overpayments and repayments</h2>
+        @smallRepayments(boxRetriever)
+        @repaymentsForThePeriodCoveredByThisReturn(boxRetriever)
+        @surrenderOfTaxRefundWithinGroup()
+        @bankDetails(retriever[RepaymentsBoxRetriever](boxRetriever))
+    </div>
+
+    <div class="page-break">
+        @paymentsToAPersonOtherThanTheCompany(retriever[RepaymentsBoxRetriever](boxRetriever))
+        @declaration(retriever[CT600DeclarationBoxRetriever](boxRetriever))
+    </div>
+
+    @if(b95) {
+        @boxRetriever match {
+            case r: CT600ABoxRetriever => {@ct600aAsHtml(r)}
+            case _ => {}
+        }
+    }
+    @boxRetriever match {
+        case r: CT600EBoxRetriever => {@ct600eAsHtml(r)}
+        case _ => {}
+    }
+    @if(b140.getOrElse(false)) {
+        @boxRetriever match {
+            case r: CT600JBoxRetriever with AboutThisReturnBoxRetriever => {@ct600jAsHtml(r)}
+            case _ => {}
+        }
+    }
+</div>

@@ -1,0 +1,19 @@
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v2.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+
+@(data: ComputationsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, condensed: Boolean = false)
+
+<div class="header" @if(condensed){ style="padding: 0" }>
+    <h1 class="text--center">
+        <ix:nonNumeric name="ct-comp:CompanyName" contextRef="CY_Comps_Instant">@{data.b155.value}</ix:nonNumeric>
+    </h1>
+    <h2 class="text--center" @if(condensed){ style="margin: 5px 0" }>
+        Utr: <ix:nonNumeric name="ct-comp:TaxReference" contextRef="CY_Comps_Instant">@{data.utr().value}</ix:nonNumeric>
+        | Accounting Period:
+        <ix:nonNumeric name="ct-comp:StartOfPeriodCoveredByReturn" contextRef="CY_Comps_Instant" format="ixt2:datedaymonthyear">@dateFormat(data.cp1.value, DDMMYYYY)</ix:nonNumeric> -
+        <ix:nonNumeric name="ct-comp:EndOfPeriodCoveredByReturn" contextRef="CY_Comps_Instant" format="ixt2:datedaymonthyear">@dateFormat(data.cp2.value, DDMMYYYY)</ix:nonNumeric>
+    </h2>
+</div>

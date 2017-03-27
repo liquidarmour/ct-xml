@@ -1,0 +1,47 @@
+@import uk.gov.hmrc.ct.ct600a.v3.retriever.CT600ABoxRetriever
+
+@(boxRetriever: CT600ABoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(id = "ct600a-summary-information", title = Some("<h2>Summary information</h2>")) {
+    @questionRow(id = "ct600a-summary-information-a75") {
+        @questionCell(6) {
+            @boxNumber("A75", white = true)
+            <strong>Total of all loans and arrangements, for all periods, outstanding at the end of the return period</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.a75().value,
+                numberOfDigits = 11,
+                id = "A75",
+                showDecimalPlaces = true,
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600a-summary-information-a80") {
+        @questionCell(6) {
+            @boxNumber("A80", white = true)
+            <strong>Tax payable </strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = boxRetriever.a80().value,
+                numberOfDigits = 11,
+                id = "A80",
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(6) {
+            <strong>Copy the figure in box A80 to box 480 on form CT600</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            <strong>box A20 minus total of boxes A45 and A70</strong>
+        }
+    }
+}

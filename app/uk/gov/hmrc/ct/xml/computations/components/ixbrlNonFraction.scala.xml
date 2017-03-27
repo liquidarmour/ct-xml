@@ -1,0 +1,9 @@
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+
+@(name: String, contextRef: String, value: Int)
+
+@if(value >= 0) {
+      <ix:nonFraction name="@name" contextRef="@contextRef" unitRef="GBP" decimals="0" format="ixt:numcommadot">@commaSeparated(value.abs)</ix:nonFraction>
+} else {
+    ( <ix:nonFraction name="@name" contextRef="@contextRef" unitRef="GBP" decimals="0" format="ixt:numcommadot" sign="-">@commaSeparated(value.abs)</ix:nonFraction> )
+}

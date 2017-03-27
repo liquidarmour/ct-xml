@@ -1,0 +1,94 @@
+@import uk.gov.hmrc.ct.ct600.v2.retriever.RepaymentsBoxRetriever
+
+@(data: RepaymentsBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Bank details (for person to whom the repayment is to be made)</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Repayment is made quickly and safely by direct credit to a bank or building society account.
+                Please complete the following details:</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(7) {
+            <span>Name of bank or building society</span>
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(4) {
+            <span>Branch sort code</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(7) {
+            @textField(
+                value = if (!data.rdq1().value) { boxToDecryptedString(data.b149()) } else { "" },
+                id = "B149",
+                boxNumber = Some("149"),
+                widthClass = Some("full")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(4) {
+            @numberField(
+                value = if (!data.rdq1().value) { boxToDecryptedString(data.b150()) } else { "" },
+                numberOfDigits = 6,
+                id = "B150",
+                boxNumber = Some("150")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <span>Account number</span>
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(6) {
+            <span>Name of account</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(5) {
+            @numberField(
+                value = if (!data.rdq1().value) { boxToDecryptedString(data.b151()) } else { "" },
+                numberOfDigits = 8,
+                id = "B151",
+                boxNumber = Some("151")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(6) {
+            @textField(
+                value = if (!data.rdq1().value) { boxToDecryptedString(data.b152()) } else { "" },
+                id = "B152",
+                boxNumber = Some("152"),
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Building society reference</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @numberField(
+                value = if (!data.rdq1().value) { boxToDecryptedString(data.b153()) } else { "" },
+                numberOfDigits = 18,
+                id = "B153",
+                boxNumber = Some("153")
+            )
+        }
+    }
+}

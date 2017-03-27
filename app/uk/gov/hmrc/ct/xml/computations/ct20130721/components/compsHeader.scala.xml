@@ -1,0 +1,17 @@
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v2.retriever.CT600BoxRetriever
+@(boxRetriever: CT600BoxRetriever with ComputationsBoxRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr, condensed: Boolean = false)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+
+<div class="header" @if(condensed){ style="padding: 0" }>
+    <h2 @if(condensed){ style="margin: 5px 0" }>
+        <ix:nonNumeric name="ct-CT:DescriptorCompanyName" contextRef="CY_Comps_Instant">@{boxRetriever.b155.value}</ix:nonNumeric>
+        <br/>
+        Utr: <ix:nonNumeric name="ct-CT:DescriptorTaxReference" contextRef="CY_Comps_Instant">@{ctUtr.toString}</ix:nonNumeric>
+        | Accounting Period:
+        <ix:nonNumeric name="ct-CT:DescriptorStartOfPeriodForWhichReturnRequired" contextRef="CY_Comps_Instant" format="ixt2:datedaymonthyear">@dateFormat(boxRetriever.cp1.value, DDMMYYYY)</ix:nonNumeric> -
+        <ix:nonNumeric name="ct-CT:DescriptorEndOfPeriodForWhichReturnRequired" contextRef="CY_Comps_Instant" format="ixt2:datedaymonthyear">@dateFormat(boxRetriever.cp2.value, DDMMYYYY)</ix:nonNumeric>
+    </h2>
+</div>

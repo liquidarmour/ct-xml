@@ -1,0 +1,5 @@
+@(file: String, attachmentDetails: uk.gov.hmrc.ct.xml.model.filing.AttachmentDetails, attachmentType: String, fileFormat: String)
+
+<Attachment Type="@attachmentType" Format="@{fileFormat}" Filename="@{attachmentDetails.filename}" Size="@{attachmentDetails.size}">
+@file
+</Attachment>

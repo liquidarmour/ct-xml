@@ -1,0 +1,206 @@
+@import uk.gov.hmrc.ct.domain.CompanyTypes
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v2.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+@import uk.gov.hmrc.ct.xml.computations.components.xml.{compsPlainValue, ixbrlNonFraction}
+@import uk.gov.hmrc.ct.xml.computations.ct20130721.components.xml.compsHeader
+
+<div class=" machineryAndPlant page-break">
+    @compsHeader(boxRetriever, ctUtr)
+    <h2>Machinery and plant</h2>
+    <table>
+        <tr>
+            <th colspan="4">Machinery and plant </th>
+            <th/>
+            <th/>
+            <th/>
+        </tr>
+        <tr>
+            <th colspan="3"> </th>
+            <th class="figure">&#xa3;</th>
+        </tr>
+        <tr>
+            <td colspan="3">Written down value of main pool brought forward: </td>
+            <td class="figure">
+            @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolWDVBF", "CY_Trade_Start_Period_Instant", boxRetriever.cp78().value.getOrElse(0))
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">Written down value of special rate pool brought forward : </td>
+            <td class="figure">
+            @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradeSpecialRatePoolWDVBF", "CY_Trade_Start_Period_Instant", boxRetriever.cp666().value.getOrElse(0))
+            </td>
+        </tr>
+        @if(boxRetriever.cp79().value.isDefined || boxRetriever.cp82().value.isDefined || boxRetriever.cp674().value.isDefined) {
+            <tr>
+                <td colspan="4" scope="row" class="strong">Additions in the period </td>
+            </tr>
+            <tr>
+                <td colspan="3">Total expenditure qualifying for the first year allowance(FYA): </td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolTotalExpenditureQualifyingForFYA", "CY_Trade_Duration", boxRetriever.cp81().value)
+                </td>
+            </tr>
+            @if(boxRetriever.cp82().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="3">Additions qualifying for Writing Down Allowance (WDA) from main pool: </td>
+                    <td class="figure">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolExpenditureQualifyingForWDA", "CY_Trade_Duration", boxRetriever.cp82.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp674().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="3">Total Additions: </td>
+                    <td class="figure">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradeOtherCapitalAllowancesAdditionsTotal", "CY_Trade_Duration", boxRetriever.cp674.value.get)
+                    </td>
+                </tr>
+            }
+        }
+        @if(boxRetriever.cp83().value.exists(_ > 0)) {
+            <tr>
+                <td scope="row" class="strong"  colspan="4">Additions for Annual Investment Allowance</td>
+            </tr>
+            <tr>
+                <td colspan="3">Expenditure qualifying for annual investment allowance(AIA): </td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolAnnualInvestmentAllowance", "CY_Trade_Duration", boxRetriever.cp83.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp84().value.exists(_ > 0)) {
+            <tr>
+                <td scope="row" class="strong"  colspan="4">Disposals in the period</td>
+            </tr>
+            <tr>
+                <td colspan="3">Disposal proceeds: </td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-CaseI_TradingProfitsIndividualTradePMAGeneralPoolTotalDisposalReceipts", "CY_Trade_Duration", boxRetriever.cp84.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp672().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Proceeds from disposals from main pool:</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolTotalDisposalReceipts", "CY_Trade_Duration", boxRetriever.cp672.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp667().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Proceeds from disposals from special rate pool: </td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradeSpecialRatePoolTotalDisposalReceipts", "CY_Trade_Duration", boxRetriever.cp667.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp673().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="3">Market value of unsold assets:</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradeFCAAssetTotalDisposalReceipts", "CY_Trade_Duration", boxRetriever.cp673.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp88().value.isDefined || boxRetriever.cp89().value.isDefined || boxRetriever.cp90().value.isDefined) {
+            <tr>
+                <td scope="row" class="strong"  colspan="4">Allowances and charges </td>
+            </tr>
+            @if(boxRetriever.cpQ8.value.exists(_ == false)) {
+                <tr>
+                    <td colspan="2">Total first year allowance claimed: </td>
+                    <td colspan="2" class="figure">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolTotalFirstYearAllowances", "CY_Trade_Duration", boxRetriever.cp87.value)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Annual Investment Allowance claimed: </td>
+                    <td colspan="2" class="figure">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolAnnualInvestmentAllowance", "CY_Trade_Duration", boxRetriever.cp88.value.getOrElse(0))
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Writing Down Allowance claimed from main pool:</td>
+                    <td colspan="2" class="figure">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolWritingDownAllowances", "CY_Trade_Duration", boxRetriever.cp89.value.getOrElse(0))
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">Writing Down Allowance claimed from special rate pool:</td>
+                    <td class="figure">
+                    @compsPlainValue(boxRetriever.cp668.value.getOrElse(0))
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp90().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="2">Balancing allowance:</td>
+                    <td colspan="2" class="figure">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolBalancingAllowances", "CY_Trade_Duration", boxRetriever.cp90.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp186().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="3" scope="row" class="strong">Total allowances claimed from main pool: </td>
+                    <th class="figure">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolTotalAllowances", "CY_Trade_Duration", boxRetriever.cp186.value.get)
+                    </th>
+                </tr>
+            }
+            @if(boxRetriever.cpQ8.value.exists(_ == false)) {
+                <tr>
+                    <td colspan="2">Total allowances claimed special rate pool:</td>
+                    <td colspan="2" class="figure">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradeSpecialRatePoolTotalAllowances", "CY_Trade_Duration", boxRetriever.cp668.orZero)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp91().value.exists(_ > 0)) {
+                <tr>
+                    <td scope="row" class="strong" colspan="3">
+                    @if(boxRetriever.cpQ8.value.exists(_ == false)) {
+                        Balancing charge from main rate pool:
+                    } else {
+                        Balancing charge:
+                    }
+                    </td>
+                    <td class="figure strong">
+                    @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradeFCASummaryBalancingChargesTotal", "CY_Trade_Duration", boxRetriever.cp91.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp670().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="3">Balancing charge from special rate pool:</td>
+                    <td class="figure">
+                    @compsPlainValue(boxRetriever.cp670)
+                    </td>
+                </tr>
+            }
+        }
+        <tr>
+            <td scope="row" colspan="4" class="strong">Written down value </td>
+        </tr>
+        <tr>
+            <td colspan="3">Written down value carried forward from main pool: </td>
+            <td class="figure">
+            @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradePMAGeneralPoolWDVCF", "CY_Trade_End_Period_Instant", boxRetriever.cp92().value.getOrElse(0))
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">Written down value carried forward from special rate pool:</td>
+            <td class="figure">
+            @ixbrlNonFraction("ct-CaseI:TradingProfitsIndividualTradeSpecialRatePoolWDVCF", "CY_Trade_End_Period_Instant", boxRetriever.cp669().value.getOrElse(0))
+            </td>
+        </tr>
+    </table>
+</div>

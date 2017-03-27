@@ -1,0 +1,17 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Important points</h2>")) {
+    @questionRow() {
+        @questionCell(12) {
+            <span>Guidance about when and how to complete this supplementary page can be found in the Company Tax Return guide.</span>
+            <br />
+            <span>- Read <b>What supplementary pages do I need to complete and include as part of the Company Tax Return?</b> to find out what supplementary pages you need to complete.</span>
+            <br />
+            <span>- Read <b>Important points about all supplementary pages</b>.</span>
+            <br />
+            <span>- Read <b>CT600J – Disclosure of Tax Avoidance Schemes</b> for further guidance about completing this supplementary page including information about the penalties that apply</span>
+        }
+    }
+}

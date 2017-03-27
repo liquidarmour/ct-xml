@@ -1,0 +1,146 @@
+@import uk.gov.hmrc.ct.xml.model.submit.hmrc.ct600a.Ct600aModel
+@(data: Ct600aModel)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox() {
+    <p>Complete part 2 to obtain relief for loans included in box A2 that were repaid, released or written off if</p>
+    <ul>
+        <li>the return is for the period in which the loans were made and</li>
+        <li>the loan was repaid, released or written off after the end of the period but earlier than nine months and one day after the end of the accounting period in which the loan was made.</li>
+    </ul>
+    <p>
+        Enter in the table details for each participator or associate. If there have been a number of repayments on an account, enter
+        only the total repayments for that account and give the date of the last repayment. A separate entry must be made for each
+        loan or part loan that has been released or written off.
+    </p>
+    <p>
+        Example
+        <br />
+        A company makes a loan during the accounting period ended 31 December 2004 and it is all repaid to the company on
+        30 June 2005. The company's tax return for the accounting period ended 31 December 2004 is sent to HM Revenue &amp;
+        Customs on 1 November 2005. Part 2 should be completed because the loan was repaid after the end of the accounting
+        period but earlier than nine months and one day after it.
+    </p>
+    @questionRow() {
+        @questionCell(12) {
+            @questionNumber("A4 & A5")
+            <span>Information about loans repaid, released or written off after the end of the period but earlier than nine months and one day after the end of the period</span>
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <table class="ct600--tax-table margin-all-none">
+                <thead>
+                    <tr>
+                        <th class="cell-size-6">Name of participator or associate</th>
+                        <th class="cell-size-2">Amount repaid</th>
+                        <th class="cell-size-2">Amount released or written off</th>
+                        <th class="cell-size-2">Date of repayment, release or write off</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(row <- data.section2.section2Table.rows) {
+                        <tr>
+                            <td class="cell-size-6">@row.nameOfParticipator</td>
+                            <td class="cell-size-2">
+                                &pound; @row.amountRepaid
+                            </td>
+                            <td class="cell-size-2">
+                                &pound; @row.amountReleasedOrWrittenOff
+                            </td>
+                            <td class="cell-size-2">@row.dateOfRepaymentReleaseOrWriteOff</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+
+    @questionRow() {
+        @questionCell(5, alignRight = true) {
+            <span>Total </span>
+        }
+        @questionCell(3, alignTop = true) {
+            @numberField(
+                value = data.section2.a4,
+                numberOfDigits = 1,
+                id = "A4",
+                boxNumber = Some("A4"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3, alignTop = true) {
+            @numberField(
+                value = data.section2.a5,
+                numberOfDigits = 1,
+                id = "A5",
+                boxNumber = Some("A5"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <i>If a continuation sheet is used, please put an 'X' in box A5A</i>
+        }
+        @questionCell(4, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "A5A",
+                boxNumber = Some("A5A")
+            )
+        }
+    }
+
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("A6")
+            <span>
+                Total amount of loans made during the return period which have been repaid,
+                released or written off after the end of the period but earlier than nine months and
+                one day after the end of the period
+            </span>
+        }
+        @questionCell(4, alignRight = true) {
+            @fieldDescription("total of boxes A4 and A5")
+            @numberField(
+                value = data.section2.a6,
+                numberOfDigits = 1,
+                id = "A6",
+                boxNumber = Some("A6"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            @questionNumber("A7")
+            <span>
+                Relief due for loans repaid, released or written off after the end of the period but
+                earlier than nine months and one day after the end of the period
+            </span>
+        }
+        @questionCell(4, alignRight = true) {
+            @fieldDescription("box A6 multiplied by 25%")
+            @numberField(
+                value = data.section2.a7,
+                numberOfDigits = 1,
+                id = "A7",
+                boxNumber = Some("A7"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

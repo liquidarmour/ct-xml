@@ -1,0 +1,189 @@
+@import uk.gov.hmrc.ct.ct600j.v3.retriever.CT600JBoxRetriever
+
+@(boxRetriever: CT600JBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@* ID contains an acronym for the file name *@
+@questionBox(id = "ct600j-dotas", title = Some("<h2>Disclosure of tax avoidance schemes</h2>")) {
+    @questionRow() {
+        @questionCell(6) {
+            <strong>Scheme reference number</strong>
+        }
+        @questionCell(6) {
+            <strong>Accounting period in which the expected advantage arises</strong>
+            <br />
+            <i>DD/MM/YYYY</i>
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j5-j5a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j5().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J5",
+                boxNumber = Some("J5")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j5A().value,
+                id = "J5A",
+                boxNumber = Some("J5A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j10-j10a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j10().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J10",
+                boxNumber = Some("J10")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j10A().value,
+                id = "J10A",
+                boxNumber = Some("J10A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j15-j15a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j15().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J15",
+                boxNumber = Some("J15")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j15A().value,
+                id = "J15A",
+                boxNumber = Some("J15A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j20-j20a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j20().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J20",
+                boxNumber = Some("J20")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j20A().value,
+                id = "J20A",
+                boxNumber = Some("J20A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j25-j25a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j25().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J25",
+                boxNumber = Some("J25")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j25A().value,
+                id = "J25A",
+                boxNumber = Some("J25A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j30-j30a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j30().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J30",
+                boxNumber = Some("J30")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j30A().value,
+                id = "J30A",
+                boxNumber = Some("J30A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j35-j35a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j35().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J35",
+                boxNumber = Some("J35")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j35A().value,
+                id = "J35A",
+                boxNumber = Some("J35A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j40-j40a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j40().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J40",
+                boxNumber = Some("J40")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j40A().value,
+                id = "J40A",
+                boxNumber = Some("J40A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j45-j45a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j45().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J45",
+                boxNumber = Some("J45")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j45A().value,
+                id = "J45A",
+                boxNumber = Some("J45A")
+            )
+        }
+    }
+    @questionRow(id = "ct600j-dotas-j50-j50a") {
+        @questionCell(6) {
+            @numberField(
+                value = boxRetriever.j50().value.getOrElse(""),
+                numberOfDigits = 8,
+                id = "J50",
+                boxNumber = Some("J50")
+            )
+        }
+        @questionCell(6) {
+            @optionalDateField(
+                value = boxRetriever.j50A().value,
+                id = "J50A",
+                boxNumber = Some("J50A")
+            )
+        }
+    }
+}

@@ -1,0 +1,78 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@* ID contains an acronym for the file name. *@
+@questionBox(id = "ct600-sotrwg", title = Some("<h2>Surrender of tax refund within group</h2>")) {
+    @questionRow(css = rowClass) {
+        @questionCell(12) {
+            <strong>Including surrenders under the Instalment Payments Regulations.</strong>
+        }
+    }
+    @questionRow(id = "ct600-sotrwg-b900", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("900", default = true)
+            <strong>The following amount is to be surrendered</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B900",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(css = rowClass) {
+        @questionCell(12) {
+            <strong>Put an 'X' in the appropriate box(es) below</strong>
+        }
+    }
+    @questionRow(id = "ct600-sotrwg-b905", css = Some("margin-bottom-none")) {
+        @questionCell(6) {
+            <strong>the joint Notice is attached</strong>
+        }
+        @questionCell(6) {
+            @checkboxField(
+                value = false,
+                id = "B905",
+                boxNumber = Some("905"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-bottom-none")) {
+        @questionCell(12) {
+            <strong>or</strong>
+        }
+    }
+    @questionRow(id = "ct600-sotrwg-b910", css = rowClass) {
+        @questionCell(6) {
+            <strong>will follow</strong>
+        }
+        @questionCell(6) {
+            @checkboxField(
+                value = false,
+                id = "B910",
+                boxNumber = Some("910"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600-sotrwg-b915") {
+        @questionCell(6) {
+            @boxNumber("915", white = true)
+            <strong>Please stop repayment of the following amount until we send you the Notice</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B915",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+}

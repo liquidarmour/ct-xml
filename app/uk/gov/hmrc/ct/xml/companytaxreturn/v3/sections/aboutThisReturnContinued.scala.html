@@ -1,0 +1,195 @@
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.AboutThisReturnBoxRetriever
+
+@(boxRetriever: AboutThisReturnBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+@import uk.gov.hmrc.ct.xml.helpers.DisableTwirlImplicits._
+
+@b95 = @{boxRetriever.b95.value}
+@b140 = @{optional(boxRetriever, optionFromAboutThisReturn[Boolean] { (br) => br.b140.value })}
+
+@budgetChangesEnabled = @{ true /* TODO: This one comes from the feature flags*/ }
+
+@questionBox(id = "ct600-about-this-return-continued", title = Some("<h2>About this return <i>continued</i></h2>")) {
+    @questionRow(id = "ct600-about-this-return-continued-b85") {
+        @questionCell(10) {
+            @boxNumber("85", default = true)
+            <strong>I attach accounts and computations for a different period</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B85 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B85"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @boxNumber("90", default = true)
+            <strong>If you are not attaching the accounts and computations, say why not</strong>
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b90") {
+        @questionCell(12) {
+            @optionalTextArea(
+                value = None,
+                id = "CT600ReasonForLackOfCalculations",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Supplementary pages enclosed</strong>
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b59") {
+        @questionCell(10) {
+            @boxNumber("95", default = true)
+            <strong>Loans and arrangements to participators by close companies - <i>form CT600A</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @checkboxField(
+                value = b95,
+                id = "B95"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b100") {
+        @questionCell(10) {
+            @boxNumber("100", default = true)
+            <strong>Controlled foreign companies and foreign permanent establishment exemptions - <i>form CT600B</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B100 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B100"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b105") {
+        @questionCell(10) {
+            @boxNumber("105", default = true)
+            <strong>Group and consortium - <i>form CT600C</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B106 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B106"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b110") {
+        @questionCell(10) {
+            @boxNumber("110", default = true)
+            <strong>Insurance - <i>form CT600D</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B110 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B110"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b115") {
+        @questionCell(10) {
+            @boxNumber("115", default = true)
+            <strong>Charities and Community Amateur Sports Clubs (CASCs) - <i>form CT600E</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B115 is not supported *@
+            @checkboxField(
+                value = boxRetriever match {
+                    case r: CT600EBoxRetriever => true
+                    case _ => false
+                },
+                id = "B115"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b120") {
+        @questionCell(10) {
+            @boxNumber("120", default = true)
+            <strong>Tonnage Tax - <i>form CT600F</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B120 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B120"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b125") {
+        @questionCell(10) {
+            @boxNumber("125", default = true)
+            <strong>form <i>CT600G</i> (not currently used)</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B125 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B125"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b130") {
+        @questionCell(10) {
+            @boxNumber("130", default = true)
+            <strong>Cross-border Royalties - <i>form CT600H</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B130 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B130"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b135") {
+        @questionCell(10) {
+            @boxNumber("135", default = true)
+            <strong>Supplementary charge in respect of ring fence trades - <i>form CT600I</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B135 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B135"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-continued-b140") {
+        @questionCell(10) {
+            @boxNumber("140", default = true)
+            <strong>Disclosure of Tax Avoidance Schemes - <i>form CT600J</i></strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @optionalCheckboxField(
+                value = b140,
+                id = "B140"
+            )
+        }
+    }
+    @if(budgetChangesEnabled) {
+        @questionRow(id = "ct600-about-this-return-continued-b141") {
+            @questionCell(10) {
+                @boxNumber("141", default = true)
+                <strong>Restitution Tax - <i>form CT600K</i></strong>
+            }
+            @questionCell(2, alignRight = true) {
+                @optionalCheckboxField(
+                    value = None,
+                    id = "B141"
+                )
+            }
+        }
+    }
+}

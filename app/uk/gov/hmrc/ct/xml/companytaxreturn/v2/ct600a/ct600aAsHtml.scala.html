@@ -1,0 +1,52 @@
+@import uk.gov.hmrc.ct.xml.model.submit.hmrc.ct600a.Ct600aModel
+@import uk.gov.hmrc.ct.ct600a.v2.retriever.CT600ABoxRetriever
+
+@(data: CT600ABoxRetriever)
+
+@ct600aModel = @{ Ct600aModel(data) }
+
+<div id="ct600aAsHtml">
+    <div class="page-break small-heading-margin">
+        <div class="ct600--header">
+            <div class="ct600--header-logo">
+                    <!-- Placeholder for the header logo -->
+            </div>
+            <div class="ct600--header-title">
+                <h1>Company Tax Return form - Supplementary Pages</h1>
+                <h1>Loans to participators by close companies</h1>
+                <h2>CT600A (2006) Version 2</h2>
+                <h3>for accounting periods ending on or after 1 July 1999</h3>
+            </div>
+        </div>
+
+        @companyInformation(ct600aModel)
+        @youNeedToCompleteTheseSupplementaryPagesIf()
+        @importantPoints()
+        @notes()
+    </div>
+
+    <div class="page-break">
+        <h1>1: Loans made during the return period</h1>
+        @loansMadeDuringTheReturnPeriod(ct600aModel)
+
+        <h1>2: Relief for amounts repaid, released or written off after the end of the period but earlier than nine months and one day after the end of the period - for loans made during the return period</h1>
+        @reliefForAmountsRepaid(ct600aModel)
+    </div>
+
+    <div class="page-break">
+        <h1>Most companies will not need to complete part 3 below</h1>
+        @mostCompaniesWillNotNeedToCompletePart3()
+
+        <h1>3: Relief for loans made during the return period repaid, released or written off more than nine months after the end of the period and where relief is due now</h1>
+        @reliefForLoans(ct600aModel)
+    </div>
+
+    <div class="page-break">
+        <h1>4: Other information</h1>
+        @otherInformation(ct600aModel)
+
+        <h1>5: What S419 ICTA 1988 tax is payable?</h1>
+        @whatS419ICTA1988TaxIsPayable(ct600aModel)
+        @whatToDoWhenYouHaveCompletedTheseSupplementaryPages()
+    </div>
+</div>

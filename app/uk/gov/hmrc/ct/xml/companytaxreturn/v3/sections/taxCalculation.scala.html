@@ -1,0 +1,231 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b330 = @{intValue(boxRetriever, intFromCT600 { (br) => br.b330().value },
+                                 intFromCT600E { (br) => br.e1003().value })}
+
+@b335 = @{intValue(boxRetriever, intFromCT600 { (br) => br.b335().value },
+                                 intFromCT600E { (br) => 0 })}
+
+@b340 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b340().value },
+                                     decimalFromCT600E { (br) => br.e1005().value })}
+
+@b345 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b345().value },
+                                     decimalFromCT600E { (br) => 0 })}
+
+@b380 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b380().value },
+                                 optionFromCT600E[Int] { (br) => br.e1013().value })}
+
+@hasSecondYear = @{b380.nonEmpty}
+
+@b385 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => if(hasSecondYear){Some(br.b385().value)} else None },
+                                 optionFromCT600E[Int] { (br) => if(hasSecondYear){Some(0)} else None })}
+
+@b390 = @{optional(boxRetriever, optionFromCT600[BigDecimal] { (br) => if(hasSecondYear){Some(br.b390().value)} else None },
+                                 optionFromCT600E[BigDecimal] { (br) => if(hasSecondYear){Some(br.e1015().value)} else None  })}
+
+@b395 = @{optional(boxRetriever, optionFromCT600[BigDecimal] { (br) => if(hasSecondYear){Some(br.b395().value)} else None },
+                                 optionFromCT600E[BigDecimal] { (br) => if(hasSecondYear){Some(0)} else None })}
+
+@b430 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b430().value },
+                                     decimalFromCT600E { (br) => 0 })}
+
+@b440 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b440().value },
+                                     decimalFromCT600E { (br) => 0 })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@budgetChangesEnabled = @{ true /* Comes from flags */ }
+
+@renderTableBoxes() = {
+    @questionRow(id = "ct600-tax-calculation-b430", css = rowClass) {
+        @questionCell(6) {
+            <strong>Corporation Tax </strong>
+            <span>total of boxes 345, 360, 375, 395, 410 and 425</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForBigDecimal(
+                value = b430,
+                numberOfDigits = 11,
+                id = "B430",
+                prefix = Some("&pound;"),
+                boxNumber = Some("430")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-calculation-b435", css = rowClass) {
+        @questionCell(6) {
+            <strong>Marginal relief for ring fence trades</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B435",
+                prefix = Some("&pound;"),
+                boxNumber = Some("435")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-calculation-b440") {
+        @questionCell(6) {
+            <strong>Corporation Tax chargeable</strong>
+            <span>box 430 minus box 435</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForBigDecimal(
+                value = b440,
+                numberOfDigits = 11,
+                id = "B440",
+                prefix = Some("&pound;"),
+                boxNumber = Some("440")
+            )
+        }
+    }
+}
+
+<h2>Tax calculation</h2>
+<h3>Enter how much profit has to be charged and at what rate</h3>
+
+<table class="ct600--tax-table @if(budgetChangesEnabled) { margin-bottom--none }">
+    <thead>
+        <tr>
+            <th class="tax-table--box-number-column"></th>
+            <th class="tax-table--small-column">Financial year (yyyy)</th>
+            <th class="tax-table--box-number-column"></th>
+            <th class="tax-table--large-column">Amount of profit</th>
+            <th class="tax-table--box-number-column"></th>
+            <th class="tax-table--small-column text-align--center">Rate of tax<br />%</th>
+            <th class="tax-table--box-number-column"></th>
+            <th class="tax-table--medium-column">Tax</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="tax-table--box-number">330</td>
+            <td id="ct600-tax-calculation-b330">
+                <span>@b330</span>
+            </td>
+            <td class="tax-table--box-number">335</td>
+            <td id="ct600-tax-calculation-b335" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span>@b335</span>
+            </td>
+            <td class="tax-table--box-number">340</td>
+            <td id="ct600-tax-calculation-b340">
+                <span>@b340</span>
+            </td>
+            <td class="tax-table--box-number">345</td>
+            <td id="ct600-tax-calculation-b345" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span>@b345</span>
+                <span class="tax-table--label-right">p</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="tax-table--disabled"></td>
+            <td class="tax-table--disabled"></td>
+            <td class="tax-table--box-number">350</td>
+            <td id="ct600-tax-calculation-b350" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span></span>
+            </td>
+            <td class="tax-table--box-number">355</td>
+            <td></td>
+            <td class="tax-table--box-number">360</td>
+            <td id="ct600-tax-calculation-b360" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span></span>
+                <span class="tax-table--label-right">p</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="tax-table--disabled"></td>
+            <td class="tax-table--disabled"></td>
+            <td class="tax-table--box-number">365</td>
+            <td id="ct600-tax-calculation-b365" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span></span>
+            </td>
+            <td class="tax-table--box-number">370</td>
+            <td id="ct600-tax-calculation-b370">
+                <span></span>
+            </td>
+            <td class="tax-table--box-number">375</td>
+            <td id="ct600-tax-calculation-b375" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span></span>
+                <span class="tax-table--label-right">p</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="tax-table--box-number">380</td>
+            <td id="ct600-tax-calculation-b380">
+                <span>@b380.getOrElse("").toString</span>
+            </td>
+            <td class="tax-table--box-number">385</td>
+            <td id="ct600-tax-calculation-b385" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span>@b385.getOrElse("")</span>
+            </td>
+            <td class="tax-table--box-number">390</td>
+            <td id="ct600-tax-calculation-b390">
+                <span>@b390.getOrElse("")</span>
+            </td>
+            <td class="tax-table--box-number">395</td>
+            <td id="ct600-tax-calculation-b395" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span>@b395.getOrElse("")</span>
+                <span class="tax-table--label-right">p</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="tax-table--disabled"></td>
+            <td class="tax-table--disabled"></td>
+            <td class="tax-table--box-number">400</td>
+            <td id="ct600-tax-calculation-b400" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span></span>
+            </td>
+            <td class="tax-table--box-number">405</td>
+            <td id="ct600-tax-calculation-b405">
+                <span></span>
+            </td>
+            <td class="tax-table--box-number">410</td>
+            <td id="ct600-tax-calculation-b410" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span></span>
+                <span class="tax-table--label-right">p</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="tax-table--disabled"></td>
+            <td class="tax-table--disabled"></td>
+            <td class="tax-table--box-number">415</td>
+            <td id="ct600-tax-calculation-b415" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span></span>
+            </td>
+            <td class="tax-table--box-number">420</td>
+            <td id="ct600-tax-calculation-b420"></td>
+            <td class="tax-table--box-number">425</td>
+            <td id="ct600-tax-calculation-b425" class="tax-table--with-labels">
+                <span class="tax-table--label-left">&pound;</span>
+                <span></span>
+                <span class="tax-table--label-right">p</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+@if(budgetChangesEnabled) {
+    @questionBox(id = "ct600-tc", cssClass = "border-top--none", minimumPadding = true) {
+        @renderTableBoxes()
+    }
+} else {
+    @renderTableBoxes()
+}

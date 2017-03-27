@@ -1,0 +1,277 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b475 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b475().value },
+                                     decimalFromCT600E { (br) => 0 })}
+
+@b480 = @{optional(boxRetriever, optionFromCT600[BigDecimal] { (br) => br.b480().value })}
+
+@b485 = @{optional(boxRetriever, optionFromCT600[Boolean] { (br) => Some(br.b485().value) })}
+
+@b510 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b510().value },
+                                     decimalFromCT600E { (br) => 0 })}
+
+@b515 = @{optional(boxRetriever, optionFromCT600[BigDecimal] { (br) => br.b515().value })}
+
+@b520 = @{optional(boxRetriever, optionFromCT600[BigDecimal] { (br) => br.b520().value })}
+
+@b525 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b525().value },
+                                     decimalFromCT600E { (br) => 0 })}
+
+@b528 = @{optional(boxRetriever, optionFromCT600[BigDecimal] { (br) => br.b528().value })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@budgetChangesEnabled = @{ true /* this comes from feature flags */ }
+
+@* The ID is an acronym for the name of files *@
+@questionBox(id = "ct600-cotooo", title = Some("<h2>Calculation of tax outstanding or overpaid</h2>")) {
+    @questionRow(id = "ct600-cotooo-b475", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("475", default = true)
+            <strong>Net Corporation Tax liability - </strong>
+            <span>box 440 minus box 470</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForBigDecimal(
+                value = b475,
+                numberOfDigits = 11,
+                id = "B475",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b480", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("480", default = true)
+            <strong>Tax payable on loans and arrangements to participators</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = b480,
+                numberOfDigits = 11,
+                id = "B480",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b485", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("485", default = true)
+            <strong>Put an 'X' in box 485 if you completed box A70 in the supplementary pages CT600A</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalCheckboxField(
+                value = b485,
+                id = "B485"
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b490", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("490", white = true)
+            <strong>CFC tax payable</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B490",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b495", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("495", white = true)
+            @if(budgetChangesEnabled) {
+                <strong>Bank levy payable</strong>
+            } else {
+                <strong>Bank Levy payable</strong>
+            }
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B495",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @if(budgetChangesEnabled) {
+        @questionRow(id = "ct600-cotooo-b496", css = rowClass) {
+            @questionCell(6) {
+                @boxNumber("496", white = true)
+                <strong>Bank surcharge payable</strong>
+            }
+            @questionCell(6, alignRight = true) {
+                @optionalNumberFieldForInt(
+                    value = None,
+                    id = "B496",
+                    numberOfDigits = 11,
+                    prefix = Some("&pound;"),
+                    showDecimalPlaces = true,
+                    onlyWholeNumbers = false
+                )
+            }
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b500", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("500", default = true)
+            @if(budgetChangesEnabled) {
+                <strong>CFC tax, bank levy and bank surcharge payable</strong>
+                <br />
+                <span>- total of boxes 490, 495 and 496</span>
+            } else {
+                <strong>CFC tax and bank Levy payable - </strong>
+                <span>total of box 490 and 495</span>
+            }
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B500",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b505", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("505", default = true)
+            <strong>Supplementary charge (ring fence trades) payable</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B505",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b510", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("510", default = true)
+            <strong>Tax chargeable - </strong>
+            <span>total of boxes 475, 480, 500 and 505</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForBigDecimal(
+                value = b510,
+                numberOfDigits = 11,
+                id = "B510",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b515", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("515", default = true)
+            <strong>Income Tax deducted from gross income included in profits</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = b515,
+                numberOfDigits = 11,
+                id = "B515",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b520", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("520", default = true)
+            <strong>Income Tax repayable to the company</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = b520,
+                numberOfDigits = 11,
+                id = "B520",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-cotooo-b525") {
+        @questionCell(6) {
+            @boxNumber("525", default = true)
+            @if(budgetChangesEnabled) {
+                <strong>Self-assessment of tax payable before restitution tax</strong>
+                <span> - box 510 minus box 515</span>
+            } else {
+                <strong>Self-assessment of tax payable - </strong>
+                <span>box 510 minus box 515</span>
+            }
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForBigDecimal(
+                value = b525,
+                numberOfDigits = 11,
+                id = "B525",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @if(budgetChangesEnabled) {
+        @questionRow(id = "ct600-cotooo-b525") {
+            @questionCell(6) {
+                @boxNumber("527", default = true)
+                <strong>Restitution tax</strong>
+            }
+            @questionCell(6, alignRight = true) {
+                @optionalNumberFieldForBigDecimal(
+                    value = None,
+                    numberOfDigits = 11,
+                    id = "B527",
+                    prefix = Some("&pound;"),
+                    showDecimalPlaces = true,
+                    onlyWholeNumbers = false
+                )
+            }
+        }
+        @questionRow(id = "ct600-cotooo-b528") {
+            @questionCell(6) {
+                @boxNumber("528", default = true)
+                <strong>Self-assessment of tax payable</strong>
+                <span> - total of boxes 525 and 527</span>
+            }
+            @questionCell(6, alignRight = true) {
+                @optionalNumberFieldForBigDecimal(
+                    value = b528,
+                    numberOfDigits = 11,
+                    id = "B528",
+                    prefix = Some("&pound;"),
+                    showDecimalPlaces = true,
+                    onlyWholeNumbers = false
+                )
+            }
+        }
+    }
+}

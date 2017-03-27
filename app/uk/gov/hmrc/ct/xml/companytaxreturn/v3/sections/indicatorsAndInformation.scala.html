@@ -1,0 +1,100 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b620 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b620().value })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@budgetChangesEnabled = @{ true /* Originally comes from Feature flags */ }
+
+@questionBox(id = "ct600-indicators-and-information", title = Some("<h2>Indicators and information</h2>")) {
+    @questionRow(id = "ct600-indicators-and-information-b620", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("620", default = true)
+            @if(budgetChangesEnabled) {
+                <strong>Franked investment income/Exempt ABGH distributions</strong>
+            } else {
+                <strong>Franked investment income</strong>
+            }
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b620,
+                id = "B260",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-indicators-and-information-b625", css = rowClass) {
+        @questionCell(10) {
+            @boxNumber("625", default = true)
+            <strong>Number of 51% group companies</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @optionalTextField(
+                value = None,
+                id = "B625",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = rowClass) {
+        @questionCell(12) {
+            <strong>Put an 'X' in the relevant boxes, if in the period, the company:</strong>
+        }
+    }
+    @questionRow(id = "ct600-indicators-and-information-b630", css = rowClass) {
+        @questionCell(10) {
+            @boxNumber("630", default = true)
+            <strong>should have made (whether it has or not) instalment payments under the Corporation Tax (Instalment Payments) Regulations 1998</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "B630"
+            )
+        }
+    }
+    @questionRow(id = "ct600-indicators-and-information-b635", css = rowClass) {
+        @questionCell(10) {
+            @boxNumber("635", default = true)
+            <strong>is within a group payments arrangement for the period</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "B635"
+            )
+        }
+    }
+    @questionRow(id = "ct600-indicators-and-information-b640", css = rowClass) {
+        @questionCell(10) {
+            @boxNumber("640", default = true)
+            <strong>has written down or sold intangible assets</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "B640"
+            )
+        }
+    }
+    @questionRow(id = "ct600-indicators-and-information-b645") {
+        @questionCell(10) {
+            @boxNumber("645", default = true)
+            <strong>has made cross-border royalty payments</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "B645"
+            )
+        }
+    }
+}

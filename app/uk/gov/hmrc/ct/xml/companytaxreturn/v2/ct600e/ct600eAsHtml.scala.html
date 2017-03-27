@@ -1,0 +1,39 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.ct600e.v2.retriever.CT600EBoxRetriever
+
+@(data: CT600EBoxRetriever with FilingAttributesBoxValueRetriever)
+
+<div id="ct600e">
+    <div class="page-break small-heading-margin">
+        <div class="ct600--header">
+            <div class="ct600--header-logo">
+                    <!-- Placeholder for the header logo -->
+            </div>
+            <div class="ct600--header-title">
+                <h1>Company Tax Return form - Supplementary Pages</h1>
+                <h1>Charities and Community Amateur Sports Clubs (CASCs)</h1>
+                <h2>CT600E (2006) Version 2</h2>
+                <h3>for accounting periods ending on or after 1 July 1999</h3>
+            </div>
+        </div>
+
+        @companyInformation(data)
+        @youNeedToCompleteTheseSupplementaryPagesIf()
+        @importantPoints()
+        @claimsToExemption(data)
+    </div>
+
+    <div class="page-break">
+        @notes()
+    </div>
+
+    <div class="page-break">
+        @repayments(data)
+        @informationRequired(data)
+    </div>
+
+    <div class="page-break">
+        @informationRequiredContinued(data)
+        @whatToDoWhenYouHaveCompletedTheseSupplementaryPages()
+    </div>
+</div>

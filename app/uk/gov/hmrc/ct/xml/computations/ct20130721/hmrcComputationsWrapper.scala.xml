@@ -1,0 +1,21 @@
+@(computationsBodyXML: play.twirl.api.Xml, title: String)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.xml.css
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ct-CT="http://www.govtalk.gov.uk/uk/fr/tax/uk-hmrc-ct-CT/2013-07-21" xmlns:ct-CaseI="http://www.govtalk.gov.uk/uk/fr/tax/uk-hmrc-ct-CaseI/2013-07-21"
+      xmlns:ct-default="http://www.govtalk.gov.uk/uk/fr/tax/uk-hmrc-ct-default/2013-07-21"
+      xmlns:ct-Tax="http://www.govtalk.gov.uk/uk/fr/tax/uk-hmrc-ct-Tax/2013-07-21"
+      xmlns:uk-bus="http://www.xbrl.org/uk/cd/business/2009-09-01" xmlns:uk-gaap-core="http://www.xbrl.org/uk/gaap/core/2009-09-01" xmlns:dpl-core="http://www.govtalk.gov.uk/uk/fr/tax/dpl-core/2013-10-01"
+      xmlns:uk-direp="http://www.xbrl.org/uk/reports/direp/2009-09-01" xmlns:xbrl="http://www.xbrl.org/2003/instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ix="http://www.xbrl.org/2008/inlineXBRL"
+      xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:hmrc="http://hmrc.gov.uk/" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/"
+      xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2010-04-20" xmlns:ixt2="http://www.xbrl.org/inlineXBRL/transformation/2011-07-31" xmlns:link="http://www.xbrl.org/2003/linkbase"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <head>
+        <title>@title</title>
+        <meta content="application/xhtml+xml; charset=UTF-8" http-equiv="Content-Type"/>
+        <style type="text/css">
+            @css()
+        </style>
+    </head>
+    <body xml:lang="en">@computationsBodyXML</body>
+</html>

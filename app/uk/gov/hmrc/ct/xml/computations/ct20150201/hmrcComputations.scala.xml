@@ -1,0 +1,197 @@
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever,
+    ctUtr: uk.gov.hmrc.domain.CtUtr,
+    excludeHtmlHeader: Boolean = false)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+@import uk.gov.hmrc.ct.xml.computations.ct20150201.sections.xml._
+
+<div class="wholedoc">
+    <div style="DISPLAY: none">
+        <ix:header>
+            <ix:references>
+                <link:schemaRef xmlns:ct-comp="http://www.govtalk.gov.uk/uk/fr/tax/uk-hmrc-ct-comp/2015-02-01"
+                xmlns:xbrldi="http://xbrl.org/2006/xbrldi"
+                xlink:type="simple"
+                xlink:href="http://www.hmrc.gov.uk/schemas/ct/comp/2015-02-01/ct-2015-02-01.xsd"/>
+
+                <link:schemaRef xmlns="http://www.xbrl.org/2003/instance"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xmlns:ixt="http://www.xbrl.org/inlineXbrL/transformation/2011-07-31"
+                xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+                xlink:type="simple"
+                xlink:href="http://www.hmrc.gov.uk/schemas/ct/dpl/2013-10-01/dpl-gaap-main-2013-10-01.xsd"/>
+
+            </ix:references>
+            <ix:resources xmlns="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:ixt="http://www.xbrl.org/inlineXbrL/transformation/2011-07-31"
+            xmlns:iso4217="http://www.xbrl.org/2003/iso4217">
+                <xbrli:context id="PoAStart">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="ct-CT:BusinessTypeDimension">ct-CT:Company</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.ac3.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="PoAEnd">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="ct-CT:BusinessTypeDimension">ct-CT:Company</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.ac4.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="PoA">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="ct-CT:BusinessTypeDimension">ct-CT:Company</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.ac3.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.ac4.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Duration">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Comps_Instant">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="ct-comp:BusinessTypeDimension">ct-comp:Company</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Comps_Duration">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="ct-comp:BusinessTypeDimension">ct-comp:Company</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Trade_Start_Period_Instant">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="ct-comp:BusinessTypeDimension">ct-comp:Trade</xbrldi:explicitMember>
+                            <xbrldi:typedMember dimension="ct-comp:BusinessNameDimension">
+                                <ct-comp:BusinessNameDomain>@{boxRetriever.b1.value}</ct-comp:BusinessNameDomain>
+                            </xbrldi:typedMember>
+                            <xbrldi:explicitMember dimension="ct-comp:TerritoryDimension">ct-comp:UK</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Trade_End_Period_Instant">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="ct-comp:BusinessTypeDimension">ct-comp:Trade</xbrldi:explicitMember>
+                            <xbrldi:typedMember dimension="ct-comp:BusinessNameDimension">
+                                <ct-comp:BusinessNameDomain>@{boxRetriever.b1.value}</ct-comp:BusinessNameDomain>
+                            </xbrldi:typedMember>
+                            <xbrldi:explicitMember dimension="ct-comp:TerritoryDimension">ct-comp:UK</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Trade_Duration">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="ct-comp:BusinessTypeDimension">ct-comp:Trade</xbrldi:explicitMember>
+                            <xbrldi:typedMember dimension="ct-comp:BusinessNameDimension">
+                                <ct-comp:BusinessNameDomain>@{boxRetriever.b1.value}</ct-comp:BusinessNameDomain>
+                            </xbrldi:typedMember>
+                            <xbrldi:explicitMember dimension="ct-comp:TerritoryDimension">ct-comp:UK</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_ExpenseType_AdminExpenses">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="dpl-core:ExpenseTypeDimension">dpl-core:AdministrativeExpenses</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_DetailedAnalysis_Item40">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="dpl-core:DetailedAnalysisDimension">dpl-core:Item40</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_ProfitLossBeforeTax_This_AP">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <unit id="GBP">
+                    <measure>iso4217:GBP</measure>
+                </unit>
+                <unit id="pure">
+                    <measure>pure</measure>
+                </unit>
+            </ix:resources>
+        </ix:header>
+    </div>
+
+    @apportionmentOfProfits(boxRetriever, ctUtr)
+    @detailedProfitAndLoss(boxRetriever, ctUtr)
+    @expenses(boxRetriever, ctUtr)
+    @machineryAndPlant(boxRetriever, ctUtr)
+    @summaryTotals(boxRetriever, ctUtr)
+    @adjustments(boxRetriever, ctUtr)
+    @summary(boxRetriever, ctUtr)
+    @summaryFiguresTransferedToCT600(boxRetriever, ctUtr)
+</div>

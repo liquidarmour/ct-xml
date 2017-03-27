@@ -1,0 +1,31 @@
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+@import uk.gov.hmrc.ct.xml.computations.components.xml.{compsPlainValue, ixbrlNonFraction}
+@import uk.gov.hmrc.ct.xml.computations.ct20150201.xml.compsHeader2
+
+<div class=" apportionment page-break">
+    @compsHeader2(boxRetriever, ctUtr)
+    <h1>Computations</h1>
+    <h2>Apportionment of profits </h2>
+    <table>
+        <tr>
+            <td colspan="2">Start date of accounts: </td>
+            <td colspan="2" class="figure">
+                <ix:nonNumeric name="ct-comp:PeriodOfAccountStartDate" contextRef="CY_Comps_Instant" format="ixt:datelonguk">@dateFormat(boxRetriever.ac3().value, LongUK)</ix:nonNumeric>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">End date of accounts: </td>
+            <td colspan="2" class="figure">
+                <ix:nonNumeric name="ct-comp:PeriodOfAccountEndDate" contextRef="CY_Comps_Instant" format="ixt:datelonguk">@dateFormat(boxRetriever.ac4().value, LongUK)</ix:nonNumeric>
+    </td>
+    </tr>
+    </table>
+</div>

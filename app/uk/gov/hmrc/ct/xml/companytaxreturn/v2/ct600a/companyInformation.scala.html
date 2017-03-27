@@ -1,0 +1,64 @@
+@import uk.gov.hmrc.ct.xml.model.submit.hmrc.ct600a.Ct600aModel
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+
+@(ct600aModel: Ct600aModel)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Company information</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Company name</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @textField(
+                value = ct600aModel.companyInformation.companyName,
+                id = "CT600ACompanyInformation",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Tax reference as shown on the CT603</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            @numberField(
+                value = ct600aModel.companyInformation.taxReference,
+                id = "CT600ATaxReference",
+                numberOfDigits = 13
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <b>Period covered by this supplementary page <i>(cannot exceed 12 months)</i></b>
+        }
+    }
+    @questionRow() {
+        @questionCell(4) {
+            <span>from <i>(dd/mm/yyyy)</i></span>
+        }
+        @questionCell(4) {
+            <span>to <i>(dd/mm/yyyy)</i></span>
+        }
+    }
+    @questionRow() {
+        @questionCell(4) {
+            @dateField(
+                value = DateFormatter.parse(ct600aModel.companyInformation.fromDate, DateFormat.DDMMYYYY),
+                id = "CT600AStartDate"
+            )
+        }
+        @questionCell(4) {
+            @dateField(
+                value = DateFormatter.parse(ct600aModel.companyInformation.toDate, DateFormat.DDMMYYYY),
+                id = "CT600AEndDate"
+            )
+        }
+    }
+}

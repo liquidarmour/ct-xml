@@ -1,0 +1,61 @@
+@(value: Option[BigDecimal],
+  id: String,
+  numberOfDigits: Int,
+  prefix: Option[String] = None,
+  suffix: Option[String] = None,
+  showDecimalPlaces: Boolean = true,
+  onlyWholeNumbers: Boolean = false,
+  disabled: Boolean = false,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default",
+  inline: Boolean = false,
+  containerCss: Option[String] = None)
+
+@numberString = @{
+    if (value.nonEmpty) {
+        value.get.toString()
+    } else {
+        ""
+    }
+}
+
+@wholeNumberPart = @{
+    val parts = numberString.split('.')
+    if (parts.length > 1) {
+        parts(0)
+    } else {
+        numberString
+    }
+}
+
+@decimalNumberPart = @{
+    val parts = numberString.split('.')
+    if (parts.length > 1) {
+        val decimalPlaces = parts(1)
+        if (decimalPlaces.length == 1) {
+            Some(decimalPlaces + "0")
+        } else {
+            Some(decimalPlaces)
+        }
+    } else if (numberString.nonEmpty && showDecimalPlaces && !onlyWholeNumbers) {
+        Some("00")
+    } else {
+        None
+    }
+}
+
+@numberField(
+    value = wholeNumberPart,
+    decimals = decimalNumberPart,
+    numberOfDigits = numberOfDigits,
+    prefix = prefix,
+    suffix = suffix,
+    showDecimalPlaces = showDecimalPlaces,
+    onlyWholeNumbers = onlyWholeNumbers,
+    disabled = disabled,
+    boxNumber = boxNumber,
+    boxNumberColor = boxNumberColor,
+    inline = inline,
+    containerCss = containerCss,
+    id = id
+)

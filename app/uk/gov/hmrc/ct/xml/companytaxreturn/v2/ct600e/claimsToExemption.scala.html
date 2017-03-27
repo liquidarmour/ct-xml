@@ -1,0 +1,172 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.ct600e.v2.retriever.CT600EBoxRetriever
+
+@(data: CT600EBoxRetriever with FilingAttributesBoxValueRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@isClaimingExemption = @{
+    data.e1010().value.getOrElse(false)
+}
+
+@isClaimingExemptionForAll = @{
+    data.e1011().value.getOrElse(false)
+}
+
+@isClaimingExemptionForSome = @{
+    isClaimingExemption && !isClaimingExemptionForAll
+}
+
+@questionBox(title = Some("<h2>Claims to exemption</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>This section should be completed in all cases</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            <span>Charity/CASC repayment reference</span>
+        }
+        @questionCell(3, alignRight = true) {
+            @optionalTextField(
+                value = data.e1000().value,
+                id = "E1000",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            <span>Charity Commission Registration number, or Scottish Charity number (if applicable)</span>
+        }
+        @questionCell(3, alignRight = true) {
+            @optionalTextField(
+                value = data.e1001().value,
+                id = "E1001",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <i>Put an 'X' in the relevant box if during the period covered by these Supplementary Pages:</i>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionRow() {
+                @questionCell(9) {
+                    <span>- the company was a charity/CASC and is claiming exemption from all tax on all or part of its income and gains</span>
+                }
+                @questionCell(1) {
+
+                }
+                @questionCell(2) {
+                    @checkboxField(
+                        value = isClaimingExemption,
+                        id = "E1010"
+                    )
+                }
+            }
+        }
+        @questionCell(6) {
+            @questionRow() {
+                @questionCell(9) {
+                    <span>- all income and gains are exempt from tax and have benn, or will be, applied for charitable or qualifying purposes only.</span>
+                }
+                @questionCell(1) {
+
+                }
+                @questionCell(2) {
+                    @checkboxField(
+                        value = isClaimingExemptionForAll,
+                        id = "E1011"
+                    )
+                }
+            }
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>If the company was a charity/CASC but had no income or gains in the period, then put an 'X' in the first box 'claiming exemption from all tax' above.</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>or</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <span>- some of the income and gains may not be exempt or have not been applied for charitable or qualifying purposes only, and I have completed form CT600. See the note on Restrictions of relief for non-qualifying expenditure on page 2.</span>
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = isClaimingExemptionForSome,
+                id = "E1010AndE1011"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>I claim exemption from tax</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <span>Signature</span>
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(5) {
+            <span>Date <i>(dd/mm/yyyy)</i></span>
+        }
+    }
+    @questionRow() {
+        @questionCell(5) {
+            @optionalTextArea(
+                value = None,
+                id = "CT600ESignature",
+                widthClass = Some("full")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(5, alignTop = true) {
+            @optionalDateField(
+                value = data.e1032().value,
+                id = "E1032"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <span>Name <i>(in capitals)</i></span>
+            <br />
+            @optionalTextField(
+                value = data.e1030().value,
+                id = "E1030",
+                widthClass = Some("full")
+            )
+            <br />
+            <span>Status</span>
+            <br />
+            @optionalTextField(
+                value = data.e1031().value,
+                id = "E1031",
+                widthClass = Some("full")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(5) {
+            <i>Except where a liquidator or administrator has been appointed, any person who is authorised to do so may sign on behalf of the company. For CASCs the treasurer should sign. A photocopy of a signature is not acceptable.</i>
+        }
+    }
+}

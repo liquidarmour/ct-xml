@@ -1,0 +1,151 @@
+@import uk.gov.hmrc.ct.domain.CompanyTypes
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v2.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr, excludeHtmlHeader: Boolean = false)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+@import uk.gov.hmrc.ct.xml.computations.components.xml.{compsPlainValue, ixbrlNonFraction}
+@import uk.gov.hmrc.ct.xml.computations.ct20130721.sections.xml._
+
+<div class="wholedoc">
+    <div style="DISPLAY: none">
+        <ix:header>
+            <ix:hidden>
+                <ix:nonNumeric name="ct-CT:DescriptorTaxDistrict" contextRef="CY_Comps_Instant">999</ix:nonNumeric>
+                <ix:tuple name="uk-bus:XBRLDocumentAuthorGrouping" tupleID="XBRLDocumentAuthorGrouping1"></ix:tuple>
+                <ix:nonNumeric name="uk-bus:NameAuthor" contextRef="CY_Duration" tupleRef="XBRLDocumentAuthorGrouping1" order="1">CATO</ix:nonNumeric>
+                <ix:nonNumeric name="uk-bus:DescriptionOrTitleAuthor" contextRef="CY_Duration" tupleRef="XBRLDocumentAuthorGrouping1" order="2">Software</ix:nonNumeric>
+            </ix:hidden>
+            <ix:references>
+                <link:schemaRef xmlns="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ixt="http://www.xbrl.org/inlineXbrL/transformation/2011-07-31" xmlns:iso4217="http://www.xbrl.org/2003/iso4217" xlink:type="simple" xlink:href="http://www.hmrc.gov.uk/schemas/ct/comp/taxonomies/2013-07-21/ct-2013-07-21.xsd"/>
+                <link:schemaRef xmlns="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ixt="http://www.xbrl.org/inlineXbrL/transformation/2011-07-31" xmlns:iso4217="http://www.xbrl.org/2003/iso4217" xlink:type="simple" xlink:href="http://www.hmrc.gov.uk/schemas/ct/dpl/2013-10-01/dpl-gaap-main-2013-10-01.xsd"/>
+            </ix:references>
+            <ix:resources xmlns="http://www.xbrl.org/2003/instance" xmlns:xlink="http://www.w3.org/1999/xlink"
+                          xmlns:ixt="http://www.xbrl.org/inlineXbrL/transformation/2011-07-31"
+                          xmlns:iso4217="http://www.xbrl.org/2003/iso4217">
+                <xbrli:context id="PoAStart">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.ac3.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="PoAEnd">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.ac4.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="PoA">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.ac3.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.ac4.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Duration">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Comps_Instant">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Comps_Duration">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Trade_Start_Period_Instant">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Trade_End_Period_Instant">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_Trade_Duration">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_ExpenseType_AdminExpenses">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_DetailedAnalysis_Item40">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="CY_ProfitLossBeforeTax_This_AP">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@{boxRetriever.ac1.value}</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@{dateFormat(boxRetriever.cp1.value, XML)}</xbrli:startDate>
+                        <xbrli:endDate>@{dateFormat(boxRetriever.cp2.value, XML)}</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <unit id="GBP">
+                    <measure>iso4217:GBP</measure>
+                </unit>
+                <unit id="pure">
+                    <measure>pure</measure>
+                </unit>
+            </ix:resources>
+        </ix:header>
+    </div>
+
+    @apportionmentOfProfits(boxRetriever, ctUtr)
+    @detailedProfitAndLoss(boxRetriever, ctUtr)
+    @expenses(boxRetriever, ctUtr)
+    @machineryAndPlant(boxRetriever, ctUtr)
+    @summaryTotals(boxRetriever, ctUtr)
+    @adjustments(boxRetriever, ctUtr)
+    @summary(boxRetriever, ctUtr)
+    @summaryFiguresTransferedToCT600(boxRetriever, ctUtr)
+</div>

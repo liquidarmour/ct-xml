@@ -1,0 +1,220 @@
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat.XML
+@import uk.gov.hmrc.ct.ct600a.v2.retriever.CT600ABoxRetriever
+@import uk.gov.hmrc.ct.ct600e.v2.retriever.CT600EBoxRetriever
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CompanyCT600Helpers
+@import uk.gov.hmrc.ct.xml.retrievers.V2BaseCT600BoxRetriever
+
+@(ct600Helper: V2CompanyCT600Helpers, data: V2BaseCT600BoxRetriever, accountsXml: play.twirl.api.Xml, computationsXmlEncoded: String, accountsAreIxbrl: Boolean, attachments: Seq[play.twirl.api.Xml])
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.sections.html._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.ct600e.{xml => ct600eXml}
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.ct600a.{xml => ct600aXml}
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.xml._
+
+<CompanyTaxReturn ReturnType="@{ct600Helper.returnType}" Short="yes" xmlns="http://www.govtalk.gov.uk/taxation/CT/3">
+    <CompanyInformation>
+        <CompanyName>@{data.b155().value}</CompanyName>
+        @data.ac1().value.find(_.nonEmpty).map{ crn =>
+        <RegistrationNumber>@crn</RegistrationNumber>
+        }
+        <Reference>@{data.utr().value}</Reference>
+        @if(ct600Helper.companyType != 0){<CompanyType>@{ct600Helper.companyType}</CompanyType>}
+        <CompanyAddress>
+            @{ct600Helper.companyAddress.line1.map(l => <Line>{l}</Line>)}
+            @{ct600Helper.companyAddress.line2.map(l => <Line>{l}</Line>)}
+            @{ct600Helper.companyAddress.line3.map(l => <Line>{l}</Line>)}
+            @{ct600Helper.companyAddress.line4.map(l => <AdditionalLine>{l}</AdditionalLine>)}
+            @{ct600Helper.companyAddress.postcode.map(l => <PostCode>{l}</PostCode>)}
+        </CompanyAddress>
+        <PeriodCovered>
+            <From>@{dateFormat(data.cp1().value, XML)}</From>
+            <To>@{dateFormat(data.cp2().value, XML)}</To>
+        </PeriodCovered>
+    </CompanyInformation>
+    <ReturnInfoSummary>
+        @aboutYourReturn(ct600Helper, data)
+        <Accounts>
+            @if(accountsAreIxbrl){<ThisPeriodAccounts>yes</ThisPeriodAccounts>}else{<ThisPeriodAccounts>yes</ThisPeriodAccounts><NoAccountsReason>PDF accounts attached with explanation</NoAccountsReason>}
+        </Accounts>
+        <Computations>
+        @if(ct600Helper.hasComputations){
+            <ThisPeriodComputations>yes</ThisPeriodComputations>
+        }else{
+            <NoComputationsReason>Not within charge to CT</NoComputationsReason>
+        }
+        </Computations>
+        @if(ct600Helper.hasSupplementaryPages) {
+            <SupplementaryPages>
+                @if(ct600Helper.shouldShowLoansByCloseCompaniesSection){
+                    <CT600A>yes</CT600A>
+                }
+                @if(ct600Helper.isCharity) {
+                    <CT600E>yes</CT600E>
+                }
+                @if(ct600Helper.taq01) {
+                    <CT600J>yes</CT600J>
+                }
+            </SupplementaryPages>
+        }
+    </ReturnInfoSummary>
+    <Turnover>
+        <Total>@currency(data.cp7)</Total>
+    </Turnover>
+    <CompanyTaxCalculation>
+        <Income>
+            <TradingAndProfessional>
+                <Profits>@currency(data.b3)</Profits>
+                @boxToPoundsPence(data.b4).map{ v => <LossesBroughtForward>@v</LossesBroughtForward> }
+                <NetProfits>@currency(data.b5)</NetProfits>
+            </TradingAndProfessional>
+            <NonTradingLoanProfitsAndGains>@currency(data.b6())</NonTradingLoanProfitsAndGains>
+            <LandAndBuildingIncome>@currency(data.b11())</LandAndBuildingIncome>
+            @boxToPoundsPence(data.b14).map { v =>
+                <IncomeWithinD><ProfitsAndGainsNotAnyOtherHeading>@v</ProfitsAndGainsNotAnyOtherHeading></IncomeWithinD>
+            }
+        </Income>
+        <ProfitsBeforeOtherDeductions>@currency(data.b21())</ProfitsBeforeOtherDeductions>
+        <DeductionsAndReliefs>
+            @if(data.cpQ18){<TradingLossesS393AcarriedBack>yes</TradingLossesS393AcarriedBack>}
+            <TradingLosses>@currency(data.b30)</TradingLosses>
+        </DeductionsAndReliefs>
+        <ChargesAndReliefs>
+            <ChargesPaid>@currency(data.b35)</ChargesPaid>
+        </ChargesAndReliefs>
+        <ChargeableProfits>@currency(data.b37())</ChargeableProfits>
+        @if(ct600Helper.claimingSmallCompaniesRate){
+        <TaxCalculation>
+            @boxToPoundsPence(data.b38).map{b38=><FrankedInvestmentIncome>@b38</FrankedInvestmentIncome>}
+            @data.b39.value.map{b39=><AssociatedCompanies><ThisPeriod>@b39</ThisPeriod></AssociatedCompanies>}
+            <StartingOrSmallCompaniesRate>yes</StartingOrSmallCompaniesRate>
+        </TaxCalculation>
+        }
+        <CorporationTaxChargeable>
+            <FinancialYearOne>
+                <Year>@data.b43.value</Year>
+                <Details>
+                    <Profit>@currency(data.b44)</Profit>
+                    <TaxRate>@poundsPence(data.b45.value * 100.0)</TaxRate>
+                    <Tax>@currency(data.b46)</Tax>
+                </Details>
+            </FinancialYearOne>
+            @data.b53.value.map { yearTwo =>
+            <FinancialYearTwo>
+                <Year>@yearTwo</Year>
+                <Details>
+                    <Profit>@currency(data.b54)</Profit>
+                    <TaxRate>@poundsPence(data.b55.value * 100.0)</TaxRate>
+                    <Tax>@currency(data.b56)</Tax>
+                </Details>
+            </FinancialYearTwo>
+            }
+        </CorporationTaxChargeable>
+        <TotalChargeableCorporationTax>@currency(data.b63)</TotalChargeableCorporationTax>
+        @if(ct600Helper.claimingSmallCompaniesRate){
+        <FurtherTaxCalculations>
+            @ct600Helper.marginalRateRelief.map{ v =>
+                <MarginalRateRelief>@poundsPence(v)</MarginalRateRelief>
+            }
+            @if(data.b65.isPositive){
+                <CTNetOfMRR>@currency(data.b65)</CTNetOfMRR>
+            }
+        </FurtherTaxCalculations>
+        }
+        <NetCorporationTaxChargeable>@currency(data.b70())</NetCorporationTaxChargeable>
+        @if(boxToBoolean(data.b80)){<A11Completed>yes</A11Completed>}
+        @if(ct600Helper.shouldShowLoansByCloseCompaniesSection){
+            @data.b79.value.map{v=><Payable>@poundsPence(v)</Payable>}
+        }
+        <IncomeTax>
+            <DeductedIncomeTax>@currency(data.b84)</DeductedIncomeTax>
+            @if(data.b85.isPositive){
+                <TaxRepayable>@currency(data.b85)</TaxRepayable>
+            }
+        </IncomeTax>
+        <TaxPayable>@currency(data.b86)</TaxPayable>
+        <TaxReconciliation>
+            <TaxAlreadyPaid>@currency(data.b91)</TaxAlreadyPaid>
+            <TaxOutstandingOrOverpaid>
+                @if(data.b92.isPositive) {
+                <TaxOutstanding>@currency(data.b92)</TaxOutstanding>
+                }
+                @if(data.b93.isPositive) {
+                <TaxOverpaid>@currency(data.b93)</TaxOverpaid>
+                }
+            </TaxOutstandingOrOverpaid>
+        </TaxReconciliation>
+    </CompanyTaxCalculation>
+    <CapitalAllowancesExpenditure>
+        <ChargesAndAllowances>
+            @boxToPoundsPence(data.b172).map { f =>
+                <AIACapitalAllowancesInc>@f</AIACapitalAllowancesInc>
+            }
+            <MachineryAndPlantSpecialRatePool>
+                <BalancingCharges>@currency(data.b106)</BalancingCharges>
+                <CapitalAllowances>@currency(data.b105)</CapitalAllowances>
+            </MachineryAndPlantSpecialRatePool>
+            <MachineryAndPlantMainPool>
+                <BalancingCharges>@currency(data.b108)</BalancingCharges>
+                <CapitalAllowances>@currency(data.b107)</CapitalAllowances>
+            </MachineryAndPlantMainPool>
+        </ChargesAndAllowances>
+        <MachineryAndPlantExpenditure>@currency(data.b118)</MachineryAndPlantExpenditure>
+        <DesignatedEnvironmentallyFriendlyMachineryAndPlant>@currency(data.b174)</DesignatedEnvironmentallyFriendlyMachineryAndPlant>
+        <OtherMachineryAndPLant>@currency(data.b121)</OtherMachineryAndPLant>
+    </CapitalAllowancesExpenditure>
+    @boxToPoundsPence(data.b122).map { v =>
+    <LossesDeficitsAndExcess>
+        <CaseI>
+            <Arising>@v</Arising>
+        </CaseI>
+    </LossesDeficitsAndExcess>
+    }
+    @overpaymentsAndRepayments(ct600Helper, data)
+    @if(data.cato10){
+    <Declaration>
+        <AcceptDeclaration>yes</AcceptDeclaration>
+        <Name>@data.cato11.value.getOrElse("")</Name>
+        <Status>@data.cato12.value.getOrElse("")</Status>
+    </Declaration>
+    }
+    @if(ct600Helper.shouldShowLoansByCloseCompaniesSection){
+        @data match{case br: CT600ABoxRetriever => @ct600aXml.ct600a(ct600Helper, br)}
+    }
+
+    @(data match{
+        case br: CT600EBoxRetriever =>
+            ct600eXml.ct600e(br)
+        case _ => {}
+    })
+
+    @if(ct600Helper.taq01){
+    <TaxAvoidanceSchemes>
+        @ct600Helper.taxAvoidance.map{v =>
+            <AvoidanceSchemes>
+                <ReferenceNumber>@v.schemeReferenceNumber</ReferenceNumber>
+                @v.advantagedInAccountingPeriod.map{ advantagedInAccountingPeriod =>
+                    <AccountingPeriod>@advantagedInAccountingPeriod</AccountingPeriod>
+                }
+            </AvoidanceSchemes>
+        }
+    </TaxAvoidanceSchemes>
+    }
+
+    <AttachedFiles>
+        <XBRLsubmission>
+            @if(ct600Helper.hasComputations){
+                <Computation>
+                    <Instance>
+                        <EncodedInlineXBRLDocument>@computationsXmlEncoded</EncodedInlineXBRLDocument>
+                    </Instance>
+                </Computation>
+            }
+            @if(accountsAreIxbrl) {@accountsXml}
+        </XBRLsubmission>
+        @if(!accountsAreIxbrl){@accountsXml}
+        @attachments.map{ attachment => @attachment }
+    </AttachedFiles>
+</CompanyTaxReturn>

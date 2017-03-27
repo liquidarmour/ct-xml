@@ -1,0 +1,67 @@
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+
+@(boxRetriever: CT600EBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(id = "ct600e-company-information", title = Some("<h2 class='ct600--heading-green'>Company information</h2>")) {
+    @questionRow(id = "ct600e-company-information-e1") {
+        @questionCell(4) {
+            @boxNumber("E1", white = true)
+            <strong>Company name</strong>
+            <br />
+            <strong>(name of charity or CASC)</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @textField(
+                value = boxRetriever.e1().value,
+                id = "E1",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600e-company-information-e2") {
+        @questionCell(4) {
+            @boxNumber("E2", white = true)
+            <strong>Tax reference</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @numberField(
+                value = boxRetriever.e2().value,
+                numberOfDigits = 10,
+                id = "E2"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Period covered by this supplementary page (cannot exceed 12 months)</strong>
+        }
+    }
+    @questionRow(id = "ct600e-company-information-e3") {
+        @questionCell(4) {
+            @boxNumber("E3", white = true)
+            <strong>from</strong>
+            <i>DD MM YYYY</i>
+        }
+        @questionCell(8, alignRight = true) {
+            @dateField(
+                value = boxRetriever.e3().value,
+                id = "E3"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-company-information-e4") {
+        @questionCell(4) {
+            @boxNumber("E4", white = true)
+            <strong>to</strong>
+            <i>DD MM YYYY</i>
+        }
+        @questionCell(8, alignRight = true) {
+            @dateField(
+                value = boxRetriever.e4().value,
+                id = "E4"
+            )
+        }
+    }
+}

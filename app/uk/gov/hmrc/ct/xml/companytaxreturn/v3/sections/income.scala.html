@@ -1,0 +1,109 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b155 = @{intValue(boxRetriever, intFromCT600 { (br) => br.b155.value },
+                                 intFromCT600E { (br) => 0 })}
+
+@b160 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => br.b160().value })}
+
+@b165 = @{intValue(boxRetriever, intFromCT600 { (br) => br.b165.value },
+                                 intFromCT600E { (br) => 0 })}
+
+@b170 = @{optional(boxRetriever, optionFromCT600[Int] { (br) => Some(br.b170().value) })}
+
+@questionBox(id = "ct600-income", title = Some("<h2>Income</h2>")) {
+    @questionRow(id = "ct600-income-b155") {
+        @questionCell(6) {
+            @boxNumber("155", default = true)
+            <strong>Trading profits</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForInt(
+                value = b155,
+                numberOfDigits = 11,
+                id = "B155",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-b160") {
+        @questionCell(6) {
+            @boxNumber("160", default = true)
+            <strong>Trading losses brought forward claimed against profits</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b160,
+                id = "B160",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-b165") {
+        @questionCell(6) {
+            @boxNumber("165", default = true)
+            <strong>Net trading profits - </strong>
+            <span>box 155 minus box 160</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForInt(
+                value = b165,
+                numberOfDigits = 11,
+                id = "B165",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-b170") {
+        @questionCell(6) {
+            @boxNumber("170", default = true)
+            <strong>Bank, building society or other interest, and profits from non-trading loan relationships</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = b170,
+                id = "B170",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-b172") {
+        @questionCell(10) {
+            @boxNumber("172", default = true)
+            <strong>Put an 'X' in box 172 if the figure in box 170 is net of carrying back a deficit from a later accounting period</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B172 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B172"
+            )
+        }
+    }
+    @questionRow(id = "ct600-income-b175") {
+        @questionCell(6) {
+            @boxNumber("175", default = true)
+            <strong>Annual payments not otherwise charged to Corporation Tax and from which Income Tax has not been deducted</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @* B175 is not supported *@
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B175",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

@@ -1,0 +1,229 @@
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr)
+
+@import uk.gov.hmrc.ct.xml.computations.components.xml.{compsPlainValue, ixbrlNonFraction}
+@import uk.gov.hmrc.ct.xml.computations.ct20150201.xml.compsHeader2
+
+<div class=" expenses page-break">
+    @compsHeader2(boxRetriever, ctUtr, condensed = true)
+    <table>
+        <tr>
+            <th colspan="3">
+                <h2 style="margin: 0 0 0 -5px; padding: 0">Expenses</h2>
+            </th>
+            <th class="figure">&#xa3;</th>
+        </tr>
+
+        <tr>
+            <td scope="row" class="strong" colspan="4">Directors', employees and subcontractor costs </td>
+        </tr>
+        @if(boxRetriever.cp15().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Directors' pension:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("uk-direp:CompanyContributionsToMoneyPurchaseSchemesDirectors", "CY_ExpenseType_AdminExpenses", boxRetriever.cp15.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp16().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Directors' remuneration:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("uk-direp:SalariesFeesDirectors", "CY_ExpenseType_AdminExpenses", boxRetriever.cp16.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp17().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Salaries and wages: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:WagesSalariesExcludingDirectors", "CY_ExpenseType_AdminExpenses", boxRetriever.cp17.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp18().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Subcontractors' payments (construction industry only): </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:SubcontractorCosts", "CY_ExpenseType_AdminExpenses", boxRetriever.cp18.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp19().value.isDefined || boxRetriever.cp20().value.isDefined || boxRetriever.cp21().value.isDefined) {
+            <tr>
+                <td scope="row" colspan="4">Legal and professional costs </td>
+            </tr>
+            @if(boxRetriever.cp19().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="2">Accountancy and audit: </td>
+                    <td colspan="2" class="figure">
+                    @ixbrlNonFraction("dpl-core:AuditAccountancyCosts", "CY_ExpenseType_AdminExpenses", boxRetriever.cp19.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp20().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="2">Consultancy:</td>
+                    <td colspan="2" class="figure">
+                    @ixbrlNonFraction("dpl-core:ConsultancyCosts", "CY_Duration", boxRetriever.cp20.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp21().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="2">Legal and professional charges:</td>
+                    <td colspan="2" class="figure">
+                    @ixbrlNonFraction("dpl-core:LegalProfessionalCosts", "CY_Duration", boxRetriever.cp21.value.get)
+                    </td>
+                </tr>
+            }
+        }
+        <tr>
+            <td scope="row" class="strong" colspan="4">Property costs </td>
+        </tr>
+        @if(boxRetriever.cp22().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Light, heat and power: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:UtilitiesCosts", "CY_Duration", boxRetriever.cp22.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp23().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Rent and rates: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:RentRatesServicesCosts", "CY_Duration", boxRetriever.cp23.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp24().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Repairs, renewals and maintenance: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:PropertyRepairsMaintenanceCosts", "CY_Duration", boxRetriever.cp24.value.get)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td scope="row" class="strong" colspan="4">General administrative expenses </td>
+        </tr>
+        @if(boxRetriever.cp25().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Advertising and promotions: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:AdvertisingPromotionsMarketingCosts", "CY_Duration", boxRetriever.cp25.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp26().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Bad debts:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:BadDebtsImpairmentLosses", "CY_Duration", boxRetriever.cp26.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp27().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Bank, credit card and other financial charges:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:BankCharges", "CY_Duration", boxRetriever.cp27.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp28().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Depreciation: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("uk-gaap-core:DepreciationOtherAmountsWrittenOffTangibleIntangibleFixedAssets", "CY_Duration", boxRetriever.cp28.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp29().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Donations: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("uk-direp:CharitableDonations", "CY_Duration", boxRetriever.cp29.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp30().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Entertaining: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:ClientEntertainingCosts", "CY_DetailedAnalysis_Item40", boxRetriever.cp30.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp31().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Insurance: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:InsuranceCosts", "CY_Duration", boxRetriever.cp31.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp32().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Interest paid: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("uk-gaap-core:BankLoansOverdraftsFinanceCharges", "CY_Duration", boxRetriever.cp32.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp33().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Profits/Losses on disposals of assets: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("uk-gaap-core:GainLossFromDisposalFixedAssets", "CY_Duration", boxRetriever.cp33.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp34().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Travel and subsistence:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:TravelSubsistenceCosts", "CY_Duration", boxRetriever.cp34.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp35().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Vehicle expenses:</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:VehicleCosts", "CY_Duration", boxRetriever.cp35.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp36().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Administration and office expenses:	</td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:OtherOperationalAdministrationCosts", "CY_Duration", boxRetriever.cp36.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp37().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Sundry expenses (use only for small miscellaneous expenses): </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("dpl-core:OtherCosts", "CY_ExpenseType_AdminExpenses", boxRetriever.cp37.value.get)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td scope="row" class="strong" colspan="4">Total expenses</td>
+        </tr>
+
+        <tr>
+            <td scope="row" colspan="3">Total expenses: </td>
+            <td class="figure">@compsPlainValue(boxRetriever.cp38().value)</td>
+        </tr>
+
+    </table>
+</div>

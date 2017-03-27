@@ -1,0 +1,10 @@
+@(value: String,
+  id: String,
+  boxNumber: Option[String] = None,
+  boxNumberColor: String = "default",
+  widthClass: Option[String] = None)
+@optionalTextField(Some(value),
+    boxNumber = boxNumber,
+    boxNumberColor = boxNumberColor,
+    widthClass = widthClass,
+    id = id)

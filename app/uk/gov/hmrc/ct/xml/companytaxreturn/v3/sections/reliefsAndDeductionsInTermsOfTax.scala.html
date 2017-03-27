@@ -1,0 +1,99 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@* ID contains an acronym for the file name *@
+@questionBox(id = "ct600-raditot", title = Some("<h2>Reliefs and deductions in terms of tax</h2>")) {
+    @questionRow(id = "ct600-raditot-b445", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("445", default = true)
+            <strong>Community investment relief</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B445",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-raditot-b450", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("450", default = true)
+            <strong>Double taxation relief</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B450",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-raditot-b455", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("455", default = true)
+            <strong>Put an 'X' in box 455 if box 450 includes an underlying Rate relief claim</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "B455"
+            )
+        }
+    }
+    @questionRow(id = "ct600-raditot-b460", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("460", default = true)
+            <strong>Put an 'X' in box 460 if box 450 includes any amount carried back from a later period</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "B460"
+            )
+        }
+    }
+    @questionRow(id = "ct600-raditot-b465", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("465", default = true)
+            <strong>Advanced Corporation Tax</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B465",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+    @questionRow(id = "ct600-raditot-b470") {
+        @questionCell(6) {
+            @boxNumber("470", default = true)
+            <strong>Total reliefs and deduction in terms of tax - </strong>
+            <br />
+            <span>total of boxes 445, 450 and 465</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B470",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = false
+            )
+        }
+    }
+}

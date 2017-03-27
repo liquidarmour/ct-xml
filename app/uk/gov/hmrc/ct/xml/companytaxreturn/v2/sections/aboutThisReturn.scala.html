@@ -1,0 +1,332 @@
+@import uk.gov.hmrc.ct.ct600.v2.retriever.ReturnStatementsBoxRetriever
+@import uk.gov.hmrc.ct.ct600e.v2.retriever.CT600EBoxRetriever
+@import uk.gov.hmrc.ct.ct600j.v2.retriever.CT600JBoxRetriever
+@import uk.gov.hmrc.ct.ct600a.v2.retriever.CT600ABoxRetriever
+
+@(data: ReturnStatementsBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.helpers.DisableTwirlImplicits._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@hasAvoidance = @{data match {
+    case br: CT600JBoxRetriever => {br.taq01().value}
+    case _ => {false}
+}}
+
+@hasLoans = @{data match {
+    case br: CT600ABoxRetriever => {br.lpq01().value}
+    case _ => {false}
+}}
+
+@hasCharity = @{data match {
+    case br: CT600EBoxRetriever => {br.e1010().orFalse}
+    case _ => {false}
+}}
+
+@startDate = @{dateValue(data, dateFromComputations { (br) => br.cp1().value },
+                               dateFromCT600E { (br) => br.e1021.value })}
+@endDate = @{dateValue(data, dateFromComputations { (br) => br.cp2().value },
+                             dateFromCT600E { (br) => br.e1022.value })}
+
+
+@questionBox(id="aboutThisReturn", title = Some("<h2>About this return</h2>")) {
+    @questionRow() {
+        @questionCell(6) {
+            @questionBox() {
+                <span>This is the above company's return for the period</span>
+                @questionRow() {
+                    @questionCell(6) {
+                        <span>from (dd/mm/yyyy)</span>
+                    }
+                    @questionCell(6) {
+                        <span>to (dd/mm/yyyy)</span>
+                    }
+                }
+                @questionRow() {
+                    @questionCell(6) {
+                        @dateField(
+                            value = startDate,
+                            id = "CT600StartDate"
+                        )
+                    }
+                    @questionCell(6) {
+                        @dateField(
+                            value = endDate,
+                            id = "CT600EndDate"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-medium")) {
+                    @questionCell(12) {
+                        <i>Put an 'X' in the appropriate box(es) below</i>
+                    }
+                }
+                @questionRow() {
+                    @questionCell(10) {
+                        <span>A repayment is due for this return period</span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = data.rsq1().value.getOrElse(false),
+                            id = "RSQ1"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>A repayment is due for an earlier period</span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = data.rsq2().value.getOrElse(false),
+                            id = "RSQ2"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Making more than one return for this company now</span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = data.rsq3().value,
+                            id = "RSQ3"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>This return contains estimated figures</span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = data.rsq4().value.getOrElse(false),
+                            id = "RSQ4"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Company part of a group that is not small</span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "CompanyGroupIsNotSmall"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Disclosure of tax avoidance schemes</span>
+                        <br />
+                        <span>Notice of disclosable avoidance schemes</span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = hasAvoidance,
+                            id = "TAQ01"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Transfer pricing</span>
+                        <br />
+                        <span>Compensating adjustment claimed</span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = data.rsq7().value.getOrElse(false),
+                            id = "RSQ7"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Company qualifies for SME exemption</span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = data.rsq8().value.getOrElse(false),
+                            id = "RSQ8"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(12) {
+                        <span>Accounts</span>
+                        <br />
+                        <span>I attach accounts and computations</span>
+                    }
+                }
+                @questionRow() {
+                    @questionCell(10) {
+                        <ul>
+                            <li>for the period to which this return relates</li>
+                        </ul>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = true,
+                            id = "AttachAccountsAndComputationsForThisPeriod"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <ul>
+                            <li>for a different period</li>
+                        </ul>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "AttachAccountsAndComputationsForDifferentPeriod"
+                        )
+                    }
+                }
+                @questionRow() {
+                    @questionCell(10) {
+                        <span>If you are not attaching accounts and computations, say why not</span>
+                    }
+                    @questionCell(2) {
+
+                    }
+                }
+                @questionRow() {
+                    @questionCell(12) {
+                        @optionalTextArea(
+                            value = None,
+                            id = "CT600ReasonForLackOfCalculations",
+                            widthClass = Some("full")
+                        )
+                    }
+                }
+            }
+        }
+
+        @questionCell(6) {
+            @questionBox() {
+                @questionRow() {
+                    @questionCell(12) {
+                        <strong>Supplementary Pages</strong>
+                        <br />
+                        <i>If you are enclosing any Supplementary Pages put an 'X' in the appropriate box(es)</i>
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Loans to participators by close companies, form <i>CT600A</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = hasLoans,
+                            id = "ComplementaryPagesCT600A"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Controlled foreign companies, form <i>CT600B</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "ComplementaryPagesCT600B"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Group and Consortium, form <i>CT600C</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "ComplementaryPagesCT600C"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Insurance, form <i>CT600D</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "ComplementaryPagesCT600D"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Charities and Community Amateur Sports Clubs (CASCs), form <i>CT600E</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = hasCharity,
+                            id = "ComplementaryPagesCT600E"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Tonnage tax, form <i>CT600F</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "ComplementaryPagesCT600F"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Corporate Venturing Scheme, form <i>CT600G</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "ComplementaryPagesCT600G"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Cross-border royalties, form <i>CT600H</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "ComplementaryPagesCT600H"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Supplementary charge in respect of ring fence trade, form <i>CT600I</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = false,
+                            id = "ComplementaryPagesCT600I"
+                        )
+                    }
+                }
+                @questionRow(css = Some("margin-top-small")) {
+                    @questionCell(10) {
+                        <span>Disclosure of tax avoidance schemes, form <i>CT600J</i></span>
+                    }
+                    @questionCell(2, alignRight = true) {
+                        @checkboxField(
+                            value = hasAvoidance,
+                            id = "ComplementaryPagesCT600J"
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

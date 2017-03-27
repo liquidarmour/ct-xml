@@ -1,0 +1,26 @@
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+
+@(boxRetriever: CT600EBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(id = "ct600e-repayments", title = Some("<h2>Repayments</h2>")) {
+    @questionRow() {
+        @questionCell(12) {
+            <strong>To make a repayment claim for the period covered by these supplementary pages, please register and enrol to use the Charities Online service. See CT600 guide for further information</strong>
+        }
+    }
+    @questionRow(id = "ct600e-repayments-e45") {
+        @questionCell(10) {
+            <strong>Put an 'X' in the box if during the period covered by these supplementary pages you have over claimed tax</strong>
+        }
+        @questionCell(2) {
+            @optionalCheckboxField(
+                value = boxRetriever.e45().value,
+                boxNumber = Some("E45"),
+                id = "E45",
+                boxNumberColor = "white"
+            )
+        }
+    }
+}

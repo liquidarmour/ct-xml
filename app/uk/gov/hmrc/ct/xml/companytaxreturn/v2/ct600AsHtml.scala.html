@@ -1,0 +1,116 @@
+@import uk.gov.hmrc.ct.xml.RetrieverTypeConverter
+@import uk.gov.hmrc.ct.ct600e.v2.retriever.CT600EBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v2.retriever.ReturnStatementsBoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.ct600a.html.ct600aAsHtml
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.ct600e.html.ct600eAsHtml
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.ct600j.html.ct600jAsHtml
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.sections.html._
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.ct600.retriever.DeclarationBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v2.retriever.RepaymentsBoxRetriever
+@import uk.gov.hmrc.ct.ct600a.v2.retriever.CT600ABoxRetriever
+@import uk.gov.hmrc.ct.ct600j.v2.retriever.CT600JBoxRetriever
+
+@(boxRetriever: BaseBoxRetriever, options: uk.gov.hmrc.ct.xml.model.filing.HtmlRendererOptions)
+
+<div class="ct600 ct600--v2">
+    @uk.gov.hmrc.ct.xml.companytaxreturn.html.ct600_css()
+
+    <div class="page-break small-heading-margin">
+        <div class="ct600--header">
+            <div class="ct600--header-logo">
+                    <!-- Placeholder for the header logo -->
+            </div>
+            <div class="ct600--header-title">
+                <h1>Company Tax Return form</h1>
+                <h2>CT600 (2008) Version 2</h2>
+                <h3>for accounting periods ending on or after 1 July 1999</h3>
+            </div>
+        </div>
+
+        <h2>Your Company Tax Return</h2>
+        <div class="ct600--notice-box">
+            <p>If we send the company a <i>Notice</i> to deliver a company tax return (form <i>CT603</i>) it has to comply by the filing date or we charge a penalty, even if there is no tax to pay. A return includes a company tax return form, any Supplementary Pages, accounts, computations and any relevant information.</p>
+            <p>Is this the right form for the company? Read the advice on pages 3 to 6 of the Company tax return guide (the <i>Guide</i>) before you start.</p>
+            <p>The forms in the CT600 series set out the information we need and provide a standard format for calculations. Use the <i>Guide</i> to help you complete the return form. It contains general information you may need and box by box advice.</p>
+            <p>Please note that some boxes on form <i>CT600</i> are not in order, reflecting changes made since the form was first published in 2004.</p>
+        </div>
+
+        @companyInformation(boxRetriever)
+        @aboutThisReturn(retriever[ReturnStatementsBoxRetriever](boxRetriever))
+    </div>
+
+    <div class="page-break">
+        <div class="page-break-fix"></div>
+        <h1>Company tax calculation</h1>
+        @turnover(boxRetriever)
+        @income(boxRetriever)
+        @chargeableGains(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        @deductionsAndReliefs(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        @taxCalculation(boxRetriever)
+        @reliefsAndDeductionsInTermsOfTax()
+    </div>
+
+    <div class="page-break">
+        @calculationOfTaxOutstandingOrOverpaid(boxRetriever)
+        @taxReconciliation(boxRetriever)
+        @indicators()
+    </div>
+
+    <div class="page-break">
+        <div class="page-break-fix"></div>
+        <h1>Information about enhanced expenditure</h1>
+        @rndOrFilmsEnhancedExpenditure()
+        @landRemediationEnhancedExpenditure()
+
+        <h1>Information about capital allowances and balancing charges</h1>
+        @chargesAndAllowancesIncludedInCalculationOfTradingProfitOrLosses(boxRetriever)
+        @chargesAndAllowancesNotIncludedInCalculationOfTradingProfitsAndLosses()
+        @qualifyingExpenditure(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        <div class="page-break-fix"></div>
+        <h1>Losses, deficits and excess amounts</h1>
+        @lossesDeficitsAndExcessAmounts(boxRetriever)
+    </div>
+
+    <div class="page-break">
+        <div class="page-break-fix"></div>
+        <h1>Overpayments and repayments</h1>
+        @smallRepayments(retriever[RepaymentsBoxRetriever](boxRetriever))
+        @repaymentsForThePeriodCoveredByThisReturn()
+    </div>
+
+    <div class="page-break">
+        @bankDetails(retriever[RepaymentsBoxRetriever](boxRetriever))
+        @paymentsToAPersonOtherThanTheCompany(retriever[RepaymentsBoxRetriever](boxRetriever))
+
+        <h1>Declaration</h1>
+        @declaration(retriever[DeclarationBoxRetriever](boxRetriever))
+    </div>
+
+
+    @boxRetriever match{
+        case br: CT600EBoxRetriever with FilingAttributesBoxValueRetriever => { @ct600eAsHtml(br) }
+        case _ => {}
+    }
+
+    @boxRetriever match{
+        case br: CT600JBoxRetriever => { @if(br.taq01().value){ @ct600jAsHtml(br)} }
+        case _ => {}
+    }
+
+    @boxRetriever match{
+        case br: CT600ABoxRetriever => { @if(br.lpq01().value){ @ct600aAsHtml(br) } }
+        case _ => {}
+    }
+</div>

@@ -1,0 +1,670 @@
+$defaultFontSizeV2: 12px;
+$defaultFontSizeV3: 11px;
+$defaultCellFontSizeV2: 12px;
+$defaultCellFontSizeV3: 10px;
+$defaultInputFontSizeV2: 9.5px;
+
+$smallFontSizeV2: 11px;
+$smallFontSizeV3: 10px;
+$smallCellFontSizeV2: 11px;
+$smallCellFontSizeV3: 9px;
+$smallInputFontSizeV2: 8px;
+
+$boxNumberGreenDarkV3: #018F8F;
+$boxNumberLightGreenV3: #A4DED4;
+$darkGreenColourV3: #01918F;
+$lightGreenColourV3: #BCDEDE;
+$tableHeadingColourV3: #75C3BA;
+$tableDisabledCellColourV3: #E6F3F1;
+
+.margin-bottom--none {
+    margin-bottom: 0 !important;
+}
+
+.border-top--none {
+    border-top: none !important;
+}
+
+.ct600 {
+    font-size: $defaultFontSizeV3;
+
+    &.ct600--v2 {
+        font-size: $defaultFontSizeV2;
+
+        h1 {
+            color: #000;
+            font-size: 1.5em;
+            font-weight: normal;
+            margin: 0;
+        }
+
+        .page-break-fix {
+            display: inline-block;
+        }
+
+        @media screen {
+            h1 {
+                margin: 1em 0 0.3em 0;
+            }
+        }
+
+        h2 {
+            background: #079CDA;
+            color: #FFF;
+            display: inline-block;
+            *display: inline;
+            font-size: 1.24em;
+            font-weight: normal;
+            line-height: 1.1em;
+            margin: 0.3em 0 0 0;
+            padding: 0.1em 0.5em 0.1em 0.5em;
+        }
+
+        h3 {
+            font-size: 1.1em;
+            font-weight: normal;
+            margin: 1em 0 0.3em 0;
+        }
+
+        .ct600--header {
+            h1 {
+                font-size: 2.2em;
+                margin: 0;
+            }
+
+            h2 {
+                background: transparent;
+                color: #000;
+                font-size: 1.5em;
+                font-weight: normal;
+                margin: 0 0 0.2em 0;
+            }
+
+            h3 {
+                font-size: 1.1em;
+                font-weight: normal;
+                margin-top: 0.6em;
+            }
+        }
+
+        .ct600--notice-box,
+        .ct600--question-box {
+            background: #B7D8F0;
+            padding: 0.1em 0.5em 0.1em 0.5em;
+        }
+
+        .question-box--minimum-padding {
+            padding: 1em;
+        }
+
+        .ct600--question-row {
+            margin-bottom: 0;
+
+            &.input-like {
+                background: #FFF;
+                border: 1px solid #31ADE0;
+                padding: (0.3 * $defaultInputFontSizeV2) (0.4 * $defaultInputFontSizeV2);
+
+                .input-box-container {
+                    border: none;
+                }
+            }
+        }
+
+        .ct600--question-cell {
+            font-size: $defaultCellFontSizeV2;
+        }
+
+        .input-box-container--inline {
+            border: 1px solid #31ADE0;
+
+            .input-box {
+                background: transparent;
+                border: none;
+            }
+        }
+
+        .input-box {
+            border: 1px solid #31ADE0;
+            font-size: $defaultInputFontSizeV2;
+            padding: 0.3em 0.4em;
+
+            span {
+                font-size: 1.3em;
+            }
+        }
+
+        .input-box--10em-width {
+            width: 10 * $defaultInputFontSizeV2;
+        }
+
+        .box-number--default,
+        .input-box-number--default {
+            background: #079CDA;
+            color: #FFF;
+        }
+
+        .input-box--disabled span {
+            color: #000;
+        }
+
+        .input-box-description {
+            background: #079CDA;
+            color: white;
+        }
+
+        .input-box-dot {
+            font-size: $defaultInputFontSizeV2;
+            margin-right: 0.25em;
+
+            &.no-decimals {
+                display: none;
+            }
+        }
+
+        .ct600--tax-table {
+            border: 1px solid #079CDA;
+
+            td,
+            th {
+                background: #FFF;
+                border-left: 1px solid #000;
+                border-top: 1px solid #000;
+                padding: 0 0.9em;
+
+                &:first-child {
+                    border-left: none;
+                }
+            }
+
+            tr:first-child th {
+                border-top: none;
+            }
+        }
+
+        $marginDirections: top, left, bottom, right;
+        $marginValues: none 0, small $defaultFontSizeV2 * 0.333, medium $defaultFontSizeV2, large $defaultFontSizeV2 * 1.5, xlarge $defaultFontSizeV2 * 2.5;
+
+        @each $direction in $marginDirections {
+            @each $marginValue in $marginValues {
+                .margin-#{$direction}-#{nth($marginValue, 1)} {
+                    margin-#{$direction}: nth($marginValue, 2);
+                }
+            }
+        }
+    }
+
+    &.ct600--v3 {
+        h1 {
+            color: $darkGreenColourV3;
+            font-size: 2.2em;
+            margin: 1em 0 0.3em 0;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            font-weight: normal;
+            margin: 0.5em 0 0.3em 0;
+        }
+
+        h3 {
+            font-size: 1.1em;
+            font-weight: normal;
+            margin: 1em 0 0.3em 0;
+        }
+        
+        &.no-italics {
+            i {
+                font-style: normal;
+            }
+        }
+
+        .ct600--header {
+            border-bottom: 0.9em solid $darkGreenColourV3;
+            padding: 0 0.5em 0.5em 0.5em;
+
+            h2 {
+                margin: 0 0 0.2em 0;
+            }
+            h3 {
+                margin-top: 0.6em;
+            }
+
+            &.no-underline {
+                border-bottom: none;
+            }
+        }
+
+        .ct600--heading-green {
+            color: $darkGreenColourV3;
+            font-weight: bold;
+        }
+
+        .ct600--notice-box {
+            background: #E4F0F0;
+            border: 1px solid $lightGreenColourV3;
+            padding: 0.4em 1em 0 2.5em;
+        }
+
+        .ct600--question-box {
+            background: #E4F0F0;
+            border: 1px solid $tableHeadingColourV3;
+            padding: 1em 1.7em 1em 2.5em;
+        }
+
+        .question-box--minimum-padding {
+            padding: 1em;
+        }
+
+        .ct600--question-row {
+            margin-bottom: $defaultCellFontSizeV3;
+        }
+
+        .ct600--question-cell {
+            font-size: $defaultCellFontSizeV3;
+        }
+
+        .input-box-container--inline {
+            border: 1px solid $boxNumberLightGreenV3;
+
+            .input-box {
+                background: transparent;
+                border: none;
+            }
+        }
+
+        .input-box {
+            border: 1px solid $boxNumberLightGreenV3;
+            font-size: $defaultCellFontSizeV3;
+            margin-right: 0.22em;
+
+            span {
+                font-size: 1.2em;
+            }
+        }
+
+        .input-box--10em-width {
+            width: 10 * $defaultCellFontSizeV3;
+        }
+
+        .box-number--default,
+        .input-box-number--default {
+            background:$boxNumberGreenDarkV3;
+            color: #FFF;
+        }
+
+        .input-box--disabled span {
+            color: $boxNumberLightGreenV3;
+        }
+
+        .input-box-dot {
+            font-size: $defaultCellFontSizeV3;
+            margin-right: 0.25em;
+        }
+
+        .ct600--tax-table {
+            td,
+            th {
+                border-left: 1px solid $tableHeadingColourV3;
+                border-top: 1px solid $tableHeadingColourV3;
+                padding: 0.8em 0.9em;
+
+                &:last-child {
+                    border-right: 1px solid $tableHeadingColourV3;
+                }
+            }
+
+            th {
+                background: $tableDisabledCellColourV3;
+                padding: 2em 0.9em;
+            }
+
+            tr:last-child td {
+                border-bottom: 1px solid $tableHeadingColourV3;
+            }
+        }
+
+        .tax-table--disabled {
+            background: $tableDisabledCellColourV3;
+        }
+
+        .tax-table--box-number {
+            background:$boxNumberGreenDarkV3;
+            color: #FFF;
+        }
+
+        hr {
+            background: $darkGreenColourV3;
+            border: none;
+            height: 0.3em;
+            margin: 0.8em 0;
+        }
+
+        $marginDirections: top, left, bottom, right;
+        $marginValues: none 0, small $defaultFontSizeV3, medium $defaultFontSizeV3 * 1.5, large $defaultFontSizeV3 * 2.5, xlarge $defaultFontSizeV3 * 4;
+
+        @each $direction in $marginDirections {
+            @each $marginValue in $marginValues {
+                .margin-#{$direction}-#{nth($marginValue, 1)} {
+                    margin-#{$direction}: nth($marginValue, 2);
+                }
+            }
+        }
+    }
+
+    ul {
+        margin: 0;
+        list-style-type: disc;
+        list-style-position: inside;
+        padding: 0;
+    }
+
+    p {
+        margin: 0.2em 0;
+    }
+}
+
+.small-heading-margin {
+    h1,
+    h2,
+    h3 {
+        margin: 0.5em 0 0.3em 0;
+    }
+}
+
+@media screen {
+    .ct600 {
+        width: 673px;
+    }
+}
+
+.ct600--header {
+    h1,
+    h2,
+    h3 {
+        font-weight: bold;
+        line-height: 1.1em;
+        margin: 0
+    }
+}
+
+.ct600--header-logo {
+    float: left;
+}
+
+.ct600--header-title {
+    text-align: right;
+}
+
+.ct600--notice-box p {
+    margin: 0 0 0.5em 0;
+}
+
+.ct600--question-row {
+    font-size: 0;
+    width: 100%;
+}
+
+.ct600--question-row:last-child {
+    margin-bottom: 0;
+}
+
+.ct600--question-cell {
+    display: inline-block;
+    *display: inline;
+    position: relative;
+    vertical-align: middle;
+
+    * {
+        vertical-align: middle;
+    }
+}
+
+$cellSize: 100% / 12;
+
+@for $cellNumber from 1 through 12 {
+    .cell-size-#{$cellNumber} {
+        width: ($cellSize * $cellNumber);
+    }
+}
+
+.input-box-container {
+    display: inline-block;
+    *display: inline;
+    font-size: 0;
+    position: relative;
+    text-align: left;
+}
+
+.input-box-container--inline {
+    background: #FFF;
+
+    .input-box-number {
+        border-bottom: none;
+        border-left: none;
+        border-top: none;
+    }
+
+    .input-box {
+        border: none;
+    }
+}
+
+.input-box {
+    background: white;
+    box-sizing: border-box;
+    display: inline-block;
+    *display: inline;
+    height: 2.2em;
+    padding: 0.4em;
+    vertical-align: top;
+}
+
+.input-box-dot {
+    vertical-align: bottom;
+}
+
+.input-box--digit-width {
+    width: 1.7em;
+}
+
+.input-box--full-width {
+    width: 100%;
+}
+
+.input-box--half-width {
+    width: 50%;
+}
+
+.input-box--disabled {
+    background: none;
+}
+
+.input-box--text-area {
+    height: auto;
+    min-height: 5.3em;
+}
+
+.box-number {
+    left: -3.2em;
+    position: absolute;
+    top: -0.6em;
+}
+
+.box-number--inline {
+    display: inline-block;
+    *display: inline;
+    left: 0;
+    position: relative;
+    top: 0;
+}
+
+.input-box-number {
+    display: inline-block;
+    *display: inline;
+    vertical-align: top;
+}
+
+.box-number,
+.input-box-number {
+    box-sizing: border-box;
+    font-size: ($defaultCellFontSizeV3 * 0.9);
+    height: 2.45em;
+    padding: 0.5em 0.2em 0.5em 0;
+    text-align: right;
+    width: 2.8em;
+}
+
+.box-number--white,
+.input-box-number--white {
+    background: #FFF;
+    border: 1px solid $boxNumberLightGreenV3;
+    color: #000;
+}
+
+.input-box-description {
+    display: block;
+    font-size: 0.8em;
+    padding: 0 0.3em;
+    text-align: center;
+}
+
+.input-box--suffix {
+    float: right;
+}
+
+.ct600 .margin-all-none {
+    margin: 0;
+}
+
+.ct600 .text-align--center {
+    text-align: center;
+}
+
+.ct600 .text-align--right {
+    text-align: right;
+}
+
+.ct600 .vertical-align--top {
+    vertical-align: top;
+}
+
+.ct600 .ct600--tax-table {
+    border-collapse: collapse;
+    font-size: $defaultFontSizeV3;
+    margin-bottom: 2em;
+    width: 100%;
+
+    td,
+    th {
+        vertical-align: middle;
+    }
+
+    td.tax-table--with-labels {
+        padding: 0.8em 2em;
+        position: relative;
+    }
+}
+
+.tax-table--box-number-column {
+    width: 5.88%;
+}
+
+.tax-table--small-column {
+    width: 11.76%;
+}
+
+.tax-table--medium-column {
+    width: 26.52%
+}
+
+.tax-table--large-column {
+    width: 29.4%
+}
+
+.tax-table--label-left {
+    left: 1em;
+    position: absolute;
+    top: 0.7em
+}
+
+.tax-table--label-right {
+    right: 1em;
+    position: absolute;
+    top: 0.8em
+}
+
+@media (max-width: 673px) {
+    .scaled .ct600 {
+        font-size: $smallFontSizeV3;
+        width: 100%;
+
+        &.ct600--v2 {
+            font-size: $smallFontSizeV2;
+
+            .ct600--question-row.input-like {
+                padding: (0.3 * $smallInputFontSizeV2) (0.4 * $smallInputFontSizeV2);
+            }
+
+            .ct600--question-cell {
+                font-size: $smallCellFontSizeV2;
+            }
+
+            .input-box {
+                font-size: $smallInputFontSizeV2;
+            }
+
+            .input-box--10em-width {
+                width: 10 * $smallInputFontSizeV2;
+            }
+
+            .input-box-dot {
+                font-size: $smallInputFontSizeV2;
+            }
+
+            $marginDirections: top, left, bottom, right;
+            $marginValues: none 0, small $smallFontSizeV2 * 0.333, medium $smallFontSizeV2, large $smallFontSizeV2 * 1.5, xlarge $smallFontSizeV2 * 2.5;
+
+            @each $direction in $marginDirections {
+                @each $marginValue in $marginValues {
+                    .margin-#{$direction}-#{nth($marginValue, 1)} {
+                        margin-#{$direction}: nth($marginValue, 2);
+                    }
+                }
+            }
+        }
+
+        &.ct600--v3 {
+            .ct600--question-row {
+                margin-bottom: $smallCellFontSizeV3;
+            }
+
+            .ct600--question-cell {
+                font-size: $smallCellFontSizeV3;
+            }
+
+            .input-box {
+                font-size: $smallCellFontSizeV3;
+            }
+
+            .input-box--10em-width {
+                width: 10 * $smallCellFontSizeV3;
+            }
+
+            .input-box-dot {
+                font-size: $smallCellFontSizeV3;
+            }
+
+            $marginDirections: top, left, bottom, right;
+            $marginValues: none 0, small $smallFontSizeV3, medium $smallFontSizeV3 * 1.5, large $smallFontSizeV3 * 2.5, xlarge $smallFontSizeV3 * 4;
+
+            @each $direction in $marginDirections {
+                @each $marginValue in $marginValues {
+                    .margin-#{$direction}-#{nth($marginValue, 1)} {
+                        margin-#{$direction}: nth($marginValue, 2);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,77 @@
+@import uk.gov.hmrc.ct.domain.CompanyTypes
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v2.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+@import uk.gov.hmrc.ct.xml.computations.components.xml.{compsHeader2, compsPlainValue, ixbrlNonFraction}
+
+<div class=" summary-totals page-break">
+    @compsHeader2(boxRetriever, ctUtr)
+    <h2>Summary totals</h2>
+    <table>
+        <tr>
+            <th colspan="3"> </th>
+            <th class="figure">&#xa3;</th>
+        </tr>
+
+        <tr>
+            <td colspan="4" scope="row" class="strong">Capital allowances </td>
+        </tr>
+        @if(boxRetriever.cp186().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Machinery and plant from main pool: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:MainPoolTotalAllowances", "CY_Trade_Duration", boxRetriever.cp186.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp668().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Machinery and plant from special rate pool: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:SpecialRatePoolWritingDownAllowance", "CY_Trade_Duration", boxRetriever.cp668.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp96().value.exists(_ > 0)) {
+            <tr>
+                <td scope="row" class="strong" colspan="4">
+                    Balancing charges:
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                @if(boxRetriever.cpQ8.value.exists(_ == false)) {
+                    Balancing charge from main pool:
+                } else {
+                    Balancing charges:
+                }
+                </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:MainPoolBalancingCharges", "CY_Trade_Duration", boxRetriever.cp96.value.get)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp670().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="2">Special rate pool balancing charge: </td>
+                <td colspan="2" class="figure">
+                @ixbrlNonFraction("ct-comp:SpecialRatePoolBalancingCharge", "CY_Trade_Duration", boxRetriever.cp670.value.get)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td scope="row" class="strong" colspan="4">Net allowances </td>
+        </tr>
+
+        <tr>
+            <td scope="row" class="strong" colspan="3">Trade net allowances: </td>
+            <td class="strong figure">@compsPlainValue(boxRetriever.cp99().value)</td>
+        </tr>
+    </table>
+</div>

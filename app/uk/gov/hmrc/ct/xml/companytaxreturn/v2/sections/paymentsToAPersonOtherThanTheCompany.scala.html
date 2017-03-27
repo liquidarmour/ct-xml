@@ -1,0 +1,137 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+@import uk.gov.hmrc.ct.ct600.v2.retriever.RepaymentsBoxRetriever
+
+@(data: RepaymentsBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@companyName = @{stringValue(data, stringFromCT600 { (br) => br.b155.value },
+                                   stringFromCT600E { (br) => br.e1020.value },
+                                   defaultValue(""))}
+
+@ct600Helper = @{V2CT600Helper(retriever[BaseBoxRetriever](data))}
+
+@questionBox(title = Some("<h2>Payments to a person other than the company</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Complete the authority below if you want the repayment to be made to a person other than the company.</span>
+            <br />
+            <span>I, as <i>(enter status - company secretary, treasurer, liquidator or authorised agent, etc.)</i></span>
+        }
+    }
+    @questionRow() {
+        @questionCell(9) {
+            @textField(
+                value = "",
+                id = "B154",
+                boxNumber = Some("154"),
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>of <i> (enter name of company)</i></span>
+        }
+    }
+    @questionRow() {
+        @questionCell(9) {
+            @textField(
+                value = if(data.rdq1().value) { companyName } else { "" },
+                id = "B155",
+                boxNumber = Some("155"),
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>authorise <i>(enter name)</i></span>
+        }
+    }
+    @questionRow() {
+        @questionCell(9) {
+            @optionalTextField(
+                value = if (data.rdq1()) { data.b156().value } else { None },
+                id = "B156",
+                boxNumber = Some("156"),
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <i>(enter address)</i>
+        }
+    }
+    @questionRow() {
+        @questionCell(9) {
+            @questionRow(css = Some("input-like")) {
+                @questionCell(8) {
+                    @textArea(
+                        value = if (data.rdq1()) { ct600Helper.addressLines.mkString(", ") } else { "" },
+                        id = "B157",
+                        boxNumber = Some("157"),
+                        widthClass = Some("full")
+                    )
+                }
+                @questionCell(4) {
+                    <span>Postcode @if(data.rdq1()) { @data.b1575().value }</span>
+                }
+            }
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Nominee reference</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(9) {
+            @optionalTextField(
+                value = if (data.rdq1()) { data.b158().value } else { None },
+                id = "B158",
+                boxNumber = Some("158"),
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <span>to receive payment on the company's behalf.</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Signature</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(9) {
+            @textArea(
+                value = "",
+                id = "B159",
+                boxNumber = Some("159"),
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Name <i>(in capitals)</i></span>
+        }
+    }
+    @questionRow() {
+        @questionCell(9) {
+            @textField(
+                value = "",
+                id = "B160",
+                boxNumber = Some("160"),
+                widthClass = Some("full")
+            )
+        }
+    }
+}

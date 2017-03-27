@@ -1,0 +1,312 @@
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+
+@(boxRetriever: CT600EBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(id = "ct600e-information-required", title = Some("<h2>Information required</h2>")) {
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Enter details of any income received from the following sources, claimed as exempt from tax in the hands of the charity/CASC. Enter the figure included in the charity's/CASC'S accounts for the period covered by this return.</strong>
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Non-exempt amounts should be entered on form CT600 in the appropriate boxes.</strong>
+        }
+    }
+    @questionRow() {
+        @questionCell(6) {
+            <strong>Type of income</strong>
+        }
+        @questionCell(6) {
+            <strong>Amount</strong>
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e50") {
+        @questionCell(6) {
+            <strong>Enter total turnover from exempt charitable trading activities</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e50().value,
+                numberOfDigits = 11,
+                id = "E50",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E50"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e55") {
+        @questionCell(6) {
+            <strong>Investment income – exclude any amounts included on form CT600</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e55().value,
+                numberOfDigits = 11,
+                id = "E55",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E55"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e60") {
+        @questionCell(6) {
+            <strong>UK land and buildings – exclude any amounts included on form CT600</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e60().value,
+                numberOfDigits = 11,
+                id = "E60",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E60"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e65") {
+        @questionCell(6) {
+            <strong>Gift Aid – exclude any amounts included on form CT600</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e65().value,
+                numberOfDigits = 11,
+                id = "E65",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E65"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e70") {
+        @questionCell(6) {
+            <strong>From other charities – exclude any amounts included  on form CT600</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e70().value,
+                numberOfDigits = 11,
+                id = "E70",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E70"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e75") {
+        @questionCell(6) {
+            <strong>Gifts of shares or securities received</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e75().value,
+                numberOfDigits = 11,
+                id = "E75",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E75"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e80") {
+        @questionCell(6) {
+            <strong>Gifts of real property received</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e80().value,
+                numberOfDigits = 11,
+                id = "E80",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E80"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e85") {
+        @questionCell(6) {
+            <strong>Other sources (not included above)</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e85().value,
+                numberOfDigits = 11,
+                id = "E85",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E85"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e90") {
+        @questionCell(6) {
+            <strong>Total of boxes E50 to E85</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e90().value,
+                numberOfDigits = 11,
+                id = "E90",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E90"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Enter details of expenditure as shown in the charity's/CASC's accounts for the period covered by these supplementary pages</strong>
+        }
+    }
+    @questionRow() {
+        @questionCell(6) {
+            <strong>Type of expenditure</strong>
+        }
+        @questionCell(6) {
+            <strong>Amount</strong>
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e95") {
+        @questionCell(6) {
+            <strong>Trading costs in relation to exempt charitable activities (in box E50)</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e95().value,
+                numberOfDigits = 11,
+                id = "E95",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E95"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e100") {
+        @questionCell(6) {
+            <strong>UK land and buildings costs in relation to exempt charitable activities (in box E60)</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e100().value,
+                numberOfDigits = 11,
+                id = "E100",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E100"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e105") {
+        @questionCell(6) {
+            <strong>All general administration/governance costs</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e105().value,
+                numberOfDigits = 11,
+                id = "E105",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E105"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e110") {
+        @questionCell(6) {
+            <strong>All grants and donations made within the UK E</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e110().value,
+                numberOfDigits = 11,
+                id = "E110",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E110"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e115") {
+        @questionCell(6) {
+            <strong>All grants and donations made outside the UK</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e115().value,
+                numberOfDigits = 11,
+                id = "E115",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E115"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e120") {
+        @questionCell(6) {
+            <strong>Other expenditure not included above, or not used in
+                calculating figures entered on the form CT600</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e120().value,
+                numberOfDigits = 11,
+                id = "E120",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E120"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+    @questionRow(id = "ct600e-information-required-e120") {
+        @questionCell(6) {
+            <strong>Total of boxes E95 to E120</strong>
+        }
+        @questionCell(6) {
+            @optionalNumberFieldForInt(
+                value = boxRetriever.e125().value,
+                numberOfDigits = 11,
+                id = "E125",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true,
+                onlyWholeNumbers = true,
+                boxNumber = Some("E125"),
+                boxNumberColor = "white"
+            )
+        }
+    }
+}

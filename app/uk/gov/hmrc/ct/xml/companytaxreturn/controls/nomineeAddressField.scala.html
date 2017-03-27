@@ -1,0 +1,17 @@
+@(boxRetriever: uk.gov.hmrc.ct.ct600.v3.retriever.RepaymentsBoxRetriever)
+
+<div class="input-box-container input-box-container--inline input-box--full-width ">
+    <div class="input-box input-box--text-area">
+        <span>
+            @if(boxRetriever.b960_1().value.nonEmpty){
+                @boxRetriever.b960_1().value
+                <br/>
+                @boxRetriever.b960_2().value
+                @boxRetriever.b960_3.value.map{value => <br/>@value}
+                @boxRetriever.b960_5.value.map{value => <br/>@value}
+            }else{
+                    &nbsp;
+            }
+        </span>
+    </div>
+</div>

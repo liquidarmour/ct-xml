@@ -1,0 +1,78 @@
+@import org.joda.time.LocalDate
+@import uk.gov.hmrc.ct.ct600.retriever.DeclarationBoxRetriever
+@import uk.gov.hmrc.cato.time.DateHelper
+@(data: DeclarationBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox() {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Warning - Giving false information in the return, or concealing any part of the company's profits or tax payable, can lead to both the company and yourself being prosecuted.</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Declaration</span>
+            <br />
+            <span>The information I have given in this company tax return is correct and complete to the best of my knowledge and belief.</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(8) {
+            <span>Signature</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(9) {
+            @optionalTextArea(
+                value = data.cato11().value,
+                id = "CT600Signature",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(7) {
+            <span>Name <i>(in capitals)</i></span>
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            <span>Date <i>(dd/mm/yyyy)</i></span>
+        }
+    }
+    @questionRow() {
+        @questionCell(7) {
+            @optionalTextField(
+                value = data.cato11().value,
+                id = "CATO11",
+                widthClass = Some("full")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @dateField(
+                value = DateHelper.now(),
+                id = "CT600DeclarationDate"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(7) {
+            <span>Status</span>
+        }
+    }
+    @questionRow() {
+        @questionCell(7) {
+            @optionalTextField(
+                value = data.cato12().value,
+                id = "CATO12",
+                widthClass = Some("full")
+            )
+        }
+    }
+}

@@ -1,0 +1,140 @@
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.retriever.AccountsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.CT600BoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: ComputationsBoxRetriever with AccountsBoxRetriever with CT600BoxRetriever with FilingAttributesBoxValueRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr)
+
+@import uk.gov.hmrc.ct.xml.computations.components.xml.{compsPlainValue, ixbrlNonFraction}
+@import uk.gov.hmrc.ct.xml.computations.ct20150201.xml.compsHeader2
+
+<div class="losses page-break">
+    @compsHeader2(boxRetriever, ctUtr)
+    <h2>Summary</h2>
+    <table>
+        <tr>
+            <th colspan="3"> </th>
+            <th class="figure">&#xa3;</th>
+        </tr>
+
+        @if(boxRetriever.cp234().value.isDefined || boxRetriever.cp237().value.isDefined || boxRetriever.cp238().value.isDefined || boxRetriever.cp235().value.isDefined) {
+            <tr>
+                <td class="strong" scope="row" colspan="4">Trading losses</td>
+            </tr>
+            @if(boxRetriever.cp235().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="3">Losses arising in this period:</td>
+                    <td class="figure">
+                    @compsPlainValue(boxRetriever.cp235.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp234().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="3">Losses brought forward:</td>
+                    <td class="figure">
+                    @ixbrlNonFraction("ct-comp:BalanceOfLossesBroughtForwardCarriedForward", "CY_Trade_Start_Period_Instant", boxRetriever.cp234.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp237().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="3">Losses carried back to an earlier period:</td>
+                    <td class="figure">
+                    @ixbrlNonFraction("ct-comp:LossesCarriedBack", "CY_Trade_Duration", boxRetriever.cp237.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp238().value.exists(_ > 0)) {
+                <tr>
+                    <td colspan="3">Losses used against trading profits:</td>
+                    <td class="figure">
+                    @ixbrlNonFraction("ct-comp:LossesUsedAgainstTradingProfits", "CY_Trade_Duration", boxRetriever.cp238.value.get)
+                    </td>
+                </tr>
+            }
+            @if(boxRetriever.cp239().value > 0) {
+                <tr>
+                    <td colspan="3">Losses used against total profits:</td>
+                    <td class="figure">
+                    @ixbrlNonFraction("ct-comp:LossesUsedAgainstTotalProfits", "CY_Trade_Duration", boxRetriever.cp239.value)
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="3">Losses carried forward:</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:BalanceOfLossesBroughtForwardCarriedForward", "CY_Trade_End_Period_Instant", boxRetriever.cp240().value.getOrElse(0))
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp305().value > 0) {
+            <tr>
+                <td scope="row" colspan="4" class="strong"> Charitable donations</td>
+            </tr>
+            <tr>
+                <td colspan="3">Qualifying charitable donations UK: </td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:QualifyingUKDonations", "CY_Comps_Duration", boxRetriever.cp305.value)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp246().value.exists(_ > 0)) {
+            <tr>
+                <td colspan="4" scope="row" class="strong">General pool	</td>
+            </tr>
+            <tr>
+                <td colspan="3">Allowances:</td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:MainPoolTotalAllowances", "CY_Trade_Duration", boxRetriever.cp246.value.get)
+                </td>
+                <td> </td>
+            </tr>
+            <tr>
+                <td colspan="3">Total allowances: </td>
+                <td class="figure">
+                @ixbrlNonFraction("ct-comp:TotalCapitalAllowances", "CY_Trade_Duration", boxRetriever.cp95().value.getOrElse(0))
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="4" scope="row" class="strong">Qualifying Expenditure </td>
+        </tr>
+        @if(boxRetriever.cp251().value > 0) {
+            <tr>
+                <td colspan="3"> Expenditure on machinery and plant on which
+                    First Year Allowances is claimed: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp251.value)
+                </td>
+            </tr>
+        }
+        @if(boxRetriever.cp252().value.getOrElse(0) > 0) {
+            <tr>
+                <td colspan="3"> Expenditure on designated environmentally
+                    friendly machinery and plant: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp252.value.getOrElse(0))
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="3"> Qualifying expenditure on machinery and plant
+                on other assets: </td>
+            <td class="figure">
+            @compsPlainValue(boxRetriever.cp253().value)
+            </td>
+        </tr>
+        @if(boxRetriever.cp249().value.exists(_ > 0)) {
+            <tr>
+                <td scope="row" colspan="4" class="strong"> Annual Investment Allowance </td>
+            </tr>
+            <tr>
+                <td colspan="3"> Trade Annual Investment Allowance: </td>
+                <td class="figure">
+                @compsPlainValue(boxRetriever.cp249().value.get)
+                </td>
+            </tr>
+        }
+    </table>
+</div>

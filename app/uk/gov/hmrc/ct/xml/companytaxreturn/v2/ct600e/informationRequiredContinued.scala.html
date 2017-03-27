@@ -1,0 +1,230 @@
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+@import uk.gov.hmrc.ct.ct600e.v2.retriever.CT600EBoxRetriever
+
+@(data: CT600EBoxRetriever with FilingAttributesBoxValueRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+@import uk.gov.hmrc.ct.ct600e.v2.CharityLoansAndInvestments
+
+@e26 = @{
+    data.e26().value.contains(CharityLoansAndInvestments.AllLoansAndInvestments)
+}
+
+@questionBox(title = Some("<h2>Information required <i>continued</i></h2>")) {
+    <p>Enter details of repayments of Income Tax/payments of Transitional Relief for income arising during the period covered by these Supplementary Pages</p>
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            <span>Charity/CASC Assets</span>
+        }
+        @questionCell(3) {
+            <span> Disposals in period (total consideration received)</span>
+        }
+        @questionCell(3) {
+            <span> Held at the end of the period (use account figures)</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            @questionNumber("E20/E20a")
+            <span>Tangible fixed assets</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e20().value,
+                numberOfDigits = 1,
+                id = "E20",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E20"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e20a().value,
+                numberOfDigits = 1,
+                id = "E20a",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E20a"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            @questionNumber("E21/E21b")
+            <span>UK investments (excluding controlled companies)</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e21().value,
+                numberOfDigits = 1,
+                id = "E21",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E21"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e21b().value,
+                numberOfDigits = 1,
+                id = "E21b",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E21b"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            @questionNumber("E22/E22c")
+            <span>Shares in, and loans to, controlled companies</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e22().value,
+                numberOfDigits = 1,
+                id = "E22",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E22"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e22c().value,
+                numberOfDigits = 1,
+                id = "E22c",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E22c"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            @questionNumber("E23/E23d")
+            <span>Overseas investments</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e23().value,
+                numberOfDigits = 1,
+                id = "E23",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E23"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(1) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e23d().value,
+                numberOfDigits = 1,
+                id = "E23d",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E23d"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E24e")
+            <span>Loans and non-trade debtors</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e24e().value,
+                numberOfDigits = 1,
+                id = "E24e",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E24e"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E25f")
+            <span>Other current assets</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e25f().value,
+                numberOfDigits = 1,
+                id = "E25f",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E25f"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E26")
+            <span> Qualifying investments and loans. Applies to charities only. See note on Page 2 </span>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = e26,
+                id = "E26",
+                boxNumber = Some("E26")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E27")
+            <span>Value of any non-qualifying investments and loans. Applies to charities only</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e27().value,
+                numberOfDigits = 1,
+                id = "E27",
+                prefix = Some("&pound;"),
+                boxNumber = Some("E27"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(9) {
+            @questionNumber("E28")
+            <span>Number of subsidiary or associated companies the charity controls at the end of the period. Exclude companies that were dormant throughout the period</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = data.e28().value,
+                numberOfDigits = 1,
+                id = "E28",
+                boxNumber = Some("E28"),
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+    }
+}

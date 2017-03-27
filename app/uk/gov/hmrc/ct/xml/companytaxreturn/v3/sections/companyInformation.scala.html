@@ -1,0 +1,81 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+@import uk.gov.hmrc.ct.domain.CompanyTypes
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@companyName = @{stringValue(boxRetriever, stringFromCT600 { (br) => br.b1.value },
+                                           stringFromCT600E { (br) => br.e1.value },
+                                           defaultValue(""))}
+
+@crn = @{optional(boxRetriever, optionFromCT600[String] { (br) => br.b2().value })}
+
+@utr = @{stringValue(boxRetriever, stringFromCT600 { (br) => br.b3.value },
+                                   stringFromCT600E { (br) => br.e2.value },
+                                   defaultValue(""))}
+
+@findCompanyTypeByName(name: String) = @{ CompanyTypes.AllCompanyTypes.find(_.toString() == name).map(_.hmrcCode.toString).getOrElse("") }
+
+@companyType = @{stringValue(boxRetriever, stringFromCT600 { (br) => findCompanyTypeByName(br.b4.value) },
+                                           stringFromFilingAttributes { (br) => br.companyType().value.hmrcCode.toString },
+                                           defaultValue("") )}
+
+@budgetChangesEnabled = @{ true /* Comes from feature flags */ }
+
+
+@questionBox(id = "ct600-company-information", title = Some("<h2>Company information</h2>")) {
+    @questionRow(id = "ct600-company-information-company-name") {
+        @questionCell(4) {
+            @boxNumber("1", default = true)
+            <strong>Company name</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @textField(
+                value = companyName,
+                id = "CT600CompanyName",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600-company-information-crn") {
+        @questionCell(4) {
+            @boxNumber("2", default = true)
+            <strong>Company registration number</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @numberField(
+                value = crn.getOrElse(""),
+                numberOfDigits = if (budgetChangesEnabled) 8 else 10,
+                id = "CT600CRN"
+            )
+        }
+    }
+    @questionRow(id = "ct600-company-information-tax-reference") {
+        @questionCell(4) {
+            @boxNumber("3", default = true)
+            <strong>Tax reference</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @numberField(
+                value = utr,
+                numberOfDigits = 10,
+                id = "CT600UTR"
+            )
+        }
+    }
+    @questionRow(id = "ct600-company-information-type-of-company") {
+        @questionCell(4) {
+            @boxNumber("4", default = true)
+            <strong>Type of company</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @numberField(
+                value = companyType,
+                numberOfDigits = 2,
+                id = "CT600CompanyType"
+            )
+        }
+    }
+}

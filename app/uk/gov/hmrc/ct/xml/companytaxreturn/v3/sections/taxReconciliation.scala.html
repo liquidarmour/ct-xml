@@ -1,0 +1,283 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b595 = @{optional(boxRetriever, optionFromCT600[BigDecimal] { (br) => br.b595().value })}
+
+@b600 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b600.orZero },
+                                     decimalFromCT600E { (br) => 0 })}
+
+@b605 = @{decimalValue(boxRetriever, decimalFromCT600 { (br) => br.b605.orZero },
+                                     decimalFromCT600E { (br) => 0 })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@budgetChangesEnabled = @{ true /* Comes from feature flags */ }
+
+@questionBox(id = "ct600-tax-reconciliation", title = Some("<h2>Tax reconciliation</h2>")) {
+    @questionRow(id = "ct600-tax-reconciliation-b530", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("530", white = true)
+            <strong>Research and Development credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B530",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b535", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("535", white = true)
+            <strong>(not currently used)</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B535",
+                prefix = Some("&pound;"),
+                disabled = !budgetChangesEnabled
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b540", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("540", white = true)
+            <strong>Creative tax credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B540",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b545", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("545", default = true)
+            <strong>Total of Research and Development credit and creative tax credit - </strong>
+            <span>total box 530 to 540</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B545",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b550", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("550", white = true)
+            <strong>Land remediation tax credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B550",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b555", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("555", white = true)
+            <strong>Life assurance company tax credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B555",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b560", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("560", default = true)
+            <strong>Total land remediation and life assurance company tax credit - </strong>
+            <span>total box 550 and 555</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B560",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b565", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("565", default = true)
+            <strong>Capital allowances first-year tax credit</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B565",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b570", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("570", default = true)
+            <strong>Surplus Research and Development credits or creative tax credit payable - </strong>
+            <span>box 545 minus box 525</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B570",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b575", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("575", default = true)
+            <strong>Land remediation or life assurance company tax credit payable - </strong>
+            <span>total of boxes 545 and 560 minus boxes 525 and 570</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B575",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b580", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("580", default = true)
+            <strong>Capital allowances first-year tax credit payable - </strong>
+            <span>boxes 545, 560 and 565 minus boxes 525, 570 and 575</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B580",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b585", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("585", default = true)
+            <strong>Ring fence Corporation Tax included</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B585",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b590", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("590", default = true)
+            <strong>Ring fence supplementary charge included</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B590",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b595", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("595", default = true)
+            <strong>Tax already paid (and not already repaid)</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = b595,
+                numberOfDigits = 11,
+                id = "B595",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b600", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("600", default = true)
+            <strong>Tax outstanding - </strong>
+            <br />
+            <span>box 525 minus boxes 545, 560, 565 and 595</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForBigDecimal(
+                value = b600,
+                numberOfDigits = 11,
+                id = "B600",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b605", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("605", default = true)
+            <strong>Tax overpaid including surplus or payable credits - </strong>
+            <br />
+            <span>total sum of boxes 545, 560, 565 and 595 minus 525</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForBigDecimal(
+                value = b605,
+                numberOfDigits = 11,
+                id = "B605",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b610", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("610", default = true)
+            <strong>Group tax refunds surrendered to this company</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B610",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+    @questionRow(id = "ct600-tax-reconciliation-b615") {
+        @questionCell(6) {
+            @boxNumber("615", default = true)
+            <strong>Research and Development expenditure credits surrendered to this company</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 11,
+                id = "B615",
+                prefix = Some("&pound;")
+            )
+        }
+    }
+}

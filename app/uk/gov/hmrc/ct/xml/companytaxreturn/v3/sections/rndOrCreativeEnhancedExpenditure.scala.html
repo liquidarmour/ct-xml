@@ -1,0 +1,116 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@budgetChangesEnabled = @{ true /* Comes from feature flags */ }
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@* ID contains an acronym of the file name *@
+@questionBox(id = "ct600-rndocee", title = Some("<h2 class=\"margin-top-none\">Research and Development (R&amp;D) or creative enhanced expenditure</h2>")) {
+    @questionRow(id = "ct600-rndocee-b650", css = rowClass) {
+        @questionCell(10) {
+            @boxNumber("650", default = true)
+            <strong>Put an 'X' in box 650 if the claim is made by a small or medium-sized enterprise (SME), including a SME subcontractor to a large company</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "B650"
+            )
+        }
+    }
+    @questionRow(id = "ct600-rndocee-b655", css = rowClass) {
+        @questionCell(10) {
+            @boxNumber("655", default = true)
+            <strong>Put an 'X' in box 655 if the claim is made by a large company</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @checkboxField(
+                value = false,
+                id = "B655"
+            )
+        }
+    }
+    @questionRow(id = "ct600-rndocee-b660", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("660", white = true)
+            <strong>R&amp;D enhanced expenditure</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B660",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-rndocee-b665", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("665", white = true)
+            <strong>Creative enhanced expenditure</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B665",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-rndocee-b670", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("670", default = true)
+            <strong>R&amp;D and creative enhanced expenditure</strong>
+            <br />
+            <span>total box 660 and 665</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B670",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-rndocee-b675", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("675", default = true)
+            @if(budgetChangesEnabled) {
+                <strong>R&amp;D enhanced expenditure of a SME on work subcontracted to it by a large company</strong>
+            } else {
+                <strong>R&amp;D enhanced expenditure of a SME on work sub contracted to it by a large company</strong>
+            }
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B675",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-rndocee-b680") {
+        @questionCell(6) {
+            @boxNumber("680", default = true)
+            <strong>Vaccine research expenditure</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B680",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

@@ -1,0 +1,106 @@
+@import uk.gov.hmrc.ct.ct600a.v3.retriever.CT600ABoxRetriever
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+
+@(boxRetriever: CT600ABoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+<h2>Part 1: Loans and arrangements made</h2>
+@questionRow(id = "ct600-loans-and-arrangements-made-a5") {
+    @questionCell(10) {
+        <strong>Put an 'X' in this box if any/all loans made during the period have been repaid, released, or written off, or, in the case of arrangements, return payments have been made before the end of the period.</strong>
+    }
+    @questionCell(2, alignRight = true) {
+        @optionalCheckboxField(
+            value = boxRetriever.a5().value,
+            boxNumber = Some("A5"),
+            id = "A5",
+            boxNumberColor = "white"
+        )
+    }
+}
+
+<h2>Outstanding loans and arrangements made</h2>
+<table id="ct600-loans-and-arrangements-made-loans" class="ct600--tax-table">
+    <thead>
+        <tr>
+            <th class="cell-size-1">A10</th>
+            <th class="cell-size-7 text-align--center">A</th>
+            <th class="cell-size-4 text-align--center">B</th>
+        </tr>
+        <tr>
+            <th class="cell-size-1">&nbsp;</th>
+            <th class="cell-size-7 text-align--center">Name of participator or associate</th>
+            <th class="cell-size-4 text-align--center">Amount of loan/benefit</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for((loan, index) <- boxRetriever.loansToParticipators().loans.zipWithIndex) {
+            <tr id="ct600-loans-and-arrangements-made-loan-@{index + 1}">
+                <td class="cell-size-1">@{index + 1}</td>
+                <td class="cell-size-7">@loan.name</td>
+                <td class="cell-size-4">
+                    &pound; @poundsPence(loan.amount)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@questionRow(id = "ct600-loans-and-arrangements-made-a15") {
+    @questionCell(5) {
+
+    }
+    @questionCell(3) {
+        @textField(
+            value = "Total",
+            id = "A15",
+            widthClass = Some("full"),
+            boxNumber = Some("A15"),
+            boxNumberColor = "white"
+        )
+    }
+    @questionCell(4) {
+        @optionalNumberFieldForInt(
+            value = boxRetriever.a15().value,
+            numberOfDigits = 1,
+            id = "A15",
+            prefix = Some("&pound;"),
+            inline = true,
+            containerCss = Some("input-box--full-width")
+        )
+    }
+}
+
+@questionRow(id = "ct600-loans-and-arrangements-made-a20") {
+    @questionCell(5) {
+
+    }
+    @questionCell(3) {
+        @textField(
+            value = "Tax chargeable",
+            id = "A20",
+            widthClass = Some("full"),
+            boxNumber = Some("A20"),
+            boxNumberColor = "white"
+        )
+    }
+    @questionCell(4) {
+        @optionalNumberFieldForBigDecimal(
+            value = boxRetriever.a20().value,
+            numberOfDigits = 1,
+            id = "A20",
+            prefix = Some("&pound;"),
+            inline = true,
+            containerCss = Some("input-box--full-width")
+        )
+    }
+}
+@questionRow() {
+    @questionCell(8) {
+
+    }
+    @questionCell(4) {
+        <strong>box A15 multiplied by rate applicable</strong>
+    }
+}

@@ -1,0 +1,258 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b3 = @{intValue(data, intFromCT600 { (br) => br.b3.value },
+                       intFromCT600E { (br) => 0 })}
+@b4 = @{optional(data, optionFromCT600[Int] { (br) => br.b4().value })}
+@b5 = @{intValue(data, intFromCT600 { (br) => br.b5.value },
+                       intFromCT600E { (br) => 0 })}
+@b6 = @{optional(data, optionFromCT600[Int] { (br) => Some(br.b6().value) })}
+@b11 = @{optional(data, optionFromCT600[Int] { (br) => Some(br.b11().value) })}
+@b14 = @{optional(data, optionFromCT600[Int] { (br) => br.b14().value })}
+
+@questionBox(title = Some("<h2>Income</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("3")
+            <span>Trading and professional profits</span>
+        }
+        @questionCell(3) {
+            @numberFieldForBigDecimal(
+                value = b3,
+                numberOfDigits = 1,
+                id = "B3",
+                boxNumber = Some("3"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("4")
+            <span>Trading losses brought forward claimed against profits</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b4,
+                numberOfDigits = 1,
+                id = "B4",
+                boxNumber = Some("4"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("5")
+            <span>Net trading and professional profits</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("box 3 minus box 4")
+            @numberFieldForInt(
+                value = b5,
+                numberOfDigits = 1,
+                id = "B5",
+                boxNumber = Some("5"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("6")
+            <span>Bank, building society or other interest, and profits and gains from non-trading loan relationships</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b6,
+                numberOfDigits = 1,
+                id = "B6",
+                boxNumber = Some("6"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("7")
+            <i>Put an 'X' in box 7 if the figure in box 6 is net of carrying back a deficit from a later accounting period</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = false,
+                id = "B7",
+                boxNumber = Some("7")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("8")
+            <span>Annuities, annual payments and discounts not arising from loan relationships and from which income tax has not been deducted </span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B8",
+                boxNumber = Some("8"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("9")
+            <span>Overseas income within Sch D Case V</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B9",
+                boxNumber = Some("9"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("10")
+            <span>Income from which income tax has been deducted</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B10",
+                boxNumber = Some("10"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("11")
+            <span>Income from UK land and buildings</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b11,
+                numberOfDigits = 1,
+                id = "B11",
+                boxNumber = Some("11"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("12")
+            <span>Non-trading gains on intangible fixed assets</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B12",
+                boxNumber = Some("12"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("13")
+            <span>Tonnage tax profits</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B13",
+                boxNumber = Some("13"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("14")
+            <span>Annual profits and gains not falling under any other heading</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b14,
+                numberOfDigits = 1,
+                id = "B14",
+                boxNumber = Some("14"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("15")
+            <span>Income within Sch D Case VI</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("total of boxes 12, 13 and 14")
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B15",
+                boxNumber = Some("15"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

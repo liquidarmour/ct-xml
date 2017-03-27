@@ -1,0 +1,83 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-deduction-and-reliefs", title = Some("<h2>Deductions and reliefs</h2>")) {
+    @questionRow(id = "ct600-deduction-and-reliefs-b240", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("240", default = true)
+            <strong>Losses on unquoted shares</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B240",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deduction-and-reliefs-b245", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("245", default = true)
+            <strong>Management expenses</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B245",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deduction-and-reliefs-b250", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("250", default = true)
+            <strong>UK property business losses for this or previous accounting period</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B250",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deduction-and-reliefs-b255", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("255", default = true)
+            <strong>Capital allowances for the purposes of management of the business</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B255",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-deduction-and-reliefs-b260") {
+        @questionCell(6) {
+            @boxNumber("260", default = true)
+            <strong>Non-trade deficits for this accounting period from loan relationships and derivative contracts (financial instruments)</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B260",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

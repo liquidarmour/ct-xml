@@ -1,0 +1,34 @@
+@import uk.gov.hmrc.ct.ct600.v2.retriever.RepaymentsBoxRetriever
+@(data: RepaymentsBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Small repayments</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>If you do not want us to make small repayments please either put an 'X' in box 139 or complete box 140 below. 'Repayments' here include tax, interest, and late-filing penalties or any combination of them.</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Do not repay &pound;20 or less</span>
+            @checkboxField(
+                value = data.b139().value,
+                id = "B139",
+                boxNumber = Some("139")
+            )
+            <span>Do not repay sums of</span>
+            @optionalNumberFieldForBigDecimal(
+                value = if(!data.b139().value) { data.b140().value.map{i => BigDecimal(i)} } else { None },
+                numberOfDigits = 1,
+                id = "B140",
+                boxNumber = Some("140"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--10em-width")
+            )
+            <span>or less.</span>
+            <i>Enter whole figure only</i>
+        }
+    }
+}

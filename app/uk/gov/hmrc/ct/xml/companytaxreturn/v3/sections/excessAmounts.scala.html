@@ -1,0 +1,74 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-excess-amounts", title = Some("<h2>Excess amounts</h2>"), minimumPadding = true) {
+    @questionRow(css = rowClass) {
+        @questionCell(2) {
+
+        }
+        @questionCell(5) {
+            <strong>Amount</strong>
+        }
+        @questionCell(5) {
+            <strong>Maximum available for surrender as group relief</strong>
+        }
+    }
+    @questionRow(id = "ct600-excess-amounts-b840", css = rowClass) {
+        @questionCell(2) {
+            <strong>Non-trade capital allowances</strong>
+        }
+        @questionCell(5) {
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B840",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                boxNumber = Some("840")
+            )
+        }
+    }
+    @questionRow(id = "ct600-excess-amounts-b845", css = rowClass) {
+        @questionCell(2) {
+            <strong>Qualifying donations</strong>
+        }
+        @questionCell(5) {
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B845",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                boxNumber = Some("845")
+            )
+        }
+    }
+    @questionRow(id = "ct600-excess-amounts-b850") {
+        @questionCell(2) {
+            <strong>Management expenses</strong>
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B850",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                boxNumber = Some("850")
+            )
+        }
+        @questionCell(5) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 11,
+                id = "B855",
+                prefix = Some("&pound;"),
+                boxNumber = Some("855")
+            )
+        }
+    }
+}

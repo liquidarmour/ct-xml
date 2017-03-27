@@ -1,0 +1,135 @@
+@(boxes: uk.gov.hmrc.ct.ct600a.v3.retriever.CT600ABoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{formatXml => dateFormatXml}
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+
+@A5 =  @{boxes.a5().value}
+@A15 = @{boxes.a15().value}
+@A20 = @{boxes.a20().value}
+@A30 = @{boxes.a30().value}
+@A35 = @{boxes.a35().value}
+@A40 = @{boxes.a40().value}
+@A45 = @{boxes.a45().value}
+@A55 = @{boxes.a55().value}
+@A60 = @{boxes.a60().value}
+@A65 = @{boxes.a65().value}
+@A70 = @{boxes.a70().value}
+@A75 = @{boxes.a75().value}
+@A80 = @{boxes.a80().value}
+@LPQ07Box = @{boxes.lpq07()}
+@loansToParticipators = @{boxes.loansToParticipators()}
+
+@CP2 = @{ boxes.cp2().value }
+
+
+<LoansByCloseCompanies> <!-- N095 -->
+    @if(A5.getOrElse(false)) {
+        <BeforeEndPeriod>yes</BeforeEndPeriod> <!-- A5v3 -->
+    } else {
+        <BeforeEndPeriod>no</BeforeEndPeriod> <!-- A5v3 -->
+    }
+
+    @if(loansToParticipators.loans.nonEmpty) {
+        <LoansInformation>
+            @for(loan <- loansToParticipators.loans) {
+                <Loan> <!-- A10v3 -->
+                    <Name>@expectedString(loan.name)</Name> <!-- A10Av3 -->
+                    <AmountOfLoan>@poundsPence(expectedInt(loan.amount))</AmountOfLoan> <!-- A10Bv3 -->
+                </Loan>
+            }
+            <TotalLoans>@poundsPence(A15)</TotalLoans> <!-- A15v3 -->
+            <TaxChargeable>@poundsPence(A20)</TaxChargeable> <!-- A20v3 -->
+        </LoansInformation>
+
+        @if(loansToParticipators.loans.exists(loan =>
+            (loan.repaymentWithin9Months.nonEmpty && loan.repaymentWithin9Months.get.isReliefEarlierThanDue(CP2)) ||
+                    loan.writeOffs.exists(writeOff => writeOff.isReliefEarlierThanDue(CP2))
+        )) {
+            <ReliefEarlierThan>
+                @for(loan <- loansToParticipators.loans) {
+                    @if(loan.repaymentWithin9Months.nonEmpty && loan.repaymentWithin9Months.get.isReliefEarlierThanDue(CP2)) {
+                        <Loan>
+                            <Name>@expectedString(loan.name)</Name>
+                            <AmountRepaid Currency="GBP">@poundsPence(expectedInt(loan.repaymentWithin9Months.flatMap(_.amount)))</AmountRepaid>
+                            @loan.repaymentWithin9Months.get.date.map { d =>
+                                <Date>@dateFormatXml(d))</Date>
+                            }
+                        </Loan>
+                    }
+
+                    @for(writeOff <- loan.writeOffs) {
+                        @if(writeOff.isReliefEarlierThanDue(CP2)) {
+                            <Loan>
+                                <Name>@expectedString(loan.name)</Name>
+                                <AmountReleasedOrWrittenOff Currency="GBP">@poundsPence(expectedInt(writeOff.amount))</AmountReleasedOrWrittenOff>
+                                @writeOff.date.map { d =>
+                                    <Date>@dateFormatXml(d)</Date>
+                                }
+                            </Loan>
+                        }
+                    }
+                }
+                @if(A30.isDefined) {
+                    <TotalAmountRepaid>@poundsPence(A30)</TotalAmountRepaid> <!-- A30v3 -->
+                }
+                @if(A35.isDefined) {
+                    <TotalAmountReleasedOrWritten Currency="GBP">@poundsPence(A35)</TotalAmountReleasedOrWritten> <!-- A35v3 -->
+                }
+                @if(A40.isDefined) {
+                    <TotalLoans>@poundsPence(A40)</TotalLoans> <!-- A40v3 -->
+                }
+                @if(A45.isDefined) {
+                    <ReliefDue>@poundsPence(A45)</ReliefDue> <!-- A45v3 -->
+                }
+            </ReliefEarlierThan>
+        }
+        @if(loansToParticipators.loans.exists(loan =>
+            loan.otherRepayments.exists(repayment => repayment.isLaterReliefNowDue(CP2, LPQ07Box)) ||
+                    loan.writeOffs.exists(writeOff => writeOff.isLaterReliefNowDue(CP2, LPQ07Box))
+        )) {
+            <LoanLaterReliefNow>
+                @for(loan <- loansToParticipators.loans) {
+
+                    @for(repayment <- loan.otherRepayments) {
+                        @if(repayment.isLaterReliefNowDue(CP2, LPQ07Box)) {
+                            <Loan>
+                                <Name>@expectedString(loan.name)</Name>
+                                <AmountRepaid Currency="GBP">@poundsPence(expectedInt(repayment.amount))</AmountRepaid>
+                                @repayment.date.map { d =>
+                                    <Date>@dateFormatXml(d)</Date>
+                                }
+                            </Loan>
+                        }
+                    }
+
+                    @for(writeOff <- loan.writeOffs) {
+                        @if(writeOff.isLaterReliefNowDue(CP2, LPQ07Box)) {
+                            <Loan>
+                                <Name>@expectedString(loan.name)</Name>
+                                <AmountReleasedOrWrittenOff>@poundsPence(expectedInt(writeOff.amount))</AmountReleasedOrWrittenOff>
+                                @writeOff.date.map { d =>
+                                    <Date>@dateFormatXml(d)</Date>
+                                }
+                            </Loan>
+                        }
+                    }
+                }
+                @if(A55.isDefined) {
+                    <TotalAmountRepaid>@poundsPence(A55)</TotalAmountRepaid> <!-- A55v3 -->
+                }
+                @if(A60.isDefined) {
+                    <TotalAmountReleasedOrWritten>@poundsPence(A60)</TotalAmountReleasedOrWritten> <!-- A60v3 -->
+                }
+                @if(A65.isDefined) {
+                    <TotalLoans>@poundsPence(A65)</TotalLoans> <!-- A65v3 -->
+                }
+                @if(A70.isDefined) {
+                    <ReliefDue>@poundsPence(A70)</ReliefDue> <!-- A70v3 -->
+                }
+            </LoanLaterReliefNow>
+        }
+    }
+    <TotalLoansOutstanding>@poundsPence(A75)</TotalLoansOutstanding> <!-- A75v3 -->
+    <TaxPayable>@poundsPence(A80)</TaxPayable> <!-- A80v3 = [A20] minus ( [A45] plus [A70] ) -->
+</LoansByCloseCompanies>

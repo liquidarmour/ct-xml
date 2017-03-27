@@ -1,0 +1,7 @@
+@(accounts: String)
+
+<Accounts>
+    <Instance>
+        <EncodedInlineXBRLDocument>@accounts</EncodedInlineXBRLDocument>
+    </Instance>
+</Accounts>

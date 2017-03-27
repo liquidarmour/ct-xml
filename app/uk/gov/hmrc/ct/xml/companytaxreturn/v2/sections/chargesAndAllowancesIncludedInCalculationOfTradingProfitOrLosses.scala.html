@@ -1,0 +1,213 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b172 = @{optional(data, optionFromCT600[Int] { (br) => br.b172().value })}
+@b105 = @{optional(data, optionFromCT600[Int] { (br) => br.b105().value })}
+@b106 = @{optional(data, optionFromCT600[Int] { (br) => br.b106().value })}
+@b107 = @{optional(data, optionFromCT600[Int] { (br) => br.b107().value })}
+@b108 = @{optional(data, optionFromCT600[Int] { (br) => br.b108().value })}
+
+@questionBox(title = Some("<h2>Charges and allowances included in calculation of trading profits or losses</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+        }
+        @questionCell(3) {
+            <span>Capital Allowances</span>
+        }
+        @questionCell(3) {
+            <span>Balancing Charges</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("172")
+            <span>Annual investment allowance</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b172,
+                numberOfDigits = 1,
+                id = "B172",
+                boxNumber = Some("172"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("105-106")
+            <span>Machinery and plant - special rate pool</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b105,
+                numberOfDigits = 1,
+                id = "B105",
+                boxNumber = Some("105"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b106,
+                numberOfDigits = 1,
+                id = "B106",
+                boxNumber = Some("106"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("107-108")
+            <span>Machinery and plant - main pool</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b107,
+                numberOfDigits = 1,
+                id = "B107",
+                boxNumber = Some("107"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b108,
+                numberOfDigits = 1,
+                id = "B108",
+                boxNumber = Some("108"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("109-110")
+            <span>Cars</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B109",
+                boxNumber = Some("109"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B110",
+                boxNumber = Some("110"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("111-112")
+            <span>Industrial buildings and structures</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B111",
+                boxNumber = Some("111"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B112",
+                boxNumber = Some("112"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("162-163")
+            <span>Business premises renovation</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B162",
+                boxNumber = Some("162"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B163",
+                boxNumber = Some("163"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("113-114")
+            <span>Other charges and allowances</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B113",
+                boxNumber = Some("113"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B114",
+                boxNumber = Some("114"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

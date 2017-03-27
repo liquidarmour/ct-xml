@@ -1,0 +1,33 @@
+@import uk.gov.hmrc.ct.ct600j.v3.retriever.CT600JBoxRetriever
+
+@(boxRetriever: CT600JBoxRetriever)
+
+<div id="ct600a">
+    <div class="page-break small-heading-margin">
+        <div class="ct600--header">
+            <div class="ct600--header-logo">
+                    <!-- Placeholder for the header logo -->
+            </div>
+            <div class="ct600--header-title">
+                <h1 class="ct600--heading-green">Company Tax Return – supplementary page</h1>
+                <h2 class="ct600--heading-green">Disclosure of tax avoidance schemes</h2>
+                <h3 class="ct600--heading-green">CT600J (2015) Version 3 for accounting periods starting on or after 1 April 2015</h3>
+            </div>
+        </div>
+
+        <h2>Guidance</h2>
+        <p>Guidance about when and how to complete this supplementary page can be found in the CT600 Guide.</p>
+        <p>
+            For further information read What supplementary pages do I need to complete and include as part of the Company Tax Return?
+            to find out what supplementary pages you need to complete.
+        </p>
+        <p>
+            Also, read the Important points about supplementary pages and CT600J – Disclosure of tax avoidance schemes for further
+            guidance about completing this supplementary page.
+        </p>
+        <hr />
+
+        @companyInformation(boxRetriever)
+        @disclosureOfTaxAvoidanceSchemes(boxRetriever)
+    </div>
+</div>

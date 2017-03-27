@@ -1,0 +1,37 @@
+@import uk.gov.hmrc.ct.ct600j.v2.retriever.CT600JBoxRetriever
+
+@(boxRetriever: CT600JBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Disclosable tax avoidance schemes</h2>")) {
+    @questionRow() {
+        @questionCell(5) {
+            <b>Scheme Reference Number</b>
+        }
+        @questionCell(5) {
+            <b>Accounting period in which the expected advantage arises <i>(dd/mm/yyyy)</i></b>
+        }
+    }
+    @* Box retriever is missing 'getTaxAvoidance' function so commenting out the stuff *@
+    @*
+    @boxRetriever.getTaxAvoidance.zipWithIndex.map { case (scheme, index) =>
+        @questionRow() {
+            @questionCell(5) {
+                @numberField(
+                    value = scheme.schemeReferenceNumber,
+                    numberOfDigits = 8,
+                    id = "TaxAvoidanceScheme" + (index + 1).toString,
+                    prefix = Some((index + 1).toString)
+                )
+            }
+            @questionCell(5) {
+                @optionalDateField(
+                    value = scheme.advantagedInAccountingPeriod,
+                    id = "TaxAvoidanceSchemeDate" + (index + 1).toString
+                )
+            }
+        }
+    }
+    *@
+}

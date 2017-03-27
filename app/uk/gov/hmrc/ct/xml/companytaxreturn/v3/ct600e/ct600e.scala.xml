@@ -1,0 +1,153 @@
+@import uk.gov.hmrc.ct.ct600e.v3.retriever.CT600EBoxRetriever
+@(boxes: CT600EBoxRetriever)
+
+@import boxes._
+@import uk.gov.hmrc.ct.xml.helpers.BoxHelpers._
+@import uk.gov.hmrc.ct.ct600e.v3.CharityLoansAndInvestments
+
+@allLoansAreQualifying() = @{
+    e180().value.getOrElse(-1) == CharityLoansAndInvestments.AllLoansAndInvestments ||
+        e180().value.getOrElse(-1) == CharityLoansAndInvestments.NoLoansNorInvestments
+}
+
+@allExempt = @{
+    e15.orFalse && (e20.orFalse || !e25.orFalse)
+}
+
+@anyIncomeBoxesPopulated = @{
+    e50.value.isDefined ||
+    e55.value.isDefined ||
+    e60.value.isDefined ||
+    e65.value.isDefined ||
+    e70.value.isDefined ||
+    e75.value.isDefined ||
+    e80.value.isDefined ||
+    e85.value.isDefined ||
+    e90.value.isDefined
+}
+
+@anyExpenditureBoxesPopulated = @{
+    e95.value.isDefined ||
+    e100.value.isDefined ||
+    e105.value.isDefined ||
+    e110.value.isDefined ||
+    e115.value.isDefined ||
+    e120.value.isDefined ||
+    e125.value.isDefined
+}
+
+@anyAssetsBoxesPopulated = @{
+    e130.value.isDefined ||
+    e135.value.isDefined ||
+    e140.value.isDefined ||
+    e145.value.isDefined ||
+    e150.value.isDefined ||
+    e155.value.isDefined ||
+    e160.value.isDefined ||
+    e165.value.isDefined ||
+    e170.value.isDefined ||
+    e175.value.isDefined ||
+    e180.value.isDefined ||
+    e185.value.isDefined ||
+    e190.value.isDefined ||
+    allLoansAreQualifying()
+}
+
+<Charity>
+    <ClaimExemption>
+        <RepaymentReference>@e5().value</RepaymentReference>
+        @e10().value.find(_.nonEmpty).map{ e10 =>
+            <RegistrationNumber>@e10</RegistrationNumber>
+        }
+        <Status>
+            @if(boxToBoolean(e15())){<ClaimingExemptionAllOrPart>yes</ClaimingExemptionAllOrPart>}
+            <AllCharitable>
+                @if(allExempt){<AllExempt>yes</AllExempt>}
+                @if(boxToBoolean(e25())){<SomeNotOnlyCharitable>yes</SomeNotOnlyCharitable>}
+            </AllCharitable>
+        </Status>
+    </ClaimExemption>
+
+    @if(boxToBoolean(e45())){
+    <Repayments>
+        <OverclaimedTax>yes</OverclaimedTax>
+    </Repayments>
+    }
+
+    @if(anyIncomeBoxesPopulated || anyExpenditureBoxesPopulated || anyAssetsBoxesPopulated) {
+        <InformationRequired>
+            @if(anyIncomeBoxesPopulated) {
+                <Income>
+                    @boxToPoundsPence(e50()).map { s => <TotalTurnover Currency="GBP">@s</TotalTurnover> }
+                    @boxToPoundsPence(e55()).map { s => <InvestmentIncome Currency="GBP">@s</InvestmentIncome> }
+                    @boxToPoundsPence(e60()).map { s => <UKlandBuildings Currency="GBP">@s</UKlandBuildings> }
+                    @boxToPoundsPence(e65()).map { s => <GiftAid Currency="GBP">@s</GiftAid> }
+                    @boxToPoundsPence(e70()).map { s => <OtherCharities Currency="GBP">@s</OtherCharities> }
+                    @boxToPoundsPence(e75()).map { s => <GiftsOfShares Currency="GBP">@s</GiftsOfShares> }
+                    @boxToPoundsPence(e80()).map { s => <GiftOfRealProperty Currency="GBP">@s</GiftOfRealProperty> }
+                    @boxToPoundsPence(e85()).map { s => <OtherSources Currency="GBP">@s</OtherSources> }
+                    @boxToPoundsPence(e90()).map { s => <Total Currency="GBP">@s</Total> }
+                </Income>
+            }
+            @if(anyExpenditureBoxesPopulated) {
+                <Expenditure>
+                    @boxToPoundsPence(e95()).map { s => <TradingCosts Currency="GBP">@s</TradingCosts> }
+                    @boxToPoundsPence(e100()).map { s => <UKlandBuildings Currency="GBP">@s</UKlandBuildings> }
+                    @boxToPoundsPence(e105()).map { s => <GeneralAdminCosts Currency="GBP">@s</GeneralAdminCosts> }
+                    @boxToPoundsPence(e110()).map { s => <GrantsDonationsWithinUK Currency="GBP">@s</GrantsDonationsWithinUK> }
+                    @boxToPoundsPence(e115()).map { s => <GrantsDonationsOutsideUK Currency="GBP">@s</GrantsDonationsOutsideUK> }
+                    @boxToPoundsPence(e120()).map { s => <OtherExpenditure Currency="GBP">@s</OtherExpenditure> }
+                    @boxToPoundsPence(e125()).map { s => <Total Currency="GBP">@s</Total> }
+                </Expenditure>
+            }
+            @if(anyAssetsBoxesPopulated) {
+                <Assets>
+                    @if(e130().value.isDefined || e135().value.isDefined) {
+                        <TangibleFixed>
+                            @boxToPoundsPence(e130()).map { s => <Disposals Currency="GBP">@s</Disposals> }
+                            @boxToPoundsPence(e135()).map { s => <Held Currency="GBP">@s</Held> }
+                        </TangibleFixed>
+                    }
+                    @if(e140().value.isDefined || e145().value.isDefined) {
+                        <UKinvestments>
+                            @boxToPoundsPence(e140()).map { s => <Disposals Currency="GBP">@s</Disposals> }
+                            @boxToPoundsPence(e145()).map { s => <Held Currency="GBP">@s</Held> }
+                        </UKinvestments>
+                    }
+                    @if(e150().value.isDefined || e155().value.isDefined) {
+                        <SharesAndLoans>
+                            @boxToPoundsPence(e150()).map { s => <Disposals Currency="GBP">@s</Disposals> }
+                            @boxToPoundsPence(e155()).map { s => <Held Currency="GBP">@s</Held> }
+                        </SharesAndLoans>
+                    }
+                    @if(e160().value.isDefined || e165().value.isDefined) {
+                        <OverseasInvestments>
+                            @boxToPoundsPence(e160()).map { s => <Disposals Currency="GBP">@s</Disposals> }
+                            @boxToPoundsPence(e165()).map { s => <Held Currency="GBP">@s</Held> }
+                        </OverseasInvestments>
+                    }
+                    @if(e170().value.isDefined) {
+                        <LoansAndNonTradeDebtors>
+                        @boxToPoundsPence(e170()).map { s => <Held Currency="GBP">@s</Held> }
+                        </LoansAndNonTradeDebtors>
+                    }
+                    @if(e175().value.isDefined) {
+                        <OtherCurrent>
+                        @boxToPoundsPence(e175()).map { s => <Held Currency="GBP">@s</Held> }
+                        </OtherCurrent>
+                    }
+                    @if(allLoansAreQualifying() || e185().value.isDefined) {
+                        <InvestmentsOrLoans>
+                            @* Show only if value is SomeLoansAndInvestments *@
+                            @if(allLoansAreQualifying()) {
+                                <Qualifying>yes</Qualifying>
+                            }
+                            @boxToPoundsPence(e185()).map { s => <ValueOfNonQualifying Currency="GBP">@s</ValueOfNonQualifying> }
+                        </InvestmentsOrLoans>
+                    }
+                    @e190().value.map { s => <SubsidiaryOrAssociatedCompanies>@s</SubsidiaryOrAssociatedCompanies> }
+                </Assets>
+            }
+        </InformationRequired>
+    }
+</Charity>

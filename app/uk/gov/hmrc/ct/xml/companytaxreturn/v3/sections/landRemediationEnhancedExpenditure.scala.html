@@ -1,0 +1,24 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@* ID contains an acronym for the name of the file *@
+@questionBox(id = "ct600-lree", title = Some("<h2>Land remediation enhanced expenditure</h2>")) {
+    @questionRow(id = "ct600-lree-b689") {
+        @questionCell(6) {
+            @boxNumber("689", default = true)
+            <strong>Enter the total enhanced expenditure</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B689",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

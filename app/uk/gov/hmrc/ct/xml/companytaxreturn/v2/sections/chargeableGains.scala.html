@@ -1,0 +1,128 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b21 = @{intValue(data, intFromCT600 { (br) => br.b21.value },
+                        intFromCT600E { (br) => 0 })}
+
+@questionBox(title = Some("<h2>Chargeable gains</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("16")
+            <span>Gross chargeable gains</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B16",
+                boxNumber = Some("16"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("17")
+            <span>Allowable losses including losses brought forward</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B17",
+                boxNumber = Some("17"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("18")
+            <span>Net chargeable gains</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("box 16 minus box 17")
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B18",
+                boxNumber = Some("18"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("19")
+            <span>Losses brought forward against certain investment income</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B19",
+                boxNumber = Some("19"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("20")
+            <span>Non-trade deficits on loan relationships (including interest), and derivative contracts (financial instruments) brought forward</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B20",
+                boxNumber = Some("20"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("21")
+            <span>Profits before other deductions and reliefs</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @fieldDescription("net sum of boxes 5, 6, 8, 9, 10, 11,15, &amp; 18 minus sum of boxes 19 and 20")
+            @numberFieldForInt(
+                value = b21,
+                numberOfDigits = 1,
+                id = "B21",
+                boxNumber = Some("21"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

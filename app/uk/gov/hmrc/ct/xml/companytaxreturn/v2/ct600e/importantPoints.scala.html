@@ -1,0 +1,25 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Important points</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>- These Supplementary Pages will form the charity's/CASC's claim to exemption from tax on the basis that its income and gains have been applied for charitable or qualifying purposes only.</span>
+            <br />
+            <span>- Please use the notes on page 2 to help you complete this form.</span>
+            <br />
+            <span>- Please enter whole figures or '0' where appropriate.</span>
+            <br />
+            <span>- How often you are asked to make a return will depend on the extent and nature of your activities.</span>
+            <br />
+            <span>- These Pages, when completed, form part of the company's return.</span>
+            <br />
+            <span>- These Pages set out the information we need and provide a standard format.</span>
+            <br />
+            <span>- These Pages are covered by the Declaration you sign on the back page of form CT600.</span>
+            <br />
+            <span>- The warning shown on form CT600 about prosecution, and the advice about late and incorrect returns and late payment of tax, also apply to these Pages.</span>
+        }
+    }
+}

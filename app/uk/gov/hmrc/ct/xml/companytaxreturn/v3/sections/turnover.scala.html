@@ -1,0 +1,43 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b145 = @{intValue(boxRetriever, intFromCT600 { (br) => br.b145().orZero },
+                                 intFromCT600E { (br) => 0 })}
+
+@b150 = @{optional(boxRetriever, optionFromCT600[Boolean] { (br) => br.b150.value })}
+
+@questionBox(id = "ct600-turnover", title = Some("<h2 class=\"margin-top-none\">Turnover</h2>")) {
+    @questionRow(id = "ct600-turnover-b145") {
+        @questionCell(3) {
+            @boxNumber("145", default = true)
+            <strong>Total turnover from trade</strong>
+        }
+        @questionCell(9, alignRight = true) {
+            @numberFieldForInt(
+                value = b145,
+                numberOfDigits = 18,
+                id = "B145",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-turnover-b150") {
+        @questionCell(10) {
+            @boxNumber("150", default = true)
+            <strong>Banks, building societies, insurance companies and other financial concerns -</strong>
+            <br />
+            <i>put an 'X' in this box if you do not have a recognised turnover and have not made an entry in box 145</i>
+        }
+        @questionCell(2, alignRight = true) {
+            @optionalCheckboxField(
+                value = b150,
+                id = "B150"
+            )
+        }
+    }
+}

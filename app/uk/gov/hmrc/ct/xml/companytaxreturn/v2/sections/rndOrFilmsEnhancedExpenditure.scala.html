@@ -1,0 +1,105 @@
+@()
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@questionBox(title = Some("<h2>Research and Development (R&amp;D) or films enhanced expenditure</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("167")
+            <i>Put an 'X' in box 167 if the claim is for films expenditure</i>
+        }
+        @questionCell(3) {
+            @optionalCheckboxField(
+                value = None,
+                boxNumber = Some("167"),
+                id = "B167"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("99")
+            <i>Put an 'X' in box 99 if the claim is made by a small or medium-sized enterprise (SME), including a SME subcontractor to a large company</i>
+        }
+        @questionCell(3) {
+            @optionalCheckboxField(
+                value = None,
+                boxNumber = Some("99"),
+                id = "B99"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("100")
+            <i>Put an 'X' in box 100 if the claim is made by a large company</i>
+        }
+        @questionCell(3) {
+            @optionalCheckboxField(
+                value = None,
+                boxNumber = Some("100"),
+                id = "B100"
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("101")
+            <span>R&amp;D or films enhanced expenditure</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B101",
+                boxNumber = Some("101"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("102")
+            <span>R&amp;D enhanced expenditure of a SME on work sub-contracted to it by a large company</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B102",
+                boxNumber = Some("102"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("103")
+            <span>Vaccines research expenditure</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B103",
+                boxNumber = Some("103"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

@@ -1,0 +1,7 @@
+@(id: String = "", title: Option[String] = None, minimumPadding: Boolean = false, cssClass: String = "")(content: Html)
+@title.map { value =>
+    @Html(value)
+}
+<div id="@id" class="ct600--question-box @cssClass @if(minimumPadding){ question-box--minimum-padding }">
+    @content
+</div>

@@ -1,0 +1,20 @@
+@import uk.gov.hmrc.ct.computations.retriever.ComputationsBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.CT600BoxRetriever
+@(boxRetriever: ComputationsBoxRetriever with CT600BoxRetriever, ctUtr: uk.gov.hmrc.domain.CtUtr, condensed: Boolean = false)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{format => dateFormat}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat._
+
+<div class="header" @if(condensed){ style="padding: 0" }>
+    <h2 @if(condensed){ style="margin: 5px 0" }>
+        <ix:nonNumeric name="ct-comp:CompanyName" contextRef="CY_Comps_Instant">@{boxRetriever.b1.value}</ix:nonNumeric>
+        <br/>
+        Utr: <ix:nonNumeric name="ct-comp:TaxReference" contextRef="CY_Comps_Instant">@{ctUtr.toString}</ix:nonNumeric>
+        | Accounting Period:
+        <ix:nonNumeric name="ct-comp:StartOfPeriodCoveredByReturn" contextRef="CY_Comps_Instant" format="ixt2:datedaymonthyear">@dateFormat(boxRetriever.cp1.value, DDMMYYYY)</ix:nonNumeric> -
+        <ix:nonNumeric name="ct-comp:EndOfPeriodCoveredByReturn" contextRef="CY_Comps_Instant" format="ixt2:datedaymonthyear">@dateFormat(boxRetriever.cp2.value, DDMMYYYY)</ix:nonNumeric>
+        <span style="display: none">
+            <ix:nonNumeric name="ct-comp:CompanyIsAPartnerInAFirm" contextRef="CY_Comps_Duration">false</ix:nonNumeric>
+        </span>
+    </h2>
+</div>

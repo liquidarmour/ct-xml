@@ -1,0 +1,518 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v2.V2CT600Helper._
+
+@(data: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@ct600Helper = @{V2CT600Helper(data)}
+
+@b38 = @{optional(data, optionFromCT600[Int] { (br) => br.b38().value })}
+@b39 = @{optional(data, optionFromCT600[Int] { (br) => br.b39().value })}
+@b42 = @{booleanValue(data, booleanFromCT600 { (br) => br.b42().value },
+                            booleanFromCT600E { (br) => false })}
+@b43 = @{intValue(data, intFromCT600 { (br) => br.b43().value },
+                        intFromCT600E { (br) => br.e1033().value })}
+@b44 = @{intValue(data, intFromCT600 { (br) => br.b44().value },
+                        intFromCT600E { (br) => 0 })}
+@b45 = @{decimalValue(data, decimalFromCT600 { (br) => br.b45().value },
+                            decimalFromCT600E { (br) => br.e1035().value })}
+@b46 = @{decimalValue(data, decimalFromCT600 { (br) => br.b46().value },
+                            decimalFromCT600E { (br) => 0 })}
+
+@b53 = @{optional(data, optionFromCT600[Int] { (br) => br.b53().value },
+                        optionFromCT600E[Int] { (br) => br.e1043().value })}
+@b54 = @{optional(data, optionFromCT600[Int] { (br) => Some(br.b54().value) },
+                        optionFromCT600E[Int] { (br) => None })}
+@b55 = @{optional(data, optionFromCT600[BigDecimal] { (br) => Some(br.b55().value) },
+                        optionFromCT600E[BigDecimal] { (br) => Some(br.e1035().value) })}
+@b56 = @{optional(data, optionFromCT600[BigDecimal] { (br) => Some(br.b56().value) },
+                        optionFromCT600E[BigDecimal] { (br) => None })}
+
+@b63 = @{decimalValue(data, decimalFromCT600 { (br) => br.b63().value },
+                            decimalFromCT600E { (br) => 0 })}
+
+@b65 = @{decimalValue(data, decimalFromCT600 { (br) => br.b65().value },
+                            decimalFromCT600E { (br) => 0 })}
+
+@b70 = @{decimalValue(data, decimalFromCT600 { (br) => br.b70().value },
+                            decimalFromCT600E { (br) => 0 })}
+
+@questionBox(title = Some("<h2>Tax calculation</h2>")) {
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("38")
+            <span>Franked investment income</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b38,
+                numberOfDigits = 1,
+                id = "B38",
+                boxNumber = Some("38"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("39")
+            <span>Number of associated companies in this period or</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b39,
+                numberOfDigits = 1,
+                id = "B39",
+                boxNumber = Some("39"),
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("40")
+            <span>Associated companies in the first financial year</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B40",
+                boxNumber = Some("40"),
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("41")
+            <span>Associated companies in the second financial year</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = None,
+                numberOfDigits = 1,
+                id = "B41",
+                boxNumber = Some("41"),
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("42")
+            <i>Put an 'X' in box 42 if the company claims to be charged at the starting rate or the small companies' rate on any part of its profits, or is claiming marginal rate relief</i>
+        }
+        @questionCell(3) {
+            @checkboxField(
+                value = b42,
+                id = "B42",
+                boxNumber = Some("42")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(12) {
+            <span>Enter how much profit has to be charged and at what rate of tax</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(2) {
+            <span>Financial year (yyyy)</span>
+        }
+        @questionCell(3) {
+            <span>Amount of profit</span>
+        }
+        @questionCell(3, alignCenter = true) {
+            <span>Rate of tax</span>
+        }
+        @questionCell(4) {
+            <span>Tax</span>
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(2) {
+            @numberFieldForInt(
+                value = b43,
+                numberOfDigits = 4,
+                id = "B43",
+                boxNumber = Some("43")
+            )
+        }
+        @questionCell(3) {
+            @numberFieldForBigDecimal(
+                value = b44,
+                numberOfDigits = 1,
+                id = "B44",
+                boxNumber = Some("44"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3, alignCenter = true) {
+            @textField(
+                value = NumberHelper.formatAsPercent(b45),
+                id = "B45",
+                boxNumber = Some("45"),
+                widthClass = Some("half")
+            )
+        }
+        @questionCell(4) {
+            @numberFieldForBigDecimal(
+                value = b46,
+                numberOfDigits = 1,
+                id = "B46",
+                boxNumber = Some("46"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(2) {
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B47",
+                boxNumber = Some("47"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3, alignCenter = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B48",
+                boxNumber = Some("48"),
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+        @questionCell(4) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B49",
+                boxNumber = Some("49"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(2) {
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B50",
+                boxNumber = Some("50"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3, alignCenter = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B51",
+                boxNumber = Some("51"),
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+        @questionCell(4) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B52",
+                boxNumber = Some("52"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(2) {
+            @optionalNumberFieldForInt(
+                value = b53,
+                numberOfDigits = 4,
+                id = "B53",
+                boxNumber = Some("53")
+            )
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForInt(
+                value = b54,
+                numberOfDigits = 1,
+                id = "B54",
+                boxNumber = Some("54"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3, alignCenter = true) {
+            @textField(
+                value = NumberHelper.formatAsPercent(b55),
+                id = "B55",
+                boxNumber = Some("55"),
+                widthClass = Some("half")
+            )
+        }
+        @questionCell(4) {
+            @optionalNumberFieldForBigDecimal(
+                value = b56,
+                numberOfDigits = 1,
+                id = "B56",
+                boxNumber = Some("56"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(2) {
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B57",
+                boxNumber = Some("57"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3, alignCenter = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                id = "B58",
+                numberOfDigits = 1,
+                boxNumber = Some("58"),
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+        @questionCell(4) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B59",
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(2) {
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B60",
+                boxNumber = Some("60"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+        @questionCell(3, alignCenter = true) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B61",
+                boxNumber = Some("61"),
+                inline = true,
+                containerCss = Some("input-box--half-width")
+            )
+        }
+        @questionCell(4) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                id = "B62",
+                numberOfDigits = 1,
+                boxNumber = Some("62"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(5) {
+            @questionNumber("63")
+            <span>Corporation tax</span>
+        }
+        @questionCell(3, alignCenter = true) {
+        }
+        @questionCell(4) {
+            @fieldDescription("total of boxes 46, 49, 52, 56, 59 and 62")
+            @numberFieldForBigDecimal(
+                value = b63,
+                numberOfDigits = 1,
+                id = "B63",
+                boxNumber = Some("63"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("64")
+            <span>Marginal rate relief</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = ct600Helper.marginalRateRelief,
+                numberOfDigits = 1,
+                id = "B64",
+                boxNumber = Some("64"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("65")
+            <span>Corporation tax net of marginal rate relief</span>
+        }
+        @questionCell(3) {
+            @numberFieldForBigDecimal(
+                value = b65,
+                numberOfDigits = 1,
+                id = "B65",
+                boxNumber = Some("65"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("66")
+            <span>Underlying rate of corporation tax</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B66",
+                boxNumber = Some("66"),
+                suffix = Some("%"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("67")
+            <span>Profits matched with non-corporate distributions</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B67",
+                boxNumber = Some("67"),
+                prefix = Some("&pound;"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("68")
+            <span>Tax at non-corporate distributions rate</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B68",
+                boxNumber = Some("68"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("69")
+            <span>Tax at underlying rate on remaining profits</span>
+        }
+        @questionCell(3) {
+            @optionalNumberFieldForBigDecimal(
+                value = None,
+                numberOfDigits = 1,
+                id = "B69",
+                boxNumber = Some("69"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+    @questionRow(css = Some("margin-top-small")) {
+        @questionCell(6) {
+            @questionNumber("70")
+            <span>Corporation tax chargeable</span>
+        }
+        @questionCell(3) {
+
+        }
+        @questionCell(3) {
+            @numberFieldForBigDecimal(
+                value = b70,
+                numberOfDigits = 1,
+                id = "B70",
+                boxNumber = Some("70"),
+                prefix = Some("&pound;"),
+                suffix = Some("p"),
+                inline = true,
+                containerCss = Some("input-box--full-width")
+            )
+        }
+    }
+}

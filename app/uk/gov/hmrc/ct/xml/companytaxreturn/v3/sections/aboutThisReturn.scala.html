@@ -1,0 +1,181 @@
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.ct600.v3.retriever.AboutThisReturnBoxRetriever
+
+@(boxRetriever: AboutThisReturnBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.helpers.DisableTwirlImplicits._
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@startDate = @{dateValue(boxRetriever, dateFromCT600 { (br) => br.b30().value },
+                                       dateFromCT600E { (br) => br.e3.value })}
+@endDate = @{dateValue(boxRetriever, dateFromCT600 { (br) => br.b35().value },
+                                     dateFromCT600E { (br) => br.e4.value })}
+
+@b40 = @{optional(boxRetriever, optionFromAboutThisReturn[Boolean] { (br) => br.b40.value })}
+@b45 = @{optional(boxRetriever, optionFromAboutThisReturn[Boolean] { (br) => br.b45.value })}
+@b50 = @{optional(boxRetriever, optionFromAboutThisReturn[Boolean] { (br) => Some(br.b50.value) })}
+@b55 = @{optional(boxRetriever, optionFromAboutThisReturn[Boolean] { (br) => br.b55.value })}
+@b65 = @{optional(boxRetriever, optionFromAboutThisReturn[Boolean] { (br) => br.b65.value })}
+
+@questionBox(id = "ct600-about-this-return", title = Some("<h2>About this return</h2>")) {
+    @questionRow(id = "ct600-about-this-return-heading") {
+        @questionCell(12) {
+            <strong>This is the above company's return for the period</strong>
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-dates-heading") {
+        @questionCell(6) {
+            @boxNumber("30", default = true)
+            <strong>from </strong>
+            <i>DD MM YYYY</i>
+        }
+        @questionCell(6) {
+            @boxNumber("35", default = true)
+            <strong>to </strong>
+            <i>DD MM YYYY</i>
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-dates") {
+        @questionCell(6) {
+            @dateField(
+                value = startDate,
+                id = "CT600StartDate"
+            )
+        }
+        @questionCell(6) {
+            @dateField(
+                value = endDate,
+                id = "CT600EndDate"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-boxes-heading") {
+        @questionCell(12) {
+            <strong>Put an 'X' in the appropriate box(es) below</strong>
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-b40") {
+        @questionCell(10) {
+            @boxNumber("40", default = true)
+            <strong>A repayment is due for this return period</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @optionalCheckboxField(
+                value = b40,
+                id = "B40"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-b45") {
+        @questionCell(10) {
+            @boxNumber("45", default = true)
+            <strong>Claim or relief affecting an earlier period</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @optionalCheckboxField(
+                value = b45,
+                id = "B45"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-b50") {
+        @questionCell(10) {
+            @boxNumber("50", default = true)
+            <strong>Making more than one return for this company now</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @optionalCheckboxField(
+                value = b50,
+                id = "B50"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-b55") {
+        @questionCell(10) {
+            @boxNumber("55", default = true)
+            <strong>This return contains estimated figures</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @optionalCheckboxField(
+                value = b55,
+                id = "B55"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-b60") {
+        @questionCell(10) {
+            @boxNumber("60", default = true)
+            <strong>Company part of a group that is not small</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B60 is not supported *@
+            @* boxRetriever.b60().value *@
+            @checkboxField(
+                value = false,
+                id = "B60"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-b65") {
+        @questionCell(10) {
+            @boxNumber("65", default = true)
+            <strong>Notice of disclosable avoidance schemes</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @optionalCheckboxField(
+                value = b65,
+                id = "B65"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Transfer Pricing</strong>
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-70") {
+        @questionCell(10) {
+            @boxNumber("70", default = true)
+            <strong>Compensating adjustment claimed</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B70 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B70"
+            )
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-75") {
+        @questionCell(10) {
+            @boxNumber("75", default = true)
+            <strong>Company qualifies for SME exemption</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B75 is not supported *@
+            @checkboxField(
+                value = false,
+                id = "B75"
+            )
+        }
+    }
+    @questionRow() {
+        @questionCell(12) {
+            <strong>Accounts and computations</strong>
+        }
+    }
+    @questionRow(id = "ct600-about-this-return-80") {
+        @questionCell(10) {
+            @boxNumber("80", default = true)
+            <strong>I attach accounts and computations for the period to which this return relates</strong>
+        }
+        @questionCell(2, alignRight = true) {
+            @* B80 is always checked *@
+            @checkboxField(
+                value = true,
+                id = "B80"
+            )
+        }
+    }
+}

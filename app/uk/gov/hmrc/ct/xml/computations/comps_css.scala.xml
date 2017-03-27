@@ -1,0 +1,4 @@
+.comps-body {
+  margin: 2em 1em 1em 1em;
+  page-break-before:always;
+}

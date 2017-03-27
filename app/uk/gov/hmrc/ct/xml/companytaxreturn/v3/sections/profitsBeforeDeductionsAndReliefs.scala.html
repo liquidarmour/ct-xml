@@ -1,0 +1,60 @@
+@import uk.gov.hmrc.ct.xml.retrievers.BaseBoxRetriever
+@import uk.gov.hmrc.ct.xml.companytaxreturn.v3.V3CT600Helper._
+
+@(boxRetriever: BaseBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@b235 = @{intValue(boxRetriever, intFromCT600 { (br) => br.b235.value },
+                                 intFromCT600E { (br) => 0 })}
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-profits-before-deductions", title = Some("<h2>Profits before deductions and reliefs</h2>")) {
+    @questionRow(id = "ct600-profits-before-deductions-b225", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("225", default = true)
+            <strong>Losses brought forward against certain investment income</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B225",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-profits-before-deductions-b230", css = rowClass) {
+        @questionCell(6) {
+            @boxNumber("230", default = true)
+            <strong>Non-trade deficits on loan relationships (including interest) and derivative contracts (financial instruments) brought forward</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @optionalNumberFieldForInt(
+                value = None,
+                id = "B230",
+                numberOfDigits = 11,
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+    @questionRow(id = "ct600-profits-before-deductions-b235") {
+        @questionCell(6) {
+            @boxNumber("235", default = true)
+            <strong>Profits before other deductions and reliefs - </strong>
+            <span>net sum of boxes 165 to 205 and 220 minus sum of boxes 225 and 230</span>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberFieldForInt(
+                value = b235,
+                numberOfDigits = 11,
+                id = "B325",
+                prefix = Some("&pound;"),
+                showDecimalPlaces = true
+            )
+        }
+    }
+}

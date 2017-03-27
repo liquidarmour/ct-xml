@@ -1,0 +1,74 @@
+@import uk.gov.hmrc.ct.ct600.v3.retriever.RepaymentsBoxRetriever
+@(boxRetriever: RepaymentsBoxRetriever)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.controls.html._
+
+@rowClass = @{ Some("margin-bottom-medium") }
+
+@questionBox(id = "ct600-bank-details", title = Some("<h2>Bank details (for person to whom a repayment is to be made)</h2>")) {
+    @questionRow(id = "ct600-bank-details-b920") {
+        @questionCell(6) {
+            @boxNumber("920", white = true)
+            <strong>Name of bank or building society</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @textField(
+                value = boxRetriever.b920().value,
+                id = "B920",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600-bank-details-b925") {
+        @questionCell(6) {
+            @boxNumber("925", default = true)
+            <strong>Branch sort code</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberField(
+                value = boxRetriever.b925().value,
+                numberOfDigits = 6,
+                id = "B295"
+            )
+        }
+    }
+    @questionRow(id = "ct600-bank-details-b925") {
+        @questionCell(6) {
+            @boxNumber("930", default = true)
+            <strong>Account number</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @numberField(
+                value = boxRetriever.b930().value,
+                numberOfDigits = 8,
+                id = "B930"
+            )
+        }
+    }
+    @questionRow(id = "ct600-bank-details-b935") {
+        @questionCell(6) {
+            @boxNumber("935", default = true)
+            <strong>Name of account</strong>
+        }
+        @questionCell(6, alignRight = true) {
+            @textField(
+                value = boxRetriever.b935().value,
+                id = "B935",
+                widthClass = Some("full")
+            )
+        }
+    }
+    @questionRow(id = "ct600-bank-details-b940") {
+        @questionCell(4) {
+            @boxNumber("940", default = true)
+            <strong>Building society reference</strong>
+        }
+        @questionCell(8, alignRight = true) {
+            @numberField(
+                value = boxRetriever.b930().value,
+                numberOfDigits = 18,
+                id = "B930"
+            )
+        }
+    }
+}
