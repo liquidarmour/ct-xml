@@ -1,0 +1,40 @@
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState, pageNumber: Integer)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+
+@crn = @{boxRetriever.ac1().value.getOrElse(throw new IllegalStateException("No CRN when generating Accounts iXbrl"))}
+
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+
+@contents = @{ documentState.getContents }
+
+<div id="Contents" class="page">
+    @pageHeader(boxRetriever)
+    <h2 class="text--center">@Messages("ixbrl.contentsHeaderLine1")</h2>
+    <p class="text--center">
+        <strong>@Messages("ixbrl.contentsHeaderLine2") @poaEndDate</strong>
+    </p>
+    <table cellspacing="10">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for((sectionName, pageNumber) <- contents) {
+                <tr>
+                    <td class="strong">
+                        <a href="#@{sectionName}Section">@Messages(s"ixbrl.contents$sectionName") - @pageNumber</a>
+                    </td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @frs10xPageBreak(documentState, "", "", predefinedPageNumber = Some(pageNumber))
+</div>

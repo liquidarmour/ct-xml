@@ -1,0 +1,48 @@
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@import uk.gov.hmrc.ct.box.{CtBoxIdentifier, CtOptionalInteger, Debit}
+
+@(currentBox: CtOptionalInteger with CtBoxIdentifier, previousBox: CtOptionalInteger with CtBoxIdentifier, figureMessageLabel: String, name: String, boxRetriever: Frs10xAccountsBoxRetriever, isTotal: Boolean = false, ixtFormat: String = "numdotdecimal", notes: String = "", hasNotes: Boolean = true)(implicit messages: Messages)
+
+@fullName = @{ "core:" + name }
+
+@noteId = @{ "uk-bus" + name + "NoteIndexes" }
+
+@isDebit = @{ (currentBox, previousBox) match {
+    case (c: Debit, p: Debit) => true
+    case _ => false
+}}
+
+@hasPreviousPoA = @{boxRetriever.ac206().value.isDefined}
+
+@if(currentBox.value.nonEmpty || previousBox.value.nonEmpty){
+<tr class="figures">
+    <td id="@{s"${currentBox.id}-label"}" @if(isTotal) {class="strong"}>@Messages(figureMessageLabel)</td>
+    @if(hasNotes) {
+        <td class="figure noteIndex" id="@noteId">@notes</td>
+    }
+    @noteFigureCell(
+        box = currentBox,
+        contextRef = "CY",
+        fullName = fullName,
+        ixtFormat = ixtFormat,
+        id = Some(s"${currentBox.id}-curr-val"),
+        isTotal = isTotal,
+        isDebit = Some(isDebit)
+    )
+    @if(hasPreviousPoA) {
+        @noteFigureCell(
+            box = previousBox,
+            contextRef = "PY",
+            fullName = fullName,
+            ixtFormat = ixtFormat,
+            id = Some(s"${currentBox.id}-prev-val"),
+            isTotal = isTotal,
+            isDebit = Some(isDebit),
+            bold = false
+        )
+    }
+</tr>
+}
+

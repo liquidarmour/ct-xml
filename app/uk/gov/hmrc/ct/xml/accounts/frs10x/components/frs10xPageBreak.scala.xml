@@ -1,0 +1,27 @@
+@(documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState, pageName: String, sectionName: String, predefinedPageNumber: Option[Integer] = None)(implicit messages: Messages)
+
+@pageNumber = @{
+    if (predefinedPageNumber.nonEmpty) {
+        predefinedPageNumber.get
+    } else {
+        val pageNumber = documentState.getNextPageNumber
+        documentState.addPage(pageName)
+        pageNumber
+    }
+}
+
+@createSectionMarker = @{
+    if (predefinedPageNumber.isEmpty)
+        documentState.registerContentsSection(sectionName)
+    else
+        false
+}
+
+<div class="page-footer">
+    <p class="center">Page @pageNumber</p>
+    <hr class="iris_hr" />
+</div>
+
+@if(createSectionMarker) {
+    <div id="@{sectionName}Section" class="section-marker"></div>
+}

@@ -1,0 +1,144 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xDirectorsBoxRetriever
+
+@(boxRetriever: Frs10xAccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState,
+    accountsApproval: uk.gov.hmrc.ct.accounts.approval.boxes.AccountsApproval)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter
+@import uk.gov.hmrc.ct.xml.formatters.DateFormat
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.CountryOfRegistration._
+@import uk.gov.hmrc.ct.xml.RetrieverTypeConverter._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.IxbrlDirectors
+
+@crn = @{boxRetriever.ac1().value.getOrElse(throw new IllegalStateException("No CRN when generating Accounts iXbrl"))}
+
+@registerLocation = @{
+    boxRetriever.countryOfRegistration() match {
+        case EnglandWales => Messages("ixbrl.registerLocationEW")
+        case Scotland => Messages("ixbrl.registerLocationSC")
+        case NorthernIreland => Messages("ixbrl.registerLocationNI")
+        case country => throw new IllegalArgumentException("No iXbrl tag to match country " + country)
+    }
+}
+
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+@directorsRetriever = @{retriever[Frs10xDirectorsBoxRetriever](boxRetriever)}
+
+@allDirectors = @{
+    IxbrlDirectors(boxRetriever, accountsApproval)
+}
+
+<div id="CompanyInformation" class="page">
+    @pageHeader(boxRetriever)
+    <h2 class="text--center">@Messages("ixbrl.companyInfoHeaderLine1")</h2>
+    <p class="text--center">
+        <strong>@Messages("ixbrl.companyInfoHeaderLine2") @poaEndDate</strong>
+    </p>
+    <br />
+    <br />
+    <br />
+    <table>
+        <tbody>
+            @for((servedOfficer, index) <- directorsRetriever.directors().directors.zipWithIndex) {
+                <tr>
+                    <td>
+                    @if(index == 0) {
+                        <b>@Messages("ixbrl.companyInfoDirector")</b>
+                    }
+                    </td>
+                    <td> </td>
+                    <td>
+                        <ix:nonNumeric contextRef="Director@{allDirectors.director(servedOfficer.ac8001).index}_CY" name="uk-bus:NameEntityOfficer">@servedOfficer.ac8001</ix:nonNumeric>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td> </td>
+            </tr>
+            <tr>
+                <td> </td>
+            </tr>
+            @directorsRetriever.ac8033().value.map { secretary =>
+                <tr>
+                    <td>
+                        <b>@Messages("ixbrl.companyInfoCompanySecretary")</b>
+                    </td>
+                    <td> </td>
+                    <td>
+                        <ix:nonNumeric contextRef="CompanySecretary_CY" name="uk-bus:NameEntityOfficer">@secretary</ix:nonNumeric>
+                    </td>
+                </tr>
+                <tr>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <td> </td>
+                </tr>
+            }
+
+            @defining(boxRetriever.companyAddress()) { companyAddress =>
+                <tr>
+                    <td>
+                        <b>@Messages("ixbrl.companyInfoRegisteredOffice")</b>
+                    </td>
+                    <td> </td>
+                    <td>
+                        @companyAddress.addressLine1.map { line1 =>
+                            <ix:nonNumeric contextRef="EntityContactInfo_CY" name="uk-bus:AddressLine1">@line1</ix:nonNumeric>
+                            <br />
+                        }
+                        @companyAddress.addressLine2.map { line2 =>
+                            <ix:nonNumeric contextRef="EntityContactInfo_CY" name="uk-bus:AddressLine2">@line2</ix:nonNumeric>
+                            <br />
+                        }
+                        @companyAddress.addressLine3.map { line3 =>
+                            <ix:nonNumeric contextRef="EntityContactInfo_CY" name="uk-bus:AddressLine3">@line3</ix:nonNumeric>
+                            <br />
+                        }
+                        @companyAddress.city.map { city =>
+                            <ix:nonNumeric contextRef="EntityContactInfo_CY" name="uk-bus:PrincipalLocation-CityOrTown">@city</ix:nonNumeric>
+                            <br />
+                        }
+                        @companyAddress.county.map { county =>
+                            <ix:nonNumeric contextRef="EntityContactInfo_CY" name="uk-bus:CountyRegion">@county</ix:nonNumeric>
+                            <br />
+                        }
+                        @companyAddress.country.map { country =>
+                            @country
+                            <br />
+                        }
+                        @companyAddress.postCode.map { postcode =>
+                            <ix:nonNumeric contextRef="EntityContactInfo_CY" name="uk-bus:PostalCodeZip">@postcode</ix:nonNumeric>
+                            <br />
+                        }
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td> </td>
+            </tr>
+            <tr>
+                <td> </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>@Messages("ixbrl.companyRegistrationNumberLabel")</b>
+                </td>
+                <td> </td>
+                <td>
+                    @boxRetriever.ac1().value.map { crn =>
+                        <ix:nonNumeric contextRef="CY" name="uk-bus:UKCompaniesHouseRegisteredNumber">@crn</ix:nonNumeric>
+                        @registerLocation
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td> </td>
+            </tr>
+        </tbody>
+    </table>
+
+    @frs10xPageBreak(documentState, "CompanyInformation", "CompanyInformation")
+</div>

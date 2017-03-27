@@ -1,0 +1,8 @@
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+
+@(name: String, context: String, value: Int, nameSchema: String = "core", unitRef: String = "GBP")(implicit messages: Messages)
+
+@fullName = @{ s"$nameSchema:$name" }
+
+@negativeWithBrackets(value){ <ix:nonFraction contextRef="@context" decimals="0" unitRef="@unitRef" name="@fullName" format="ixt2:numdotdecimal"@if(value < 0){ sign="-" }>@commaSeparated(value.abs)</ix:nonFraction> }

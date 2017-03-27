@@ -1,0 +1,16 @@
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormatter, DateFormat}
+
+@accountsType = @{
+    (boxRetriever.abridgedFiling().value, boxRetriever.microEntityFiling().value) match {
+        case (true, false) => "AbridgedAccounts"
+        case (false, true) => "MicroEntityAccounts"
+        case _ => "FullAccounts"
+    }
+}
+
+<h2 class="text--center">@Messages(s"ixbrl.header.notesHeaderLine1_${accountsType}")</h2>
+<p class="text--center">
+    <strong>@Messages("ixbrl.header.notesHeaderLine2") @DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)</strong>
+</p>

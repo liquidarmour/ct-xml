@@ -1,0 +1,9 @@
+@(  text: String,
+    ixbrlName: String,
+    context: String)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.helpers.IXBRLHelper
+
+<p class="text-area-display">
+    <ix:nonNumeric contextRef="@context" name="@ixbrlName">@Xml(IXBRLHelper.escape(text))</ix:nonNumeric>
+</p>

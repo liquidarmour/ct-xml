@@ -1,0 +1,51 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@(boxRetriever: Frs10xAccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.CountryOfRegistration._
+
+@crn = @{boxRetriever.ac1().value.getOrElse(throw new IllegalStateException("No CRN when generating Accounts iXbrl"))}
+
+@registerLocation = @{
+    boxRetriever.countryOfRegistration() match {
+        case EnglandWales => Messages("ixbrl.registerLocationEW")
+        case Scotland => Messages("ixbrl.registerLocationSC")
+        case NorthernIreland => Messages("ixbrl.registerLocationNI")
+        case country => throw new IllegalArgumentException("No iXbrl tag to match country " + country)
+    }
+}
+
+@accountsType = @{
+    (boxRetriever.statutoryAccountsFiling().value, boxRetriever.abridgedFiling().value, boxRetriever.microEntityFiling().value) match {
+        case (true, false, false) => "statutory"
+        case (false, true, false) => "abridged"
+        case (false, false, true) => "micro entity" // TODO: verify validity of this
+        case _ => throw new IllegalStateException("not a recognised filing type")
+    }
+}
+
+@poaStartDate = @{DateFormatter.format(boxRetriever.ac3().value, DateFormat.LongUK)}
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+
+<div id="AccountsHeader" class="page margin-xx-large">
+    @pageHeader(boxRetriever)
+
+    <h2 class="center margin-large">@Messages("ixbrl.companyRegistrationNumberLabel")<br />
+        <ix:nonNumeric contextRef="CY" name="uk-bus:UKCompaniesHouseRegisteredNumber">@crn</ix:nonNumeric>
+        @registerLocation
+    </h2>
+
+    <h2 id="accountsHeaderTitle" class="text--center margin-large">
+        <ix:nonNumeric contextRef="CY" name="uk-bus:ReportTitle">Unaudited @accountsType accounts for the year ended @poaEndDate</ix:nonNumeric>
+    </h2>
+
+    <h2 class="text--center margin-large">@Messages("ixbrl.header.periodOfAccounts")</h2>
+
+    <h2 class="text--center margin-large">@Messages("ixbrl.header.startDate") @poaStartDate</h2>
+
+    <h2 class="text--center">@Messages("ixbrl.header.endDate") @poaEndDate</h2>
+
+    @frs10xPageBreak(documentState, "Title", "Title", predefinedPageNumber = Some(documentState.getNextPageNumber))
+</div>

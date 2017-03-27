@@ -1,0 +1,21 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@(boxRetriever: Frs10xAccountsBoxRetriever, idPrefix: String, hasNotes: Boolean = true)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.model.filing.AccountsPeriodHeadingCalculator
+
+@currentHeading = @{
+    AccountsPeriodHeadingCalculator.periodHeading(boxRetriever.ac3().value, boxRetriever.ac4().value)
+}
+
+@previousHeading = @{
+    AccountsPeriodHeadingCalculator.periodHeading(boxRetriever.ac205().value, boxRetriever.ac206().value)
+}
+
+<tr>
+    <th class="table-heading"></th>
+    @if(hasNotes) {
+        <th class="table-heading"><br/>Notes</th>
+    }
+    <th class="table-heading" id="@{s"$idPrefix-current-heading"}">@currentHeading._1<br/>@currentHeading._2<br/>&#163;</th>
+    @previousHeading.map{ ph => <th class="table-heading" id="@{s"$idPrefix-previous-heading"}">@ph._1<br/>@ph._2<br/>&#163;</th> }
+</tr>

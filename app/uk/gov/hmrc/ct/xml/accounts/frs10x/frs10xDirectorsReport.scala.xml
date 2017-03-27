@@ -1,0 +1,157 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xDirectorsBoxRetriever
+
+@(boxRetriever: Frs10xAccountsBoxRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState,
+    returnType:  uk.gov.hmrc.ct.version.ReturnType,
+    accountsApproval: uk.gov.hmrc.ct.accounts.approval.boxes.AccountsApproval)(implicit messages: Messages)
+
+@import org.joda.time.LocalDate
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.IxbrlSectionStatus
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.formatXml
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.RetrieverTypeConverter._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.IxbrlDirectors
+
+@directorsRetriever = @{
+    retriever[Frs10xDirectorsBoxRetriever](boxRetriever)
+}
+
+@previousPoaStartDate = @{boxRetriever.ac205().value.map(formatXml)}
+@previousPoaEndDate = @{boxRetriever.ac206().value.map(formatXml)}
+@directors = @{directorsRetriever.directors.directors}
+@secretary = @{directorsRetriever.ac8033().value}
+@principalActivities = @{directorsRetriever.ac8051().value}
+@politicalDonations = @{directorsRetriever.ac8052().value}
+@disabledPersonsPolicy = @{directorsRetriever.ac8053().value}
+@additionalInfo = @{directorsRetriever.ac8054().value}
+@directorsAppointmentsQuestion = @{directorsRetriever.acQ8003().orFalse}
+@directorsResignationsQuestion = @{directorsRetriever.acQ8009().orFalse}
+@companyName = @{boxRetriever.ac1().value}
+
+@formattedLongUkDate(theDate: LocalDate) = @{DateFormatter.format(theDate, DateFormat.LongUK)}
+@poaStartDate = @{formattedLongUkDate(boxRetriever.ac3().value)}
+@poaEndDate = @{formattedLongUkDate(boxRetriever.ac4().value)}
+
+@allDirectors = @{
+    IxbrlDirectors(boxRetriever, accountsApproval)
+}
+
+@if(IxbrlSectionStatus(boxRetriever, returnType).isDirectorsReportEnabled) {
+    <div id="DirectorsReport" class="page">
+        @pageHeader(boxRetriever)
+
+        <h2 id="periodHeading" class="text--center"><strong>@Messages("ixbrl.directorsReport.reportEnded.withDates", poaEndDate)</strong></h2>
+        <p>@Messages("ixbrl.directorsReport.directorsReport.withDate", poaEndDate)</p>
+
+        @principalActivities.map { text =>
+            <div id="principal-activities-section">
+                <p class="strong">@Messages("ixbrl.directorsReport.principalActivities")</p>
+                <p class="text-area-display">
+                    <ix:nonNumeric contextRef="CY" name="uk-bus:DescriptionPrincipalActivities">@text</ix:nonNumeric>
+                </p>
+            </div>
+        }
+
+        @politicalDonations.map { text =>
+            <div id="political-donations-section">
+                <p class="strong">@Messages("ixbrl.directorsReport.donations")</p>
+                <p class="text-area-display">
+                    <ix:nonNumeric contextRef="CY" name="direp:PoliticalDonationsFree-textComment">@text</ix:nonNumeric>
+                </p>
+            </div>
+        }
+
+        @disabledPersonsPolicy.map { text =>
+            <div id="disabled-persons-policy-section">
+                <p class="strong">@Messages("ixbrl.directorsReport.disabledEmployment")</p>
+                <p class="text-area-display">
+                    <ix:nonNumeric contextRef="CY" name="direp:EmploymentDisabledPersonsPolicy">@text</ix:nonNumeric>
+                </p>
+            </div>
+        }
+
+        @additionalInfo.map { text =>
+            <div id="additional-info-section">
+                <p class="strong">@Messages("ixbrl.directorsReport.additionalInformation")</p>
+                <p class="text-area-display">
+                @text
+                </p>
+            </div>
+        }
+
+        <p><strong>Directors</strong></p>
+
+        @if(directors.exists(d => !d.ac8005.getOrElse(false) && !d.ac8011.getOrElse(false))) {
+            <p id="wholePeriodHeading">
+                <strong>@Messages("ixbrl.directorsReport.wholePeriod.withDates", poaStartDate, poaEndDate)</strong>
+                <br/>
+                @for(director <- directors) {
+                    @if(!director.ac8005.getOrElse(false) && !director.ac8011.getOrElse(false)) {
+                        <ix:nonNumeric contextRef="Director@{
+                            allDirectors.director(director.ac8001).index
+                        }_CY" name="uk-bus:NameEntityOfficer">@{
+                            director.ac8001
+                        }</ix:nonNumeric>
+                        <br/>
+                    }
+                }
+            </p>
+        }
+
+        @if(directorsAppointmentsQuestion) {
+            <p id="appointedDirectors">
+                <strong>@Messages("ixbrl.directorsReport.appointedDirectors")</strong>
+                <br/>
+                @for(director <- directors) {
+                    @if(director.ac8005.getOrElse(false)) {
+                        <ix:nonNumeric contextRef="Director@{allDirectors.director(director.ac8001).index}_CY" name="uk-bus:NameEntityOfficer">@{
+                            director.ac8001
+                        }</ix:nonNumeric> <br/>
+                        <ix:nonNumeric contextRef="Director@{allDirectors.director(director.ac8001).index}_CY_END" format="ixt:datelonguk" name="direp:DateAssumedPosition">
+                        @formattedLongUkDate(director.ac8007.getOrElse(throw new IllegalStateException("should have appointment date")))
+                        </ix:nonNumeric>
+                        <br/>
+                    }
+                }
+            </p>
+        }
+
+        @if(directorsResignationsQuestion) {
+            <p id="resignedDirectors">
+                <strong>@Messages("ixbrl.directorsReport.resignedDirectors")</strong>
+                <br/>
+                @for(director <- directors) {
+                    @if(director.ac8011.getOrElse(false)) {
+                        @if(director.ac8005.getOrElse(false)) {
+                            @{
+                                director.ac8001
+                            } <br/>
+                        } else {
+                            <ix:nonNumeric contextRef="Director@{allDirectors.director(director.ac8001).index}_CY" name="uk-bus:NameEntityOfficer">@{
+                                director.ac8001
+                            }</ix:nonNumeric> <br/>
+                        }
+                        <ix:nonNumeric contextRef="Director@{allDirectors.director(director.ac8001).index}_CY_END" format="ixt:datelonguk" name="direp:DateResignation">
+                        @formattedLongUkDate(director.ac8013.getOrElse(throw new IllegalStateException("should have resignation date")))
+                        </ix:nonNumeric>
+                        <br/>
+                    }
+                }
+            </p>
+        }
+
+        @secretary.map { theSecretary =>
+            <p id="secretary">
+                <strong>@Messages("ixbrl.directorsReport.secretary")</strong>
+                <br/>
+                <ix:nonNumeric contextRef="CompanySecretary_CY" name="uk-bus:NameEntityOfficer">@theSecretary</ix:nonNumeric>
+            </p>
+        }
+
+        @frs10xAccountsApproval(boxRetriever, "directors-report", accountsApproval)
+
+        @frs10xPageBreak(documentState, "DirectorsReport", "DirectorsReport")
+    </div>
+}

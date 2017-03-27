@@ -1,0 +1,28 @@
+@(id: String,
+  value: Option[BigDecimal],
+  name: String,
+  context: String,
+  isTotal: Boolean = false,
+  isGrandTotal: Boolean = false,
+  bracketsIfNegative: Boolean = false,
+  totalCss: String = "strong total"
+  )(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.helpers.BigDecimalHelper._
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+
+
+@cssClass = @{ if(isGrandTotal) "strong grandtotal" else if(isTotal) totalCss else "figure" }
+
+<td id="@id" class="@cssClass">
+    @value.map { value =>
+        @if(value < Zero && bracketsIfNegative) {
+            @negativeWithBrackets(value){<ix:nonFraction contextRef="@context" name="@name" unitRef="GBP" decimals="0" sign="-" format="ixt2:numdotdecimal" scale="0">@formatAsString(value, 0)</ix:nonFraction>}
+        } else {
+            <ix:nonFraction contextRef="@context" name="@name" unitRef="GBP" decimals="0" @if(value < Zero){ sign="-"} format="ixt2:numdotdecimal" scale="0">@formatAsString(value, 0)</ix:nonFraction>
+        }
+    }.getOrElse {
+      <ix:nonFraction contextRef="@context" decimals="0" unitRef="GBP" name="@name" format="ixt2:zerodash">-</ix:nonFraction>
+    }
+</td>

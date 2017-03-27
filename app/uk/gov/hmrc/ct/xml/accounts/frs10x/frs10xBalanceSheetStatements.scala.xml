@@ -1,0 +1,54 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs105.retriever.Frs105AccountsBoxRetriever
+
+@(boxRetriever: Frs10xAccountsBoxRetriever)(implicit messages: Messages)
+
+@isFrs102 = @{ boxRetriever.isInstanceOf[Frs102AccountsBoxRetriever] }
+@isFrs105 = @{ boxRetriever.isInstanceOf[Frs105AccountsBoxRetriever] }
+
+@boxRetriever102 = @{ boxRetriever.asInstanceOf[Frs102AccountsBoxRetriever] }
+@boxRetriever105 = @{ boxRetriever.asInstanceOf[Frs105AccountsBoxRetriever] }
+
+@if(boxRetriever.ac8081().orFalse) {
+    @defining(boxRetriever.ac4().value.toString("d MMMM yyyy")) { poaDateString =>
+        <p>
+            <ix:nonNumeric contextRef="CY" name="direp:StatementThatCompanyEntitledToExemptionFromAuditUnderSection477CompaniesAct2006RelatingToSmallCompanies">For the year ending @poaDateString the company was entitled to exemption under section 477 of the Companies Act 2006 relating to small companies.</ix:nonNumeric>
+        </p>
+    }
+}
+
+@*TODO DORMANT STATEMENT - StatementThatCompanyEntitledToExemptionFromAuditUnderSection480CompompaniesAct2006RelatingToDormantCompanies *@
+
+@if(boxRetriever.ac8082().orFalse) {
+    <p>
+        <ix:nonNumeric contextRef="CY" name="direp:StatementThatMembersHaveNotRequiredCompanyToObtainAnAudit">The members have not required the company to obtain an audit in accordance with section 476 of the Companies Act 2006.</ix:nonNumeric>
+    </p>
+}
+
+@if(boxRetriever.ac8083().orFalse) {
+    <p>
+        <ix:nonNumeric contextRef="CY" name="direp:StatementThatDirectorsAcknowledgeTheirResponsibilitiesUnderCompaniesAct">The directors acknowledge their responsibilities for complying with the requirements of the Act with respect to accounting records and the preparation of accounts.</ix:nonNumeric>
+    </p>
+}
+
+@if(isFrs102) {
+    @if(boxRetriever102.ac8084().orFalse) {
+        <p>
+            <ix:nonNumeric contextRef="CY" name="direp:StatementThatMembersHaveAgreedToPreparationAbridgedAccountsUnderSection444CompaniesAct2006">The members have agreed to the preparation of abridged accounts for this accounting period in accordance with Section 444(2A).</ix:nonNumeric>
+        </p>
+    }
+
+    @if(boxRetriever102.ac8085().orFalse) {
+        <p>
+            <ix:nonNumeric contextRef="CY" name="direp:StatementThatAccountsHaveBeenPreparedInAccordanceWithProvisionsSmallCompaniesRegime">These accounts have been prepared and delivered in accordance with the provisions applicable to companies subject to the small companies regime.</ix:nonNumeric>
+        </p>
+    }
+}
+@if(isFrs105) {
+    @if(boxRetriever105.ac8087().orFalse) {
+        <p>
+            <ix:nonNumeric contextRef="CY" name="direp:StatementThatAccountsHaveBeenPreparedInAccordanceWithProvisionsSmallCompaniesRegime">These accounts have been prepared and delivered in accordance with the provisions of the small companies regime applicable to micro-entities.</ix:nonNumeric>
+        </p>
+    }
+}

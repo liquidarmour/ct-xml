@@ -1,0 +1,33 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xDirectorsBoxRetriever
+@(boxRetriever: Frs10xAccountsBoxRetriever, callingPageId: String, accountsApproval: uk.gov.hmrc.ct.accounts.approval.boxes.AccountsApproval)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.RetrieverTypeConverter._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.IxbrlDirectors
+
+@approvalDate = @{accountsApproval.ac198A.value.map{date => DateFormatter.format(date, DateFormat.LongWithShortDayUK)}}
+
+@allDirectors = @{
+    IxbrlDirectors(boxRetriever, accountsApproval)
+}
+
+@if(accountsApproval.ac8091.value.getOrElse(false)) {
+    <div id="@{s"accounts-approval-$callingPageId"}">
+        <p class="strong">
+            @Messages("ixbrl.directorsReport.reportApprovedOn")
+            <ix:nonNumeric contextRef="CY_END" name="core:DateAuthorisationFinancialStatementsForIssue" format="ixt2:datedaymonthyearen">@approvalDate</ix:nonNumeric>
+            <br />
+            @Messages("ixbrl.directorsReport.signedByBoard")
+        </p>
+        @for(directorName <- allDirectors.masterList) {
+            @if(allDirectors.director(directorName).approver) {
+                <p>
+                    @Messages("ixbrl.directorsReport.nameLabel") <ix:nonNumeric contextRef="Director@{allDirectors.director(directorName).index}_CY" name="uk-bus:NameEntityOfficer">@directorName</ix:nonNumeric>
+                    <br/>
+                    @Messages("ixbrl.directorsReport.status")
+                </p>
+            }
+        }
+    </div>
+}

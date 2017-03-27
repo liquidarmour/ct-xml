@@ -1,0 +1,1039 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xDirectorsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xDormancyBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.FullAccountsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.AbridgedAccountsBoxRetriever
+@import uk.gov.hmrc.ct.accounts.frs102.retriever.Frs102AccountsBoxRetriever
+@import uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever
+
+@(boxRetriever: Frs10xAccountsBoxRetriever with FilingAttributesBoxValueRetriever,
+        returnType:  uk.gov.hmrc.ct.version.ReturnType,
+        accountsApproval: uk.gov.hmrc.ct.accounts.approval.boxes.AccountsApproval
+)(implicit messages: Messages)
+
+@import org.joda.time.LocalDate
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.IxbrlSectionStatus
+@import uk.gov.hmrc.ct.xml.formatters.DateFormatter.{formatXml, formatXmlDotNotation}
+@import uk.gov.hmrc.ct.CountryOfRegistration._
+@import uk.gov.hmrc.ct.domain.CompanyTypes._
+@import uk.gov.hmrc.ct.xml.RetrieverTypeConverter
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.IxbrlDirectors
+
+@directorsRetriever = @{
+    RetrieverTypeConverter.retriever[Frs10xDirectorsBoxRetriever](boxRetriever)
+}
+
+@dormancyBoxRetriever = @{
+    RetrieverTypeConverter.retriever[Frs10xDormancyBoxRetriever](boxRetriever)
+}
+
+@frs102boxRetriever = @{
+    RetrieverTypeConverter.retriever[Frs102AccountsBoxRetriever](boxRetriever)
+}
+
+@crn = @{boxRetriever.ac1().value.getOrElse(throw new IllegalStateException("No CRN when generating FRS 102 Accounts iXbrl"))}
+@poaStartDate = @{formatXml(boxRetriever.ac3().value)}
+@poaEndDate = @{formatXml(boxRetriever.ac4().value)}
+@previousPoaStartDate = @{boxRetriever.ac205().value.map(formatXml)}
+@previousPoaEndDate = @{boxRetriever.ac206().value.map(formatXml)}
+@poaStartDateDotFormat = @{formatXmlDotNotation(boxRetriever.ac3().value)}
+@poaEndDateDotFormat = @{formatXmlDotNotation(boxRetriever.ac4().value)}
+
+@allDirectors = @{
+    IxbrlDirectors(boxRetriever, accountsApproval)
+}
+
+@secretary = @{directorsRetriever.ac8033().value}
+
+@principalActivities = @{directorsRetriever.ac8051().value}
+@relatedPartyTransactions = @{frs102boxRetriever.relatedPartyTransactions().transactions}
+@loansToDirectors = @{frs102boxRetriever.loansToDirectors().loans}
+
+@dormant = @{dormancyBoxRetriever.acq8999.orFalse}
+@previouslyTraded = @{dormancyBoxRetriever.acq8991.orFalse}
+
+@countriesTag = @{ boxRetriever.countryOfRegistration() match {
+    case EnglandWales => "countries:EnglandWales"
+    case Scotland => "countries:Scotland"
+    case NorthernIreland => "countries:NorthernIreland"
+    case country => throw new IllegalArgumentException("No iXbrl tag to match country " + country)
+}}
+
+@legalFormTag = @{ boxRetriever.companyType().value match {
+    case UkTradingCompany | LimitedBySharesCASC | LimitedBySharesCharity => "uk-bus:PrivateLimitedCompanyLtd"
+    case CompanyLimitedByGuarantee | LimitedByGuaranteeCASC | LimitedByGuaranteeCharity => "uk-bus:CompanyLimitedByGuarantee"
+    case companyType => throw new IllegalArgumentException("Have no FRS 102 iXbrl tag setup for Company Type " + companyType.toString())
+}}
+
+@accountingStandardsTag = @{
+    if(boxRetriever.microEntityFiling().value) {
+        "uk-bus:Micro-entities"
+    } else {
+        (frs102boxRetriever.ac320().value) match {
+            case Some(true) => "uk-bus:FRS102"
+            case Some(false) => "uk-bus:OtherStandards"
+            case None => throw new IllegalStateException("Accounts type is not Micro entity and has no answers for AC320")
+        }
+    }
+}
+
+@accountsTypeTag = @{
+    (boxRetriever.statutoryAccountsFiling().value, boxRetriever.abridgedFiling().value, boxRetriever.microEntityFiling().value) match {
+        case (true, false, false) => "uk-bus:FullAccounts"
+        case (false, true, false) => "uk-bus:AbridgedAccounts"
+        case (false, false, true) => "uk-bus:FullAccounts" // TODO: "MicroAccounts" and "MicroEntityAccounts" both fail validation
+        case _ => throw new IllegalStateException("not a recognised filing type")
+    }
+}
+
+@fullBoxRetriever = @{
+    boxRetriever.asInstanceOf[FullAccountsBoxRetriever with FilingAttributesBoxValueRetriever]
+}
+
+@renderOnlyForFull(xml: Xml) = {
+    @if(boxRetriever.isInstanceOf[FullAccountsBoxRetriever]) {
+        @xml
+    }
+}
+
+@renderOnlyForFullOrAbridged(xml: => Xml) = {
+    @if(boxRetriever.isInstanceOf[FullAccountsBoxRetriever] || boxRetriever.isInstanceOf[AbridgedAccountsBoxRetriever]) {
+        @xml
+    }
+}
+
+@today = @{ new LocalDate() }
+
+<div id="accountsHeaderIxbrl" style="display:none">
+
+    <ix:header>
+        <ix:hidden>
+            <ix:nonNumeric contextRef="CY" name="uk-bus:NameProductionSoftware">Company Accounts and Tax Online</ix:nonNumeric>
+            <ix:nonNumeric contextRef="CY" name="uk-bus:UKCompaniesHouseRegisteredNumber">@crn</ix:nonNumeric>
+
+            <ix:nonNumeric contextRef="Countries_CY" name="uk-bus:CountryFormationOrIncorporation" format="ixt2:nocontent" />
+            <ix:nonNumeric contextRef="Currencies_CY" name="uk-bus:PrincipalCurrencyUsedInBusinessReport" format="ixt2:nocontent" />
+            <ix:nonNumeric contextRef="CY" name="core:DescriptionBodyAuthorisingFinancialStatements">Board of Directors</ix:nonNumeric>
+            <ix:nonNumeric contextRef="LegalFormEntity_CY" name="uk-bus:LegalFormEntity" format="ixt2:nocontent" />
+            <ix:nonNumeric contextRef="AccountingStandards_CY" name="uk-bus:AccountingStandardsApplied" format="ixt2:nocontent" />
+            <ix:nonNumeric contextRef="AccountsStatus_CY" name="uk-bus:AccountsStatusAuditedOrUnaudited" format="ixt2:nocontent" />
+            <ix:nonNumeric contextRef="AccountsType_CY" name="uk-bus:AccountsTypeFullOrAbbreviated" format="ixt2:nocontent" />
+
+            @for(directorName <- allDirectors.masterList) {
+                @if(allDirectors.director(directorName).approver) {
+                    <ix:nonNumeric contextRef="Director@{allDirectors.director(directorName).index}_CY" name="core:DirectorSigningFinancialStatements" format="ixt2:nocontent"/>
+                    @if(IxbrlSectionStatus(boxRetriever, returnType).isDirectorsReportEnabled) {
+                        <ix:nonNumeric contextRef="Director@{allDirectors.director(directorName).index}_CY" name="direp:DirectorSigningDirectorsReport" format="ixt2:nocontent"/>
+                    }
+                }
+            }
+
+            <ix:nonNumeric contextRef="CY_END" name="uk-bus:StartDateForPeriodCoveredByReport" format="ixt2:datedaymonthyear">@poaStartDateDotFormat</ix:nonNumeric>
+            <ix:nonNumeric contextRef="CY_END" name="uk-bus:EndDateForPeriodCoveredByReport" format="ixt2:datedaymonthyear">@poaEndDateDotFormat</ix:nonNumeric>
+            <ix:nonNumeric contextRef="CY_END" name="uk-bus:BalanceSheetDate" format="ixt2:datedaymonthyear">@poaEndDateDotFormat</ix:nonNumeric>
+
+            @if(principalActivities.isEmpty) {
+                <ix:nonNumeric contextRef="CY" name="uk-bus:DescriptionPrincipalActivities">@Messages("ixbrl.header.defaultPrincipalActivities")</ix:nonNumeric>
+            }
+
+            <ix:nonNumeric contextRef="CY" name="uk-bus:EntityDormantTruefalse" format="ixt2:booleanfalse">@dormant</ix:nonNumeric>
+            @if(dormant) {
+                <ix:nonNumeric contextRef="TradingStatus" name="uk-bus:EntityTradingStatus"></ix:nonNumeric>
+            } else {
+                <ix:nonNumeric contextRef="CY" name="uk-bus:EntityTradingStatus" format="ixt2:nocontent" />
+            }
+        </ix:hidden>
+        <ix:references>
+            <link:schemaRef xlink:href="https://xbrl.frc.org.uk/FRS-102/2014-09-01/FRS-102-2014-09-01.xsd" xlink:type="simple" />
+        </ix:references>
+        <ix:resources>
+
+            @if(dormant) {
+                <xbrli:context id="TradingStatus">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            @if(previouslyTraded) {
+                                <xbrldi:explicitMember dimension="uk-bus:EntityTradingStatusDimension">uk-bus:EntityNoLongerTradingButTradedInPast</xbrldi:explicitMember>
+                            } else {
+                                <xbrldi:explicitMember dimension="uk-bus:EntityTradingStatusDimension">uk-bus:EntityHasNeverTraded</xbrldi:explicitMember>
+                            }
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            <xbrli:unit id="GBP">
+                <xbrli:measure>iso4217:GBP</xbrli:measure>
+            </xbrli:unit>
+            <xbrli:unit id="pure">
+                <xbrli:measure>xbrli:pure</xbrli:measure>
+            </xbrli:unit>
+
+            @previousPoaEndDate.map{ previousEndDate =>
+                <xbrli:context id="PY">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@previousPoaStartDate.get</xbrli:startDate>
+                        <xbrli:endDate>@previousEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+            <xbrli:context id="CY_END">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:instant>@poaEndDate</xbrli:instant>
+                </xbrli:period>
+            </xbrli:context>
+            <xbrli:context id="CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+            @previousPoaEndDate.map { previousEndDate =>
+                <xbrli:context id="PY_END">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@previousEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            <xbrli:context id="Countries_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="countries:CountriesRegionsDimension">@countriesTag</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            <xbrli:context id="Currencies_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="curr:CurrenciesDimension">curr:PoundSterling</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            <xbrli:context id="LegalFormEntity_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="uk-bus:LegalFormEntityDimension">@legalFormTag</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            <xbrli:context id="AccountingStandards_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="uk-bus:AccountingStandardsDimension">@accountingStandardsTag</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            <xbrli:context id="AccountsStatus_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="uk-bus:AccountsStatusDimension">uk-bus:AuditExempt-NoAccountantsReport</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            <xbrli:context id="AccountsType_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="uk-bus:AccountsTypeDimension">@accountsTypeTag</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            <xbrli:context id="EntityContactInfo_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="uk-bus:EntityContactTypeDimension">uk-bus:RegisteredOffice</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            @for(directorName <- allDirectors.masterList) {
+                <xbrli:context id='Director@{allDirectors.director(directorName).index}_CY'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:Director@{allDirectors.director(directorName).index}</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="Director@{allDirectors.director(directorName).index}_CY_START">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:Director@{allDirectors.director(directorName).index}</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaStartDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:context id="Director@{allDirectors.director(directorName).index}_CY_END">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:Director@{allDirectors.director(directorName).index}</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            @secretary.map { theSecretary =>
+                <xbrli:context id="CompanySecretary_CY">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:CompanySecretary1</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            @* Debtors Note context *@
+            <xbrli:context id="Debtors_CY_END">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="core:MaturitiesOrExpirationPeriodsDimension">core:AfterOneYear</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:instant>@poaEndDate</xbrli:instant>
+                </xbrli:period>
+            </xbrli:context>
+            @previousPoaEndDate.map { previousEndDate =>
+                <xbrli:context id="Debtors_PY_END">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:MaturitiesOrExpirationPeriodsDimension">core:AfterOneYear</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@previousEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            @* BALANCE SHEET DIMENSIONS *@
+            <xbrli:context id="CreditorsWithinOneYear_CY_END">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="core:MaturitiesOrExpirationPeriodsDimension">core:WithinOneYear</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:instant>@poaEndDate</xbrli:instant>
+                </xbrli:period>
+            </xbrli:context>
+            @previousPoaEndDate.map { previousEndDate =>
+                <xbrli:context id="CreditorsWithinOneYear_PY_END">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:MaturitiesOrExpirationPeriodsDimension">core:WithinOneYear</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@previousEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            <xbrli:context id="CreditorsWithinOneYear_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="core:MaturitiesOrExpirationPeriodsDimension">core:WithinOneYear</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            <xbrli:context id="CreditorsAfterOneYear_CY_END">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="core:MaturitiesOrExpirationPeriodsDimension">core:AfterOneYear</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:instant>@poaEndDate</xbrli:instant>
+                </xbrli:period>
+            </xbrli:context>
+            @previousPoaEndDate.map { previousEndDate =>
+                <xbrli:context id="CreditorsAfterOneYear_PY_END">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:MaturitiesOrExpirationPeriodsDimension">core:AfterOneYear</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@previousEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            <xbrli:context id="CreditorsAfterOneYear_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="core:MaturitiesOrExpirationPeriodsDimension">core:AfterOneYear</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            <xbrli:context id="ShareCapital_CY_END">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="core:EquityClassesDimension">core:ShareCapital</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:instant>@poaEndDate</xbrli:instant>
+                </xbrli:period>
+            </xbrli:context>
+            @previousPoaEndDate.map { previousEndDate =>
+                <xbrli:context id="ShareCapital_PY_END">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:EquityClassesDimension">core:ShareCapital</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@previousEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            <xbrli:context id="RevaluationReserve_CY_END">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="core:EquityClassesDimension">core:RevaluationReserve</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:instant>@poaEndDate</xbrli:instant>
+                </xbrli:period>
+            </xbrli:context>
+            @previousPoaEndDate.map { previousEndDate =>
+                <xbrli:context id="RevaluationReserve_PY_END">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:EquityClassesDimension">core:RevaluationReserve</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@previousEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            <xbrli:context id="RetainedEarningsAccumulatedLosses_CY_END">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="core:EquityClassesDimension">core:RetainedEarningsAccumulatedLosses</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:instant>@poaEndDate</xbrli:instant>
+                </xbrli:period>
+            </xbrli:context>
+            @previousPoaEndDate.map { previousEndDate =>
+                <xbrli:context id="RetainedEarningsAccumulatedLosses_PY_END">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:EquityClassesDimension">core:RetainedEarningsAccumulatedLosses</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@previousEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+            }
+
+            @renderOnlyForFullOrAbridged  {
+                @for((transaction, index) <- relatedPartyTransactions.zipWithIndex) {
+
+                    <xbrli:context id='RelatedParty@{index + 1}_CY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:RelatedPartiesDimension">core:Associate@{index + 1}</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                            <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    @previousPoaEndDate.map { previousEndDate =>
+                        <xbrli:context id='RelatedParty@{index + 1}_PY_END'>
+                            <xbrli:entity>
+                                <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                                <xbrli:segment>
+                                    <xbrldi:explicitMember dimension="core:RelatedPartiesDimension">core:Associate@{
+                                        index + 1
+                                    }</xbrldi:explicitMember>
+                                </xbrli:segment>
+                            </xbrli:entity>
+                            <xbrli:period>
+                                <xbrli:instant>@previousEndDate</xbrli:instant>
+                            </xbrli:period>
+                        </xbrli:context>
+                    }
+
+                    <xbrli:context id='RelatedParty@{index + 1}_CY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:RelatedPartiesDimension">core:Associate@{index + 1}</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@poaEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    <xbrli:context id='Associate@{index + 1}_CY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:AssociatesDimension">core:Associate@{index + 1}</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                            <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+            }
+            
+            @renderOnlyForFullOrAbridged {
+                @for((transaction, index) <- loansToDirectors.zipWithIndex) {
+                    <xbrli:context id='LoanToDirector@{index + 1}_CY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:Director@{allDirectors.director(transaction.ac304A.value).index}</xbrldi:explicitMember>
+                                <xbrldi:typedMember dimension="direp:X-SpecificAdvanceOrCreditDirectorsGroupingDimension"><direp:SpecificAdvanceOrCreditDirectorsGroupingDimension.domain>@{index +1}</direp:SpecificAdvanceOrCreditDirectorsGroupingDimension.domain></xbrldi:typedMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                            <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    @previousPoaEndDate.map { previousEndDate =>
+                        <xbrli:context id='LoanToDirector@{index + 1}_PY_END'>
+                            <xbrli:entity>
+                                <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                                <xbrli:segment>
+                                <xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:Director@{allDirectors.director(transaction.ac304A.value).index}</xbrldi:explicitMember>
+                                    <xbrldi:typedMember dimension="direp:X-SpecificAdvanceOrCreditDirectorsGroupingDimension"><direp:SpecificAdvanceOrCreditDirectorsGroupingDimension.domain>@{index +1}</direp:SpecificAdvanceOrCreditDirectorsGroupingDimension.domain></xbrldi:typedMember>
+                                </xbrli:segment>
+                            </xbrli:entity>
+                            <xbrli:period>
+                                <xbrli:instant>@previousEndDate</xbrli:instant>
+                            </xbrli:period>
+                        </xbrli:context>
+                    }
+
+                    <xbrli:context id='LoanToDirector@{index + 1}_CY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:Director@{allDirectors.director(transaction.ac304A.value).index}</xbrldi:explicitMember>
+                                <xbrldi:typedMember dimension="direp:X-SpecificAdvanceOrCreditDirectorsGroupingDimension"><direp:SpecificAdvanceOrCreditDirectorsGroupingDimension.domain>@{index +1}</direp:SpecificAdvanceOrCreditDirectorsGroupingDimension.domain></xbrldi:typedMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@poaEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+            }
+
+            <xbrli:context id="POST_CY">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:typedMember dimension="core:X-EventAfterReportingDateGroupingDimension"><core:XEventAfterReportingDateGroupingDimension.domain>1</core:XEventAfterReportingDateGroupingDimension.domain></xbrldi:typedMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+
+            @renderOnlyForFull {
+                <xbrli:context id='LandAndBuildings_CY'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:LandBuildings</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+
+                <xbrli:context id='LandAndBuildings_CY_END'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:LandBuildings</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+
+                @previousPoaEndDate.map { previousEndDate =>
+                    <xbrli:context id='LandAndBuildings_PY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:LandBuildings</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@previousPoaStartDate.get</xbrli:startDate>
+                            <xbrli:endDate>@previousEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    <xbrli:context id='LandAndBuildings_PY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:LandBuildings</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@previousEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+
+                <xbrli:context id='PlantMachinery_CY'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:PlantMachinery</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+
+                <xbrli:context id='PlantMachinery_CY_END'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:PlantMachinery</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+
+                @previousPoaEndDate.map { previousEndDate =>
+                    <xbrli:context id='PlantMachinery_PY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:PlantMachinery</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@previousPoaStartDate.get</xbrli:startDate>
+                            <xbrli:endDate>@previousEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    <xbrli:context id='PlantMachinery_PY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:PlantMachinery</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@previousEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+
+                <xbrli:context id='FurnitureFittingsToolsEquipment_CY'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:FurnitureFittingsToolsEquipment</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+
+                <xbrli:context id='FurnitureFittingsToolsEquipment_CY_END'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:FurnitureFittingsToolsEquipment</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+
+                @previousPoaEndDate.map { previousEndDate =>
+                    <xbrli:context id='FurnitureFittingsToolsEquipment_PY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:FurnitureFittingsToolsEquipment</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@previousPoaStartDate.get</xbrli:startDate>
+                            <xbrli:endDate>@previousEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    <xbrli:context id='FurnitureFittingsToolsEquipment_PY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:FurnitureFittingsToolsEquipment</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@previousEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+
+                <xbrli:context id='OfficeEquipment_CY'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:OfficeEquipment</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+
+                <xbrli:context id='OfficeEquipment_CY_END'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:OfficeEquipment</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+
+                @previousPoaEndDate.map { previousEndDate =>
+                    <xbrli:context id='OfficeEquipment_PY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:OfficeEquipment</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@previousPoaStartDate.get</xbrli:startDate>
+                            <xbrli:endDate>@previousEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    <xbrli:context id='OfficeEquipment_PY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:OfficeEquipment</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@previousEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+
+                <xbrli:context id='Vehicles_CY'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:Vehicles</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+
+                <xbrli:context id='Vehicles_CY_END'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:Vehicles</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+
+                @previousPoaEndDate.map { previousEndDate =>
+                    <xbrli:context id='Vehicles_PY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:Vehicles</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@previousPoaStartDate.get</xbrli:startDate>
+                            <xbrli:endDate>@previousEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    <xbrli:context id='Vehicles_PY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:PropertyPlantEquipmentClassesDimension">core:Vehicles</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@previousEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+
+                <xbrli:context id='NetGoodwill_CY'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:IntangibleAssetClassesDimension">core:NetGoodwill</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+
+                <xbrli:context id='NetGoodwill_CY_END'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:IntangibleAssetClassesDimension">core:NetGoodwill</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+
+                @previousPoaEndDate.map { previousEndDate =>
+                    <xbrli:context id='NetGoodwill_PY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:IntangibleAssetClassesDimension">core:NetGoodwill</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@previousPoaStartDate.get</xbrli:startDate>
+                            <xbrli:endDate>@previousEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    <xbrli:context id='NetGoodwill_PY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:IntangibleAssetClassesDimension">core:NetGoodwill</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@previousEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+
+                <xbrli:context id='IntangibleAssetsOtherThanGoodwill_CY'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:IntangibleAssetClassesDimension">core:IntangibleAssetsOtherThanGoodwill</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                        <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                    </xbrli:period>
+                </xbrli:context>
+
+                <xbrli:context id='IntangibleAssetsOtherThanGoodwill_CY_END'>
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                        <xbrli:segment>
+                            <xbrldi:explicitMember dimension="core:IntangibleAssetClassesDimension">core:IntangibleAssetsOtherThanGoodwill</xbrldi:explicitMember>
+                        </xbrli:segment>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>@poaEndDate</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+
+                @previousPoaEndDate.map { previousEndDate =>
+                    <xbrli:context id='IntangibleAssetsOtherThanGoodwill_PY'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:IntangibleAssetClassesDimension">core:IntangibleAssetsOtherThanGoodwill</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:startDate>@previousPoaStartDate.get</xbrli:startDate>
+                            <xbrli:endDate>@previousEndDate</xbrli:endDate>
+                        </xbrli:period>
+                    </xbrli:context>
+
+                    <xbrli:context id='IntangibleAssetsOtherThanGoodwill_PY_END'>
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                            <xbrli:segment>
+                                <xbrldi:explicitMember dimension="core:IntangibleAssetClassesDimension">core:IntangibleAssetsOtherThanGoodwill</xbrldi:explicitMember>
+                            </xbrli:segment>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>@previousEndDate</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                }
+            }
+
+            @*
+            <xbrli:context id='AllEntityOfficers_CY'>
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.companieshouse.gov.uk/">@crn</xbrli:identifier>
+                    <xbrli:segment>
+                        <xbrldi:explicitMember dimension="uk-bus:EntityOfficersDimension">uk-bus:AllEntityOfficersEntityOfficersTotalDefault</xbrldi:explicitMember>
+                    </xbrli:segment>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>@poaStartDate</xbrli:startDate>
+                    <xbrli:endDate>@poaEndDate</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+            *@
+
+
+        </ix:resources>
+    </ix:header>
+</div>

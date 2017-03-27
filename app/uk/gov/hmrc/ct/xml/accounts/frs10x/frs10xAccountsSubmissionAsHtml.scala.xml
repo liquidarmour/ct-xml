@@ -1,0 +1,45 @@
+@import uk.gov.hmrc.ct.xml.model.filing.{Filing, AccountsType, HtmlRendererOptions}
+
+@(accountsXml: play.twirl.api.Xml,
+    filing: Filing,
+    accountsType: AccountsType,
+    options: HtmlRendererOptions)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.companytaxreturn.xml.css
+@import uk.gov.hmrc.ct.xml.helpers.xml.printScript
+
+<html   xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:fn="http://www.w3.org/2005/xpath-functions"
+        xmlns:iris="http://www.iris.co.uk/ixbrl"
+        xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+        xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+        xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2010-04-20"
+        xmlns:ixt2="http://www.xbrl.org/inlineXBRL/transformation/2011-07-31"
+        xmlns:link="http://www.xbrl.org/2003/linkbase"
+        xmlns:uk-bus="http://xbrl.frc.org.uk/cd/2014-09-01/business"
+        xmlns:curr="http://xbrl.frc.org.uk/cd/2014-09-01/currencies"
+        xmlns:countries="http://xbrl.frc.org.uk/cd/2014-09-01/countries"
+        xmlns:direp="http://xbrl.frc.org.uk/reports/2014-09-01/direp"
+        xmlns:core="http://xbrl.frc.org.uk/fr/2014-09-01/core"
+        xmlns:xbrldi="http://xbrl.org/2006/xbrldi"
+        xmlns:xbrli="http://www.xbrl.org/2003/instance"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xml:lang="en">
+    <head>
+        <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8"/>
+        <meta name="generation_system" content="CATO"/>
+        <title>
+            @if(!filing.isSubmittedToCH){draft-}companies-house-@{filing.currentPeriodOfAccounts.endDate.toString("yyyy-MM-dd")}
+        </title>
+
+        <style type="text/css">
+            @css()
+        </style>
+
+    </head>
+
+    <body xml:lang="en" class="@if(options.useScaling.contains(true)){scaled}">
+        @printScript(options.print.getOrElse(false))
+        <div class="accounts-body @if(options.isDraft.contains(true)){draft}">@accountsXml</div>
+    </body>
+</html>

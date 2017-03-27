@@ -1,0 +1,13 @@
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever)(implicit messages: Messages)
+
+<div class="header">
+    <h1 class="text--center">
+        <ix:nonNumeric contextRef="CY" name="uk-bus:EntityCurrentLegalOrRegisteredName">@boxRetriever.ac2().value.get</ix:nonNumeric>
+    </h1>
+
+    @if(isLimitedByGuaranteeCompany(boxRetriever)){
+        <h2 class="text--center">@Messages("ixbrl.header.limitedByGuarantee")</h2>
+    }
+</div>

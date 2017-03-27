@@ -1,0 +1,47 @@
+@import uk.gov.hmrc.ct.accounts.frs10x.retriever.Frs10xAccountsBoxRetriever
+@import uk.gov.hmrc.ct.box.{CtOptionalInteger, Debit}
+
+@(id: String, currentBox: CtOptionalInteger, previousBox: CtOptionalInteger, figureMessageLabel: String, name: String, boxRetriever: Frs10xAccountsBoxRetriever,
+        currentContext: String = "CY_END", previousContext: String = "PY_END", notes: String = "", hasNoteIndex: Boolean = false)(implicit messages: Messages)
+
+@noteId = @{ "uk-bus" + name + currentContext + "NoteIndexes" }
+
+@isDebit = @{ (currentBox, previousBox) match {
+    case (c: Debit, p: Debit) => true
+    case _ => false
+}}
+
+@hasPreviousPoA = @{boxRetriever.ac206().value.isDefined}
+
+
+@if(currentBox.value.nonEmpty || previousBox.value.nonEmpty){
+    <tr class="figures">
+        <td id="@{s"$id-label"}">@{Messages(figureMessageLabel)}</td>
+
+        @if(hasNoteIndex) {
+            <td class="figure noteIndex" id="@noteId">@notes</td>
+        }
+
+        <td id="@{s"$id-curr-val"}" class="strong figure">
+            @currentBox.value.map{ value =>
+                @if(isDebit) {
+                    @debitFigure(name, currentContext, value)
+                } else {
+                    @figure(name, currentContext, value)
+                }
+            }
+        </td>
+        @if(hasPreviousPoA) {
+            <td id="@{s"$id-prev-val"}" class="figure">
+                @previousBox.value.map{ value =>
+                    @if(isDebit) {
+                        @debitFigure(name, previousContext, value)
+                    } else {
+                        @figure(name, previousContext, value)
+                    }
+                }
+            </td>
+        }
+    </tr>
+}
+

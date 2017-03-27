@@ -1,0 +1,46 @@
+@import uk.gov.hmrc.ct.box.{CtBoxIdentifier, CtOptionalInteger, Debit}
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+@import uk.gov.hmrc.ct.xml.helpers.NumberHelper._
+@import scala.collection.mutable.ArrayBuffer
+
+@(box: CtOptionalInteger with CtBoxIdentifier, contextRef: String, fullName: String, ixtFormat: String = "numdotdecimal", id: Option[String] = None, isTotal: Boolean = false, isGrandTotal: Boolean = false, isDebit: Option[Boolean] = None, bold: Boolean = true)(implicit messages: Messages)
+
+@renderAsDebit = @{
+    if (isDebit.nonEmpty) {
+        isDebit.get
+    } else {
+        box match {
+            case c: Debit => true
+            case _ => false
+        }
+    }
+}
+
+@cellClasses = @{
+    var classes = ArrayBuffer[String]()
+
+    if (bold)
+        classes += "strong"
+
+    classes += (
+        (isGrandTotal, isTotal) match {
+            case (true, _) => "grandtotal"
+            case (_, true) => "total"
+            case _ => "figure"
+        }
+    )
+
+    classes.mkString(" ")
+}
+
+@cellId = @{ id.getOrElse(s"${box.id}-val") }
+
+<td id="@cellId" class="@cellClasses">
+    @box.value.map{value =>
+        @if(renderAsDebit) {
+            @positiveWithBrackets(value){<ix:nonFraction contextRef="@contextRef" decimals="0" unitRef="GBP" name="@fullName" format="ixt2:@ixtFormat" @if(value < 0){ sign="-" }>@commaSeparated(value.abs)</ix:nonFraction>}
+        } else {
+            @negativeWithBrackets(value){<ix:nonFraction contextRef="@contextRef" decimals="0" unitRef="GBP" name="@fullName" format="ixt2:@ixtFormat" @if(value < 0){ sign="-" }>@commaSeparated(value.abs)</ix:nonFraction>}
+        }
+    }.orElse(Some(<span>-</span>))
+</td>
