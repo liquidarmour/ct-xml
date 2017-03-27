@@ -1,0 +1,23 @@
+@(boxRetriever: uk.gov.hmrc.ct.accounts.frs105.retriever.Frs105AccountsBoxRetriever with uk.gov.hmrc.ct.box.retriever.FilingAttributesBoxValueRetriever,
+        documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.accounts.frs105.footnotes.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.frs105.AccountsRendering
+@import uk.gov.hmrc.ct.xml.helpers.accounts.frs105.AccountsRendering._
+
+@noteType = @{ NoteType.AdvancesAndCredits }
+
+@notesPage("AdvancesAndCreditsNote", "Footnotes", noteType, boxRetriever, documentState) {
+    <ul>
+        <li>
+            <h2>@AccountsRendering.getNoteNumber(noteType, boxRetriever). @Messages("ixbrl.frs105.advancesAndCredits.note.title")</h2>
+
+            @boxRetriever.ac7997.value.map { noteText =>
+            <div class="text-area-display" id="advances-and-credits-note">
+                @ixbrlTextNote(text = noteText, ixbrlName = "direp:GeneralDescriptionAdvancesCreditsToDirectorsIncludingTermsInterestRates", context = "CY")
+            </div>
+            }
+        </li>
+    </ul>
+}

@@ -1,0 +1,57 @@
+@import uk.gov.hmrc.ct.accounts.frs105.retriever.Frs105AccountsBoxRetriever
+@(boxRetriever: Frs105AccountsBoxRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState,
+    accountsApproval: uk.gov.hmrc.ct.accounts.approval.boxes.AccountsApproval)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.xml._
+
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+
+
+<div id="BalanceSheet" class="page">
+    @pageHeader(boxRetriever)
+
+    <h2 class="text--center">Balance sheet</h2>
+    <p class="text--center"><strong>As at <ix:nonNumeric contextRef="CY_END" name="uk-bus:BalanceSheetDate" format="ixt:datelonguk">@poaEndDate</ix:nonNumeric></strong></p>
+    <table cellspacing="10">
+        <thead>
+            @tableHeader(boxRetriever, "balance-sheet", hasNotes = false)
+        </thead>
+        <tbody>
+            @if(!isLimitedByGuaranteeCompany(boxRetriever)) {
+                @figureRow("ac460", boxRetriever.ac460(), boxRetriever.ac461(), "ixbrl.micro.balance.sheet.share.capital.label", "CalledUpShareCapitalNotPaidNotExpressedAsCurrentAsset", boxRetriever)
+            }
+            @figureRow("ac450", boxRetriever.ac450(), boxRetriever.ac451(), "ixbrl.micro.balance.sheet.fixed.assets.label", "FixedAssets", boxRetriever)
+            @figureRow("ac455", boxRetriever.ac455(), boxRetriever.ac456(), "ixbrl.micro.balance.sheet.current.assets.label", "CurrentAssets", boxRetriever)
+            @figureRow("ac465", boxRetriever.ac465(), boxRetriever.ac466(), "ixbrl.micro.balance.sheet.prepayments.label", "PrepaymentsAccruedIncomeNotExpressedWithinCurrentAssetSubtotal", boxRetriever)
+            @figureRow("ac58", boxRetriever.ac58(), boxRetriever.ac59(), "ixbrl.micro.balance.sheet.creditors.within.one.year.label", "Creditors", boxRetriever, "CreditorsWithinOneYear_CY_END", "CreditorsWithinOneYear_PY_END")
+            @figureTotal("ac60", boxRetriever.ac60(), boxRetriever.ac61(), "ixbrl.micro.balance.sheet.net.current.assets.liabilities.label", "NetCurrentAssetsLiabilities", boxRetriever)
+            @figureRow("ac62", boxRetriever.ac62(), boxRetriever.ac63(), "ixbrl.micro.balance.sheet.total.assets.less.liabilities.label", "TotalAssetsLessCurrentLiabilities", boxRetriever)
+            @figureRow("ac64", boxRetriever.ac64(), boxRetriever.ac65(), "ixbrl.micro.balance.sheet.creditors.after.one.year.label", "Creditors", boxRetriever, "CreditorsAfterOneYear_CY_END", "CreditorsAfterOneYear_PY_END")
+            @figureRow("ac66", boxRetriever.ac66(), boxRetriever.ac67(), "ixbrl.micro.balance.sheet.provision.for.liabilities.label", "ProvisionsForLiabilitiesBalanceSheetSubtotal", boxRetriever)
+            @figureRow("ac470", boxRetriever.ac470(), boxRetriever.ac471(), "ixbrl.micro.balance.sheet.accruals.deferred.income.label", "AccruedLiabilitiesNotExpressedWithinCreditorsSubtotal", boxRetriever)
+            @figureTotal("ac68", boxRetriever.ac68(), boxRetriever.ac69(), "ixbrl.micro.balance.sheet.total.net.assets.liabilities.label", "NetAssetsLiabilities", boxRetriever)
+            @figureTotal("ac490", boxRetriever.ac490(), boxRetriever.ac491(), prependLbgPrefix("ixbrl.micro.balance.sheet.capital.reserves.label", boxRetriever), "Equity", boxRetriever)
+        </tbody>
+    </table>
+
+    @frs10xPageBreak(documentState, "BalanceSheet", "BalanceSheet")
+</div>
+
+
+<div id="BalanceSheetContinued" class="page">
+    @pageHeader(boxRetriever)
+
+    <h2 class="text--center">Balance sheet continued</h2>
+
+    @frs10xBalanceSheetStatements(boxRetriever)
+
+    @frs10xAccountsApproval(boxRetriever, "balance-sheet", accountsApproval)
+
+    <p class="text--center">The notes form part of these financial statements</p>
+
+    @frs10xPageBreak(documentState, "BalanceSheetContinued", "BalanceSheet")
+</div>

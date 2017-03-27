@@ -1,0 +1,55 @@
+@import uk.gov.hmrc.ct.accounts.frs105.retriever.Frs105AccountsBoxRetriever
+
+@(boxRetriever: Frs105AccountsBoxRetriever,
+    documentState: uk.gov.hmrc.ct.xml.helpers.DocumentState,
+    returnType:  uk.gov.hmrc.ct.version.ReturnType)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.formatters.{DateFormat, DateFormatter}
+@import uk.gov.hmrc.ct.xml.model.filing.AccountsPeriodHeadingCalculator
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.components.xml._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering._
+@import uk.gov.hmrc.ct.xml.helpers.accounts.AccountsRendering.NoteType._
+@import uk.gov.hmrc.ct.xml.accounts.frs10x.IxbrlSectionStatus
+
+@poaEndDate = @{DateFormatter.format(boxRetriever.ac4().value, DateFormat.LongUK)}
+
+@currentHeading = @{
+    AccountsPeriodHeadingCalculator.periodHeading(boxRetriever.ac3().value, boxRetriever.ac4().value)
+}
+
+@previousHeading = @{
+    AccountsPeriodHeadingCalculator.periodHeading(boxRetriever.ac205().value, boxRetriever.ac206().value)
+}
+
+@if(IxbrlSectionStatus(boxRetriever, returnType).isProfitAndLossEnabled) {
+    <div id="ProfitAndLossOfAccount" class="page">
+        @pageHeader(boxRetriever)
+
+        <h2 class="text--center">@Messages(prependLbgPrefix("ixbrl.profit.loss.heading", boxRetriever))</h2>
+        <p class="text--center">
+            <strong>for the Period Ended @poaEndDate</strong>
+        </p>
+        <table cellspacing="10">
+            <thead>
+                @tableHeader(boxRetriever, "p-and-l", hasNotes = false)
+            </thead>
+            <tbody>
+                @profitAndLossFigureRow(boxRetriever.ac12(), boxRetriever.ac13(), "ixbrl.profit.loss.turnover.label", "TurnoverRevenue", boxRetriever, hasNotes = false)
+                @profitAndLossFigureRow(boxRetriever.ac405(), boxRetriever.ac406(), "ixbrl.profit.loss.other.income.label", "OtherOperatingIncomeFormat2", boxRetriever, hasNotes = false)
+                @profitAndLossFigureRow(boxRetriever.ac410(), boxRetriever.ac411(), "ixbrl.profit.loss.materials.cost.label", "RawMaterialsConsumablesUsed", boxRetriever, hasNotes = false)
+                @profitAndLossFigureRow(boxRetriever.ac415(), boxRetriever.ac416(), "ixbrl.profit.loss.staff.costs.label", "StaffCostsEmployeeBenefitsExpense", boxRetriever, hasNotes = false)
+                @profitAndLossFigureRow(boxRetriever.ac420(), boxRetriever.ac421(), "ixbrl.profit.loss.depreciation.and.writeoffs.label", "DepreciationAmortisationImpairmentExpense", boxRetriever, hasNotes = false)
+                @profitAndLossFigureRow(boxRetriever.ac425(), boxRetriever.ac426(), "ixbrl.profit.loss.other.charges.label", "OtherOperatingExpensesFormat2", boxRetriever, hasNotes = false)
+                @profitAndLossFigureRow(boxRetriever.ac34(), boxRetriever.ac35(), prependLbgPrefix("ixbrl.profit.loss.tax.label", boxRetriever), "TaxTaxCreditOnProfitOrLossOnOrdinaryActivities", boxRetriever, hasNotes = false)
+                @profitAndLossFigureRow(boxRetriever.ac435(), boxRetriever.ac436(), prependLbgPrefix("ixbrl.profit.loss.profit.label", boxRetriever), "ProfitLoss", boxRetriever, hasNotes = false)
+            </tbody>
+        </table>
+
+        @if(isLimitedByGuaranteeCompany(boxRetriever)) {
+            @frs10xPageBreak(documentState, "SurplusOrDeficit", "SurplusOrDeficit")
+        }else{
+            @frs10xPageBreak(documentState, "ProfitAndLoss", "ProfitAndLoss")
+        }
+
+    </div>
+}
