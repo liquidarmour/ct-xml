@@ -1,0 +1,10 @@
+@(accountsAsHtml: Boolean, hasAttachments: Boolean, hasComputations: Boolean)(implicit messages: Messages)
+
+<div id="content">
+    <ul class="accounts-comps-ct">
+        @if(hasAttachments){<li><a href="#AttachmentsSection" class="heading-large">@Messages("ixbrl.combined.attachments")</a></li>}
+        @if(accountsAsHtml){<li><a href="#AccountsSection" class="heading-large">@Messages("ixbrl.combined.accounts")</a></li>}
+        @if(hasComputations){<li><a href="#ComputationsSection" class="heading-large">@Messages("ixbrl.combined.computations")</a></li>}
+        <li><a href="#CT600Section" class="heading-large">@Messages("ixbrl.combined.ct600")</a></li>
+    </ul>
+</div>

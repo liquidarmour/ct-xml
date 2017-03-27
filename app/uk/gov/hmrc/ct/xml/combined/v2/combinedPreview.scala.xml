@@ -1,0 +1,55 @@
+@(  accountsIxbrl: Option[Xml],
+    hmrcComputationsXml: Xml,
+    ct600Html: Html,
+    compsModel: uk.gov.hmrc.ct.xml.model.submit.hmrc.ComputationsModel,
+    attachments: Html,
+    options: uk.gov.hmrc.ct.xml.model.filing.HtmlRendererOptions)(implicit messages: Messages)
+
+@import uk.gov.hmrc.ct.xml.model.filing.HtmlRendererSections
+@import uk.gov.hmrc.ct.xml.companytaxreturn.xml._
+@import uk.gov.hmrc.ct.xml.combined.xml.combinedContentsPage
+@import uk.gov.hmrc.ct.xml.helpers.xml._
+@import uk.gov.hmrc.ct.xml.helpers.XmlHelpers
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ct-comp="http://www.govtalk.gov.uk/uk/fr/tax/uk-hmrc-ct-comp/2013-10-14" xmlns:uk-bus="http://www.xbrl.org/uk/cd/business/2009-09-01" xmlns:xbrl="http://www.xbrl.org/2003/instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:ix="http://www.xbrl.org/2008/inlineXBRL" xmlns:uk-gaap="http://www.xbrl.org/uk/gaap/core/2009-09-01" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:hmrc="http://hmrc.gov.uk/" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2010-04-20" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:uk-direp="http://www.xbrl.org/uk/reports/direp/2009-09-01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<head>
+    <meta http-equiv="content-type"  charset="UTF-8"/>
+    <title>Combined Accounts/Computations/Company Tax Return</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <style type="text/css">            
+        @css()
+    </style>
+</head>
+
+<body class="content @if(options.useScaling.contains(true)){scaled} @if(options.isDraft.contains(true)){draft}">
+    @printScript(options.print.getOrElse(false))
+    @if(!options.isDraft.contains(true)) {
+        @submittedFilingWatermark(compsModel.hmrcSubmissionDate)
+    }
+    @if(!options.sectionsToHide.contains(HtmlRendererSections.Index)) {
+        @combinedContentsPage(
+            accountsIxbrl.isDefined,
+            XmlHelpers.nonEmpty(attachments.toString()),
+            XmlHelpers.nonEmpty(hmrcComputationsXml.toString())
+        )
+    }
+    @if(!options.sectionsToHide.contains(HtmlRendererSections.Attachments) && XmlHelpers.nonEmpty(attachments.toString())) {
+        <div id="Attachments">@Xml(attachments.toString())</div>
+    } else {
+        @if(accountsIxbrl.nonEmpty) {
+            <div class="page-break-only">&nbsp;</div>
+        }
+    }
+    @if(!options.sectionsToHide.contains(HtmlRendererSections.Accounts)) {
+        @accountsIxbrl.map{ xml =>
+            <div class="accounts-body" id="AccountsSection">@xml</div>
+        }
+    }
+    @if(!options.sectionsToHide.contains(HtmlRendererSections.Computations)) {
+        @if(XmlHelpers.nonEmpty(hmrcComputationsXml.toString())) {
+            <div class="comps-body" id="ComputationsSection">@hmrcComputationsXml</div>
+        }
+    }
+    <div class="ct-body" id="CT600Section">@Xml(ct600Html.toString())</div>
+</body></html>

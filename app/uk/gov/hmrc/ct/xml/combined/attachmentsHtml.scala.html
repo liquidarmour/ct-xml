@@ -1,0 +1,21 @@
+@(accounts: Option[uk.gov.hmrc.ct.xml.model.filing.AttachmentDetails],
+  attachments: Seq[uk.gov.hmrc.ct.xml.model.filing.AttachmentDetails])
+
+@if(accounts.nonEmpty || attachments.nonEmpty) {
+    <div id="AttachmentsSection" class="page-break">
+        @accounts.map{ det =>
+            <h1>Uploaded Accounts:</h1>
+            <p class="accounts-upload" id="AccountsAttachment">@det.filename</p>
+        }
+        @if(attachments.nonEmpty) {
+            <div id="UploadedAttachmentsSection">
+                <h1>Supporting documents:</h1>
+                <ul class="with-list-style">
+                    @attachments.map{ att =>
+                        <li>@att.filename</li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+}
